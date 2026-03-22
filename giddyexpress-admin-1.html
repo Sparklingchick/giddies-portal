@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express &mdash; Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="gx.css"/>
+<style>
+:root{--hi:#F59E0B;--hi2:#FBBF24}
+.spin{width:36px;height:36px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside class="sb">
+  <div class="sb-logo-wrap">
+    <div style="padding:.5rem 1.2rem .3rem">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.06em;color:var(--hi)">GIDDIES EXPRESS</div>
+      <div style="font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase">Staff Portal</div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv" style="background:#F59E0B">??</div>
+      <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole"></div></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard"     onclick="goTo('dashboard')"><span class="ic">&#x1f4ca;</span><span>Dashboard</span></div>
+    <div class="nav-a" id="nav-approvals"     onclick="goTo('approvals')"><span class="ic">&#x1f4cb;</span><span>Approvals</span></div>
+    <div class="nav-a" id="nav-sessions"      onclick="goTo('sessions')"><span class="ic">&#x1f7e2;</span><span>Live Sessions</span></div>
+    <div class="nav-sec">Management</div>
+    <div class="nav-a" id="nav-employees"     onclick="goTo('employees')"><span class="ic">&#x1f465;</span><span>All Employees</span></div>
+    <div class="nav-a" id="nav-departments"   onclick="goTo('departments')"><span class="ic">&#x1f3e2;</span><span>Departments</span></div>
+    <div class="nav-a" id="nav-budgets"       onclick="goTo('budgets')"><span class="ic">&#x1f4b0;</span><span>Budgets</span></div>
+    <div class="nav-a" id="nav-announcements" onclick="goTo('announcements')"><span class="ic">&#x1f4e2;</span><span>Announcements</span></div>
+    <div class="nav-sec">Operations</div>
+    <div class="nav-a" id="nav-attendance"    onclick="goTo('attendance')"><span class="ic">&#x23f1;</span><span>Attendance</span></div>
+    <div class="nav-a" id="nav-leave"         onclick="goTo('leave')"><span class="ic">&#x1f334;</span><span>Leave Requests</span></div>
+    <div class="nav-a" id="nav-reports"       onclick="goTo('reports')"><span class="ic">&#x1f4c8;</span><span>Reports</span></div>
+    <div class="nav-sec">System</div>
+    <div class="nav-a" id="nav-notifications" onclick="goTo('notifications')"><span class="ic">&#x1f514;</span><span>Notifications</span></div>
+    <div class="nav-a" id="nav-settings"      onclick="goTo('settings')"><span class="ic">&#x2699;</span><span>Settings</span></div>
+  </nav>
+  <div class="sb-foot"><button class="sb-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="pageTitle">Dashboard</div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span id="onlineCnt">0 online</span></div>
+      <button class="tb-btn" onclick="goTo('notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading Admin Dashboard...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODALS - using single quotes in ALL onclick attributes -->
+<div class="overlay" id="mAnn">
+  <div class="modal">
+    <div class="m-hd"><div class="m-title">&#x1f4e2; Post Announcement</div><button class="m-x" onclick="gxClose('mAnn')">&#x2715;</button></div>
+    <div class="field"><label>Title</label><input id="ann-title" placeholder="Announcement title..."/></div>
+    <div class="field"><label>Message</label><textarea id="ann-body" placeholder="Message to all staff..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Type</label>
+        <select id="ann-type">
+          <option value="info">Info</option>
+          <option value="warn">Warning</option>
+          <option value="ok">Success</option>
+          <option value="er">Urgent</option>
+        </select>
+      </div>
+      <div class="field"><label>Send To</label>
+        <select id="ann-dept">
+          <option value="all">All Staff</option>
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Management">Managers Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="m-ft">
+      <button class="btn btn-gh" onclick="gxClose('mAnn')">Cancel</button>
+      <button class="btn btn-hi" id="ann-btn">Post Announcement</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mLock">
+  <div class="modal">
+    <div class="m-hd"><div class="m-title" style="color:var(--er)">&#x1f512; Emergency Lock</div><button class="m-x" onclick="gxClose('mLock')">&#x2715;</button></div>
+    <div class="info info-red">This locks the portal for ALL staff immediately. Only Admin retains access.</div>
+    <div class="field"><label>Reason for Emergency Lock</label><textarea id="lock-reason" placeholder="Explain the reason..."></textarea></div>
+    <div class="m-ft">
+      <button class="btn btn-gh" onclick="gxClose('mLock')">Cancel</button>
+      <button class="btn btn-er" id="lock-btn">&#x1f512; Lock Portal Now</button>
+    </div>
+  </div>
+</div>
+
+<div id="gx-toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<!-- Load Supabase FIRST, then gx.js, then page script -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="gx.js"></script>
+<script>
+var ALLOWED_ROLES = ['admin'];
+var ME, SB;
+var EMPS = [], LEAVES = [];
+
+/* ── Navigation ── */
+var PAGE_TITLES = {
+  dashboard:'Dashboard', approvals:'Approvals', sessions:'Live Sessions',
+  employees:'All Employees', departments:'Departments', budgets:'Budget Requests',
+  announcements:'Announcements', attendance:'Attendance', leave:'Leave Requests',
+  reports:'Reports', notifications:'Notifications', settings:'Settings'
+};
+
+function goTo(id) {
+  gxNav(id);
+  var t = $('pageTitle'); if (t) t.textContent = PAGE_TITLES[id] || id;
+  setHTML('MC', '<div style="display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem"><div class="spin"></div><div style="color:var(--tx3)">Loading...</div></div>');
+  var tid = setTimeout(function() {
+    var mc = $('MC');
+    if (mc && mc.querySelector('.spin'))
+      mc.innerHTML = '<div style="text-align:center;padding:3rem"><div style="color:var(--er);margin-bottom:1rem">Took too long. Check your connection.</div><button class="btn btn-gh" onclick="goTo('' + id + '')">Retry</button></div>';
+  }, 8000);
+  try {
+    if      (id === 'dashboard')     pgDash(tid);
+    else if (id === 'approvals')     { clearTimeout(tid); pgApprovals(); }
+    else if (id === 'sessions')      { clearTimeout(tid); pgSessions(); }
+    else if (id === 'employees')     { clearTimeout(tid); pgEmployees(); }
+    else if (id === 'departments')   { clearTimeout(tid); pgDepts(); }
+    else if (id === 'budgets')       { clearTimeout(tid); pgBudgets(); }
+    else if (id === 'announcements') { clearTimeout(tid); pgAnnouncements(); }
+    else if (id === 'attendance')    { clearTimeout(tid); pgAttendance(); }
+    else if (id === 'leave')         { clearTimeout(tid); pgLeave(); }
+    else if (id === 'reports')       { clearTimeout(tid); pgReports(); }
+    else if (id === 'notifications') { clearTimeout(tid); pgNotifications(); }
+    else if (id === 'settings')      { clearTimeout(tid); pgSettings(); }
+    else { clearTimeout(tid); setHTML('MC', '<div style="text-align:center;padding:3rem;color:var(--tx3)">Page not found</div>'); }
+  } catch(e) {
+    clearTimeout(tid);
+    setHTML('MC', '<div style="text-align:center;padding:3rem"><div style="color:var(--er);margin-bottom:1rem">Error: ' + e.message + '</div><button class="btn btn-gh" onclick="goTo('' + id + '')">Retry</button></div>');
+    console.error('Page error [' + id + ']:', e);
+  }
+}
+
+/* ── DASHBOARD ── */
+function pgDash(tid) {
+  var online = gxOnline();
+  if (!SB) { clearTimeout(tid); renderDash(0, 0, 0, 0, online); return; }
+  Promise.all([
+    SB.from('employees').select('id', {count:'exact', head:true}).eq('status', 'active'),
+    SB.from('leave_requests').select('id', {count:'exact', head:true}).eq('status', 'pending'),
+    SB.from('budget_requests').select('id', {count:'exact', head:true}).eq('status', 'pending'),
+    SB.from('announcements').select('id', {count:'exact', head:true})
+  ]).then(function(r) {
+    clearTimeout(tid);
+    renderDash(r[0].count||0, r[1].count||0, r[2].count||0, r[3].count||0, online);
+  }).catch(function(e) {
+    clearTimeout(tid);
+    console.error('Dashboard error:', e);
+    renderDash(0, 0, 0, 0, online);
+  });
+}
+
+function renderDash(ec, lc, bc, ac, online) {
+  var mc = $('MC'); if (!mc) return;
+  mc.innerHTML =
+    '<div style="background:var(--bg2);border:1px solid var(--br);border-radius:10px;padding:.85rem 1.2rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.65rem">' +
+      '<div style="display:flex;align-items:center;gap:.75rem">' +
+        '<span class="pulse"></span><span style="font-weight:600;font-size:.82rem">Portal Active</span>' +
+        '<span style="font-size:.72rem;color:var(--tx3)">| Testing mode - open 24/7</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+        '<button class="btn btn-gh btn-sm" onclick="gxOpen('mAnn')">&#x1f4e2; Announce</button>' +
+        '<button class="btn btn-er btn-sm" onclick="gxOpen('mLock')">&#x1f512; Lock Portal</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="stats">' +
+      '<div class="stat" style="--sc:#F59E0B;--sc2:#FBBF24"><div class="s-top"><div class="s-ic">&#x1f465;</div></div><div class="s-val">' + ec + '</div><div class="s-lbl">Employees</div></div>' +
+      '<div class="stat" style="--sc:#22C55E;--sc2:#4ADE80"><div class="s-top"><div class="s-ic">&#x1f7e2;</div></div><div class="s-val">' + online.length + '</div><div class="s-lbl">Online Now</div></div>' +
+      '<div class="stat" style="--sc:#EF4444;--sc2:#F87171"><div class="s-top"><div class="s-ic">&#x1f4cb;</div></div><div class="s-val">' + (lc+bc) + '</div><div class="s-lbl">Pending Approvals</div><div class="s-sub">' + lc + ' leave / ' + bc + ' budgets</div></div>' +
+      '<div class="stat" style="--sc:#60A5FA;--sc2:#93C5FD"><div class="s-top"><div class="s-ic">&#x1f4e2;</div></div><div class="s-val">' + ac + '</div><div class="s-lbl">Announcements</div></div>' +
+    '</div>' +
+    '<div class="g21">' +
+      '<div>' +
+        '<div class="card"><div class="c-hd"><div><div class="c-title">Pending Approvals</div></div><button class="btn btn-gh btn-sm" onclick="goTo('approvals')">All &rarr;</button></div>' +
+          '<div id="dash-appr"><div style="display:flex;align-items:center;justify-content:center;padding:1.5rem"><div class="spin" style="width:24px;height:24px;border-width:2px"></div></div></div>' +
+        '</div>' +
+        '<div class="card"><div class="c-hd"><div class="c-title">Recent Announcements</div><button class="btn btn-hi btn-sm" onclick="gxOpen('mAnn')">+ Post</button></div>' +
+          '<div id="dash-anns"><div style="color:var(--tx3);font-size:.8rem">Loading...</div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="card"><div class="c-hd"><div class="c-title">Quick Actions</div></div>' +
+          '<div style="display:flex;flex-direction:column;gap:.5rem">' +
+            '<button class="btn btn-hi btn-bl" onclick="goTo('approvals')">&#x1f4cb; Review All Approvals</button>' +
+            '<button class="btn btn-gh btn-bl" onclick="goTo('employees')">&#x1f465; All Employees</button>' +
+            '<button class="btn btn-gh btn-bl" onclick="goTo('leave')">&#x1f334; Leave Requests</button>' +
+            '<button class="btn btn-gh btn-bl" onclick="goTo('attendance')">&#x23f1; Attendance</button>' +
+            '<button class="btn btn-gh btn-bl" onclick="goTo('departments')">&#x1f3e2; Departments</button>' +
+            '<button class="btn btn-gh btn-bl" onclick="gxOpen('mAnn')">&#x1f4e2; Post Announcement</button>' +
+            '<button class="btn btn-er btn-bl" onclick="gxOpen('mLock')">&#x1f512; Emergency Lock</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card" style="margin-top:1.1rem"><div class="c-hd"><div class="c-title">Online Now</div><span class="b b-ok">' + online.length + '</span></div>' +
+          (online.length ? online.slice(0,8).map(function(u) {
+            return '<div style="display:flex;align-items:center;gap:.55rem;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03)">' + gxAv(u.name, '24px') + '<div><div style="font-size:.78rem;font-weight:600">' + u.name + '</div><div style="font-size:.65rem;color:var(--tx3)">' + u.dept + '</div></div></div>';
+          }).join('') : '<div style="text-align:center;padding:1rem;color:var(--tx3);font-size:.8rem">No others online</div>') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  loadDashAppr();
+  loadDashAnns();
+}
+
+function loadDashAppr() {
+  var el = $('dash-appr'); if (!el || !SB) { if(el) el.innerHTML = '<div class="info info-orange" style="font-size:.78rem">Not connected</div>'; return; }
+  Promise.all([
+    SB.from('leave_requests').select('id,employee_name,type,from_date,to_date').eq('status','pending').order('created_at',{ascending:false}).limit(3),
+    SB.from('budget_requests').select('id,department,title,amount').eq('status','pending').order('created_at',{ascending:false}).limit(2)
+  ]).then(function(r) {
+    if (!$('dash-appr')) return;
+    var items = [];
+    (r[0].data||[]).forEach(function(l) { items.push({id:l.id, tp:'leave', ic:'&#x1f334;', ti:(l.employee_name||'?') + ' &mdash; ' + l.type + ' Leave', me:l.from_date + ' to ' + l.to_date}); });
+    (r[1].data||[]).forEach(function(b) { items.push({id:b.id, tp:'budget', ic:'&#x1f4b0;', ti:'Budget: ' + b.department, me:gxMoney(b.amount)}); });
+    $('dash-appr').innerHTML = items.length ? items.map(function(a) {
+      return '<div class="appr-row">' +
+        '<div class="appr-ic">' + a.ic + '</div>' +
+        '<div class="appr-info"><div class="appr-title">' + a.ti + '</div><div class="appr-meta">' + a.me + '</div></div>' +
+        '<div class="appr-acts">' +
+          '<button class="btn btn-ok btn-xs" onclick="doApprove('' + a.id + '','' + a.tp + '')">&#x2713;</button>' +
+          '<button class="btn btn-er btn-xs" onclick="doReject('' + a.id + '','' + a.tp + '')">&#x2715;</button>' +
+        '</div></div>';
+    }).join('') : '<div style="text-align:center;padding:1.5rem;color:var(--tx3)">&#x2705; No pending approvals</div>';
+  }).catch(function(e) { console.error(e); if($('dash-appr')) $('dash-appr').innerHTML = '<div style="color:var(--tx3);font-size:.78rem;padding:.5rem">Could not load</div>'; });
+}
+
+function loadDashAnns() {
+  var el = $('dash-anns'); if (!el || !SB) return;
+  SB.from('announcements').select('title,type,poster_name,created_at').order('created_at',{ascending:false}).limit(3)
+  .then(function(r) {
+    if (!$('dash-anns')) return;
+    var clr = {info:'#60A5FA', warn:'var(--wa)', ok:'var(--ok)', er:'var(--er)'};
+    $('dash-anns').innerHTML = (r.data||[]).length ? (r.data||[]).map(function(a) {
+      return '<div style="padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.03);display:flex;gap:.5rem">' +
+        '<div style="width:4px;border-radius:2px;flex-shrink:0;background:' + (clr[a.type]||'#60A5FA') + '"></div>' +
+        '<div><div style="font-size:.8rem;font-weight:600">' + a.title + '</div>' +
+        '<div style="font-size:.67rem;color:var(--tx3)">' + (a.poster_name||'Admin') + ' &bull; ' + gxAgo(a.created_at) + '</div></div></div>';
+    }).join('') : '<div style="color:var(--tx3);font-size:.8rem">No announcements yet</div>';
+  }).catch(function(e) { console.error(e); });
+}
+
+function doApprove(id, tp) {
+  if (!SB) return;
+  var tbl = tp === 'leave' ? 'leave_requests' : 'budget_requests';
+  SB.from(tbl).update({status:'approved'}).eq('id', id)
+  .then(function(r) { if(r.error){gxToast('Error: '+r.error.message,'er');return;} gxToast('&#x2705; Approved','ok'); loadDashAppr(); })
+  .catch(function(e) { gxToast('Failed: '+e.message,'er'); });
+}
+function doReject(id, tp) {
+  if (!SB) return;
+  var tbl = tp === 'leave' ? 'leave_requests' : 'budget_requests';
+  SB.from(tbl).update({status:'rejected'}).eq('id', id)
+  .then(function(r) { if(r.error){gxToast('Error: '+r.error.message,'er');return;} gxToast('Rejected','wa'); loadDashAppr(); })
+  .catch(function(e) { gxToast('Failed: '+e.message,'er'); });
+}
+
+/* ── APPROVALS ── */
+function pgApprovals() {
+  setHTML('MC',
+    '<div class="card">' +
+      '<div class="c-hd"><div class="c-title">All Pending Approvals</div></div>' +
+      '<div class="tabs">' +
+        '<div class="tab on" onclick="gxTab(this);loadApprovals('all')">All</div>' +
+        '<div class="tab" onclick="gxTab(this);loadApprovals('leave')">Leave</div>' +
+        '<div class="tab" onclick="gxTab(this);loadApprovals('budget')">Budgets</div>' +
+      '</div>' +
+      '<div id="appr-list"><div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div></div>' +
+    '</div>'
+  );
+  loadApprovals('all');
+}
+
+function loadApprovals(f) {
+  var el = $('appr-list'); if (!el) return;
+  if (!SB) { el.innerHTML = '<div class="info info-orange">Not connected to database</div>'; return; }
+  Promise.all([
+    SB.from('leave_requests').select('*').eq('status','pending').order('created_at',{ascending:false}),
+    SB.from('budget_requests').select('*').eq('status','pending').order('created_at',{ascending:false})
+  ]).then(function(r) {
+    if (!$('appr-list')) return;
+    var lv = (r[0].data||[]).map(function(l) { return {id:l.id, tp:'leave', ic:'&#x1f334;', ti:(l.employee_name||'?') + ' &mdash; ' + l.type + ' Leave', me:l.from_date + ' to ' + l.to_date + ' (' + l.days + ' days)', dt:l.reason||''}; });
+    var bg = (r[1].data||[]).map(function(b) { return {id:b.id, tp:'budget', ic:'&#x1f4b0;', ti:'Budget: ' + b.department + (b.title?' &mdash; '+b.title:''), me:gxMoney(b.amount), dt:b.reason||''}; });
+    var sets = {all: lv.concat(bg), leave: lv, budget: bg};
+    var items = sets[f] || [];
+    $('appr-list').innerHTML = items.length ? items.map(function(a) {
+      return '<div class="appr-row">' +
+        '<div class="appr-ic">' + a.ic + '</div>' +
+        '<div class="appr-info">' +
+          '<div class="appr-title">' + a.ti + '</div>' +
+          '<div class="appr-meta">' + a.me + '</div>' +
+          (a.dt ? '<div style="font-size:.7rem;color:var(--tx2);margin-top:.1rem">' + a.dt + '</div>' : '') +
+        '</div>' +
+        '<div class="appr-acts">' +
+          '<button class="btn btn-ok btn-sm" onclick="doApprove('' + a.id + '','' + a.tp + '')">&#x2713; Approve</button>' +
+          '<button class="btn btn-er btn-sm" onclick="doReject('' + a.id + '','' + a.tp + '')">&#x2715; Reject</button>' +
+        '</div></div>';
+    }).join('') : '<div style="text-align:center;padding:2.5rem;color:var(--tx3)">&#x2705; No pending ' + f + ' approvals</div>';
+  }).catch(function(e) {
+    console.error(e);
+    if ($('appr-list')) $('appr-list').innerHTML = '<div class="info info-orange">Failed to load: ' + e.message + '</div>';
+  });
+}
+
+/* ── SESSIONS ── */
+function pgSessions() {
+  var online = gxOnline();
+  setHTML('MC',
+    '<div class="stats" style="grid-template-columns:repeat(3,1fr)">' +
+      '<div class="stat" style="--sc:#22C55E;--sc2:#4ADE80"><div class="s-top"><div class="s-ic">&#x1f7e2;</div></div><div class="s-val">' + online.length + '</div><div class="s-lbl">Online Now</div></div>' +
+      '<div class="stat" style="--sc:var(--hi);--sc2:var(--hi2)"><div class="s-top"><div class="s-ic">&#x1f465;</div></div><div class="s-val" id="total-staff">-</div><div class="s-lbl">Total Staff</div></div>' +
+      '<div class="stat" style="--sc:#A78BFA;--sc2:#7C3AED"><div class="s-top"><div class="s-ic">&#x1f3e2;</div></div><div class="s-val">10</div><div class="s-lbl">Departments</div></div>' +
+    '</div>' +
+    '<div class="card"><div class="c-hd"><div class="c-title">Active Sessions</div></div>' +
+      (online.length ? online.map(function(u) {
+        return '<div style="display:flex;align-items:center;gap:.7rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.03)">' +
+          gxAv(u.name,'30px') + '<div style="flex:1"><div style="font-weight:600;font-size:.82rem">' + u.name + '</div><div style="font-size:.68rem;color:var(--tx3)">' + u.dept + ' &bull; ' + u.role + '</div></div><span class="b b-ok">Online</span></div>';
+      }).join('') : '<div style="text-align:center;padding:2rem;color:var(--tx3)">No other users online</div>') +
+    '</div>'
+  );
+  if (SB) SB.from('employees').select('id',{count:'exact',head:true}).eq('status','active').then(function(r){var e=$('total-staff');if(e)e.textContent=r.count||0;}).catch(function(){});
+}
+
+/* ── EMPLOYEES ── */
+function pgEmployees() {
+  setHTML('MC',
+    '<div class="card">' +
+      '<div class="c-hd">' +
+        '<div><div class="c-title">Employee Directory</div><div class="c-sub" id="emp-sub">Loading...</div></div>' +
+        '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+          '<input id="emp-q" placeholder="Search name or dept..." oninput="filterEmps(this.value)" style="padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:160px"/>' +
+          '<button class="btn btn-gh btn-sm" onclick="printEmps()">&#x1f5a8; Print</button>' +
+          '<button class="btn btn-gh btn-sm" onclick="exportEmps()">&#x2193; CSV</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tabs">' +
+        '<div class="tab on" onclick="gxTab(this);loadEmps('active')">Active</div>' +
+        '<div class="tab" onclick="gxTab(this);loadEmps('suspended')">Suspended</div>' +
+        '<div class="tab" onclick="gxTab(this);loadEmps('')">All</div>' +
+      '</div>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<tbody id="emp-tb"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">Loading...</td></tr></tbody>' +
+      '</table></div>' +
+    '</div>'
+  );
+  loadEmps('active');
+}
+
+function loadEmps(f) {
+  var tb = $('emp-tb');
+  if (!tb || !SB) { if(tb) tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">Not connected to database</td></tr>'; return; }
+  var q = SB.from('employees').select('*').order('name'); if (f) q = q.eq('status',f);
+  q.then(function(r) {
+    if (r.error) { console.error(r.error); }
+    EMPS = r.data || [];
+    var s = $('emp-sub'); if (s) s.textContent = EMPS.length + ' employees';
+    renderEmps(EMPS);
+  }).catch(function(e) {
+    console.error(e);
+    var tb2 = $('emp-tb');
+    if (tb2) tb2.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--er)">Failed to load: ' + e.message + '</td></tr>';
+  });
+}
+
+function renderEmps(list) {
+  var tb = $('emp-tb'); if (!tb) return;
+  tb.innerHTML = list.length ? list.map(function(e) {
+    return '<tr>' +
+      '<td><div class="td-user">' + gxAv(e.name,'24px') + '<span style="font-weight:500">' + e.name + '</span></div></td>' +
+      '<td>' + (e.department||'-') + '</td>' +
+      '<td>' + gxBadge(e.role) + '</td>' +
+      '<td style="font-weight:600">' + (e.salary > 0 ? gxMoney(e.salary) : '-') + '</td>' +
+      '<td>' + gxBadge(e.status) + '</td>' +
+      '<td><button class="btn btn-gh btn-xs" onclick="printSlip('' + e.name.replace(/'/g,'') + '',' + (e.salary||0) + ')">Payslip</button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No employees found</td></tr>';
+}
+function filterEmps(q) { renderEmps(q ? EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q.toLowerCase())||(e.department||'').toLowerCase().includes(q.toLowerCase());}) : EMPS); }
+function printEmps() { gxPrint('Employee Directory', '<table><thead><tr><th>Name</th><th>Dept</th><th>Role</th><th>Salary</th><th>Status</th></tr></thead><tbody>' + EMPS.map(function(e){return '<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+e.role+'</td><td>'+(e.salary?gxMoney(e.salary):'-')+'</td><td>'+e.status+'</td></tr>';}).join('') + '</tbody></table>'); }
+function exportEmps() { var rows=[['Name','Dept','Role','Salary','Status','Email']].concat(EMPS.map(function(e){return[e.name,e.department,e.role,e.salary||0,e.status,e.email];}));var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('
+');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='employees.csv';a.click();gxToast('Exported employees.csv','ok'); }
+function printSlip(name, sal) { var p=gxCalcPay(sal); gxPrint('Payslip &mdash; '+name, '<p><strong>Employee:</strong> '+name+'</p><p><strong>Period:</strong> '+new Date().toLocaleString('en-NG',{month:'long',year:'numeric'})+'</p><table><thead><tr><th>Component</th><th>Amount</th></tr></thead><tbody><tr><td>Gross Salary</td><td>'+gxMoney(p.gross)+'</td></tr><tr><td>Tax (20%)</td><td>-'+gxMoney(p.tax)+'</td></tr><tr><td>NI (8%)</td><td>-'+gxMoney(p.ni)+'</td></tr><tr><td>Pension (5%)</td><td>-'+gxMoney(p.pension)+'</td></tr><tr><td><strong>NET PAY</strong></td><td><strong>'+gxMoney(p.net)+'</strong></td></tr></tbody></table>'); }
+
+/* ── DEPARTMENTS ── */
+function pgDepts() {
+  setHTML('MC', '<div id="dept-grid" style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>');
+  if (!SB) { setHTML('dept-grid','<div class="info info-orange">Not connected to database</div>'); return; }
+  SB.from('departments').select('*').order('name')
+  .then(function(r) {
+    if (!$('dept-grid')) return;
+    var d = r.data || [];
+    $('dept-grid').style.display = '';
+    $('dept-grid').innerHTML = d.length ?
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem">' +
+      d.map(function(dept) {
+        var p = dept.budget > 0 ? Math.round((dept.spent||0)/dept.budget*100) : 0;
+        return '<div class="card" style="margin-bottom:0">' +
+          '<div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.8rem">' +
+            '<span style="font-size:1.5rem">' + (dept.icon||'&#x1f3e2;') + '</span>' +
+            '<div><div style="font-weight:700;font-size:.88rem">' + dept.name + '</div>' +
+            '<div style="font-size:.68rem;color:var(--tx3)">' + (dept.head_email||'No head set') + '</div></div>' +
+          '</div>' +
+          '<div style="font-size:.75rem;color:var(--tx3);margin-bottom:.25rem">Budget: ' + (dept.budget > 0 ? gxMoney(dept.budget) : 'Not set') + '</div>' +
+          '<div style="font-size:.75rem;color:var(--tx3);margin-bottom:.4rem">Spent: ' + gxMoney(dept.spent||0) + '</div>' +
+          (dept.budget > 0 ? '<div class="prog-bg" style="height:5px"><div class="prog-fill" style="width:'+Math.min(p,100)+'%;height:5px;background:'+(p>80?'var(--er)':p>60?'var(--wa)':'var(--hi)')+'"></div></div><div style="font-size:.68rem;color:'+(p>80?'var(--er)':'var(--tx3)')+';margin-top:.2rem">'+p+'% used</div>' : '') +
+        '</div>';
+      }).join('') + '</div>' : '<div style="text-align:center;padding:2rem;color:var(--tx3)">No departments found</div>';
+  }).catch(function(e) {
+    console.error(e);
+    if ($('dept-grid')) $('dept-grid').innerHTML = '<div class="info info-orange">Failed to load: ' + e.message + '</div>';
+  });
+}
+
+/* ── BUDGETS ── */
+function pgBudgets() {
+  setHTML('MC',
+    '<div class="info info-blue">Budget flow: Dept Manager submits &rarr; Admin approves &rarr; Finance allocates funds</div>' +
+    '<div class="card">' +
+      '<div class="c-hd"><div class="c-title">Budget Requests</div></div>' +
+      '<div class="tabs">' +
+        '<div class="tab on" onclick="gxTab(this);loadBudgets('pending')">Pending</div>' +
+        '<div class="tab" onclick="gxTab(this);loadBudgets('approved')">Approved</div>' +
+        '<div class="tab" onclick="gxTab(this);loadBudgets('')">All</div>' +
+      '</div>' +
+      '<div id="budg-list"><div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div></div>' +
+    '</div>'
+  );
+  loadBudgets('pending');
+}
+
+function loadBudgets(f) {
+  var el = $('budg-list'); if (!el) return;
+  if (!SB) { el.innerHTML = '<div class="info info-orange">Not connected to database</div>'; return; }
+  var q = SB.from('budget_requests').select('*').order('created_at',{ascending:false}); if (f) q = q.eq('status',f);
+  q.then(function(r) {
+    if (!$('budg-list')) return;
+    var d = r.data || [];
+    $('budg-list').innerHTML = d.length ?
+      '<div class="tbl-wrap"><table><thead><tr><th>Dept</th><th>Title</th><th>Amount</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      d.map(function(b) {
+        return '<tr>' +
+          '<td><span class="b b-gy">' + b.department + '</span></td>' +
+          '<td style="font-weight:500">' + (b.title||'-') + '</td>' +
+          '<td style="font-weight:700;color:var(--hi)">' + gxMoney(b.amount) + '</td>' +
+          '<td style="font-size:.75rem;color:var(--tx2);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (b.reason||'-') + '</td>' +
+          '<td>' + gxBadge(b.status) + '</td>' +
+          '<td><div class="td-acts">' +
+            (b.status === 'pending' ?
+              '<button class="btn btn-ok btn-xs" onclick="approveBudget('' + b.id + '','' + b.department + '',' + b.amount + ','' + (b.submitted_by||'') + '')">&#x2713;</button>' +
+              '<button class="btn btn-er btn-xs" onclick="rejectBudget('' + b.id + '','' + (b.submitted_by||'') + '')">&#x2715;</button>'
+              : '-') +
+          '</div></td>' +
+        '</tr>';
+      }).join('') + '</tbody></table></div>' :
+      '<div style="text-align:center;padding:2rem;color:var(--tx3)">No ' + f + ' budget requests</div>';
+  }).catch(function(e) {
+    console.error(e);
+    if ($('budg-list')) $('budg-list').innerHTML = '<div class="info info-orange">Failed to load: ' + e.message + '</div>';
+  });
+}
+
+function approveBudget(id, dept, amount, submittedBy) {
+  if (!SB) return;
+  SB.from('budget_requests').update({status:'approved'}).eq('id',id)
+  .then(function(r) {
+    if (r.error) { gxToast('Error: '+r.error.message,'er'); return; }
+    if (submittedBy) gxNotify(submittedBy, 'Budget Approved', 'Your ' + dept + ' budget of ' + gxMoney(amount) + ' was approved', 'ok');
+    gxToast('&#x2705; Budget approved', 'ok');
+    loadBudgets('pending');
+  }).catch(function(e) { gxToast('Failed: '+e.message,'er'); });
+}
+function rejectBudget(id, submittedBy) {
+  var reason = prompt('Reason for rejection:'); if (!reason) return;
+  SB.from('budget_requests').update({status:'rejected', reason:reason}).eq('id',id)
+  .then(function(r) {
+    if (r.error) { gxToast('Error: '+r.error.message,'er'); return; }
+    if (submittedBy) gxNotify(submittedBy, 'Budget Rejected', 'Reason: ' + reason, 'er');
+    gxToast('Rejected', 'wa');
+    loadBudgets('pending');
+  }).catch(function(e) { gxToast('Failed: '+e.message,'er'); });
+}
+
+/* ── ANNOUNCEMENTS ── */
+function pgAnnouncements() {
+  setHTML('MC',
+    '<div class="card">' +
+      '<div class="c-hd"><div class="c-title">Announcements</div><button class="btn btn-hi btn-sm" onclick="gxOpen('mAnn')">+ Post New</button></div>' +
+      '<div id="ann-list"><div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div></div>' +
+    '</div>'
+  );
+  if (!SB) { setHTML('ann-list','<div class="info info-orange">Not connected</div>'); return; }
+  SB.from('announcements').select('*').order('created_at',{ascending:false}).limit(25)
+  .then(function(r) {
+    if (!$('ann-list')) return;
+    var clr = {info:'#60A5FA', warn:'var(--wa)', ok:'var(--ok)', er:'var(--er)'};
+    var d = r.data || [];
+    $('ann-list').innerHTML = d.length ? d.map(function(a) {
+      return '<div class="ann ann-' + a.type + '" style="border-left:4px solid ' + (clr[a.type]||'#60A5FA') + '">' +
+        '<div class="ann-title">' + a.title + '</div>' +
+        '<div class="ann-body">' + a.body + '</div>' +
+        '<div style="font-size:.68rem;color:var(--tx3);margin-top:.4rem">' + (a.poster_name||'Admin') + ' &bull; ' + (a.department==='all'?'All Staff':a.department) + ' &bull; ' + gxAgo(a.created_at) + '</div>' +
+      '</div>';
+    }).join('') : '<div style="text-align:center;padding:2rem;color:var(--tx3)">No announcements yet</div>';
+  }).catch(function(e) { console.error(e); if($('ann-list')) $('ann-list').innerHTML = '<div class="info info-orange">Failed to load</div>'; });
+}
+
+/* ── ATTENDANCE ── */
+function pgAttendance() {
+  setHTML('MC',
+    '<div class="c-hd" style="margin-bottom:1rem"><div class="c-title">Attendance Today</div><button class="btn btn-gh btn-sm" onclick="printAtt()">&#x1f5a8; Print</button></div>' +
+    '<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.1rem">' +
+      '<div class="stat" style="--sc:#22C55E;--sc2:#4ADE80"><div class="s-top"><div class="s-ic">&#x2705;</div></div><div class="s-val" id="att-p">-</div><div class="s-lbl">Present</div></div>' +
+      '<div class="stat" style="--sc:var(--wa);--sc2:#FBBF24"><div class="s-top"><div class="s-ic">&#x23f0;</div></div><div class="s-val" id="att-l">-</div><div class="s-lbl">Late</div></div>' +
+      '<div class="stat" style="--sc:var(--er);--sc2:#F87171"><div class="s-top"><div class="s-ic">&#x274c;</div></div><div class="s-val" id="att-a">-</div><div class="s-lbl">Absent</div></div>' +
+      '<div class="stat" style="--sc:#60A5FA;--sc2:#93C5FD"><div class="s-top"><div class="s-ic">&#x1f334;</div></div><div class="s-val">-</div><div class="s-lbl">On Leave</div></div>' +
+    '</div>' +
+    '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th></tr></thead>' +
+      '<tbody id="att-tb"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">Loading...</td></tr></tbody></table></div></div>'
+  );
+  if (!SB) { setHTML('att-tb','<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">Not connected</td></tr>'); return; }
+  // JOIN attendance with employees to get name and department
+  SB.from('attendance').select('*, employees(name, department)').eq('date', gxToday())
+  .then(function(r) {
+    if (r.error) console.error(r.error);
+    var d = r.data || [];
+    var ep=$('att-p'), el=$('att-l'), ea=$('att-a');
+    if(ep) ep.textContent = d.filter(function(a){return a.status==='present';}).length;
+    if(el) el.textContent = d.filter(function(a){return a.status==='late';}).length;
+    if(ea) ea.textContent = d.filter(function(a){return a.status==='absent';}).length;
+    var tb = $('att-tb');
+    if (tb) tb.innerHTML = d.length ? d.map(function(a) {
+      var name = (a.employees && a.employees.name) || 'Unknown';
+      var dept = (a.employees && a.employees.department) || '-';
+      return '<tr><td><div class="td-user">' + gxAv(name,'22px') + '<span>' + name + '</span></div></td><td>' + dept + '</td><td>' + (a.clock_in||'-') + '</td><td>' + (a.clock_out||'-') + '</td><td>' + gxBadge(a.status) + '</td></tr>';
+    }).join('') : '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">No attendance records today</td></tr>';
+  }).catch(function(e) {
+    console.error(e);
+    // Fallback without join
+    SB.from('attendance').select('*').eq('date',gxToday()).then(function(r2){
+      var tb=$('att-tb');
+      if(tb) tb.innerHTML = (r2.data||[]).length ? (r2.data||[]).map(function(a){return '<tr><td>' + (a.employee_id||'?') + '</td><td>-</td><td>'+(a.clock_in||'-')+'</td><td>'+(a.clock_out||'-')+'</td><td>'+gxBadge(a.status)+'</td></tr>';}).join('') : '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">No records today</td></tr>';
+    }).catch(function(){});
+  });
+}
+function printAtt() { var tb=$('att-tb'); if(!tb)return; gxPrint('Attendance &mdash; '+gxToday(),'<table><thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th></tr></thead>'+tb.innerHTML+'</table>'); }
+
+/* ── LEAVE ── */
+function pgLeave() {
+  setHTML('MC',
+    '<div class="card">' +
+      '<div class="c-hd"><div class="c-title">Leave Management</div><button class="btn btn-gh btn-sm" onclick="printLeave()">&#x1f5a8; Print</button></div>' +
+      '<div class="tabs">' +
+        '<div class="tab on" onclick="gxTab(this);loadLeave('pending')">Pending</div>' +
+        '<div class="tab" onclick="gxTab(this);loadLeave('approved')">Approved</div>' +
+        '<div class="tab" onclick="gxTab(this);loadLeave('')">All</div>' +
+      '</div>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<tbody id="leave-tb"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">Loading...</td></tr></tbody></table></div>' +
+    '</div>'
+  );
+  loadLeave('pending');
+}
+function loadLeave(f) {
+  var tb = $('leave-tb'); if (!tb || !SB) { if(tb) tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">Not connected</td></tr>'; return; }
+  var q = SB.from('leave_requests').select('*').order('created_at',{ascending:false}); if (f) q = q.eq('status',f);
+  q.then(function(r) {
+    if (r.error) console.error(r.error);
+    LEAVES = r.data || [];
+    if (!$('leave-tb')) return;
+    $('leave-tb').innerHTML = LEAVES.length ? LEAVES.map(function(l) {
+      return '<tr>' +
+        '<td><div class="td-user">' + gxAv(l.employee_name||'?','22px') + '<span>' + (l.employee_name||'Unknown') + '</span></div></td>' +
+        '<td><span class="b b-bl">' + l.type + '</span></td>' +
+        '<td>' + l.from_date + '</td><td>' + l.to_date + '</td><td>' + l.days + '</td>' +
+        '<td>' + gxBadge(l.status) + '</td>' +
+        '<td><div class="td-acts">' +
+          (l.status === 'pending' ?
+            '<button class="btn btn-ok btn-xs" onclick="approveLeave('' + l.id + '','' + (l.employee_id||'') + '')">&#x2713;</button>' +
+            '<button class="btn btn-er btn-xs" onclick="rejectLeave('' + l.id + '','' + (l.employee_id||'') + '')">&#x2715;</button>'
+            : '-') +
+          '<button class="btn btn-gh btn-xs" onclick="printLeaveRow('' + l.id + '')">&#x1f5a8;</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('') : '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No ' + f + ' leave requests</td></tr>';
+  }).catch(function(e) { console.error(e); var tb2=$('leave-tb');if(tb2)tb2.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">Failed: '+e.message+'</td></tr>'; });
+}
+function approveLeave(id, empId) {
+  if (!SB) return;
+  SB.from('leave_requests').update({status:'approved', approved_by:ME.id, approver_name:ME.name}).eq('id',id)
+  .then(function(r){ if(r.error){gxToast('Error: '+r.error.message,'er');return;} if(empId) gxNotify(empId,'Leave Approved','Your leave request was approved by '+ME.name,'ok'); gxToast('&#x2705; Leave approved','ok'); loadLeave('pending'); })
+  .catch(function(e){gxToast('Failed: '+e.message,'er');});
+}
+function rejectLeave(id, empId) {
+  var reason = prompt('Reason for rejection:'); if (!reason) return;
+  SB.from('leave_requests').update({status:'rejected', approved_by:ME.id, approver_name:ME.name, rejected_reason:reason}).eq('id',id)
+  .then(function(r){ if(r.error){gxToast('Error: '+r.error.message,'er');return;} if(empId) gxNotify(empId,'Leave Rejected','Reason: '+reason,'er'); gxToast('Rejected','wa'); loadLeave('pending'); })
+  .catch(function(e){gxToast('Failed: '+e.message,'er');});
+}
+function printLeaveRow(id) { var l=LEAVES.filter(function(x){return x.id===id;})[0]; if(!l)return; gxPrint('Leave &mdash; '+l.employee_name,'<p><strong>Employee:</strong> '+l.employee_name+'</p><p><strong>Type:</strong> '+l.type+'</p><p><strong>Dates:</strong> '+l.from_date+' to '+l.to_date+' ('+l.days+' days)</p><p><strong>Reason:</strong> '+(l.reason||'-')+'</p><p><strong>Status:</strong> '+l.status+'</p>'); }
+function printLeave() { gxPrint('Leave Report','<table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead><tbody>'+LEAVES.map(function(l){return'<tr><td>'+l.employee_name+'</td><td>'+l.type+'</td><td>'+l.from_date+'</td><td>'+l.to_date+'</td><td>'+l.days+'</td><td>'+l.status+'</td></tr>';}).join('')+'</tbody></table>'); }
+
+/* ── REPORTS ── */
+function pgReports() {
+  setHTML('MC',
+    '<div class="g2">' +
+      '<div class="card"><div class="c-hd"><div class="c-title">Export Reports</div></div>' +
+        '<div style="display:flex;flex-direction:column;gap:.55rem">' +
+          '<button class="btn btn-gh btn-bl" onclick="printEmps()">&#x1f5a8; Employee Directory PDF</button>' +
+          '<button class="btn btn-gh btn-bl" onclick="printLeave()">&#x1f5a8; Leave Report PDF</button>' +
+          '<button class="btn btn-gh btn-bl" onclick="printAtt()">&#x1f5a8; Attendance PDF</button>' +
+          '<button class="btn btn-gh btn-bl" onclick="exportEmps()">&#x2193; Employees CSV</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card"><div class="c-hd"><div class="c-title">Payroll Summary</div></div>' +
+        '<div id="rep-stats"><div style="color:var(--tx3)">Loading...</div></div>' +
+      '</div>' +
+    '</div>'
+  );
+  if (!SB) return;
+  SB.from('employees').select('salary,department').eq('status','active')
+  .then(function(r) {
+    var emps = r.data || [];
+    var total = emps.reduce(function(s,e){return s+(e.salary||0);},0);
+    var p = gxCalcPay(total);
+    setHTML('rep-stats',
+      '<div style="font-size:.85rem;margin-bottom:.5rem">Active staff: <strong>' + emps.length + '</strong></div>' +
+      '<div style="font-size:.85rem;margin-bottom:.5rem">Monthly gross payroll: <strong style="color:var(--hi)">' + gxMoney(total) + '</strong></div>' +
+      '<div style="font-size:.85rem">Estimated net payroll: <strong style="color:var(--ok)">' + gxMoney(p.net) + '</strong></div>'
+    );
+  }).catch(function(e){console.error(e);});
+}
+
+/* ── NOTIFICATIONS ── */
+function pgNotifications() {
+  setHTML('MC',
+    '<div class="card">' +
+      '<div class="c-hd"><div class="c-title">My Notifications</div><button class="btn btn-gh btn-sm" onclick="markAllRead()">Mark All Read</button></div>' +
+      '<div id="notif-list"><div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div></div>' +
+    '</div>'
+  );
+  if (!SB) { setHTML('notif-list','<div class="info info-orange">Not connected</div>'); return; }
+  SB.from('notifications').select('*').eq('employee_id',ME.id).order('created_at',{ascending:false}).limit(30)
+  .then(function(r) {
+    if (!$('notif-list')) return;
+    var clr = {ok:'#4ADE80', er:'#F87171', wa:'#FCD34D', in:'#93C5FD'};
+    var d = r.data || [];
+    $('notif-list').innerHTML = d.length ? d.map(function(n) {
+      return '<div style="display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer" onclick="markRead('' + n.id + '')">' +
+        '<div style="width:8px;height:8px;border-radius:50%;background:' + (clr[n.type]||'#60A5FA') + ';flex-shrink:0;margin-top:.45rem"></div>' +
+        '<div style="flex:1">' +
+          '<div style="font-size:.82rem;font-weight:' + (n.read?400:600) + '">' + n.title + '</div>' +
+          '<div style="font-size:.75rem;color:var(--tx2)">' + n.message + '</div>' +
+          '<div style="font-size:.65rem;color:var(--tx3);margin-top:.15rem">' + gxAgo(n.created_at) + '</div>' +
+        '</div>' +
+        (n.read ? '' : '<span class="b b-or">New</span>') +
+      '</div>';
+    }).join('') : '<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';
+    var dot = $('notifDot'); if (dot) dot.style.display = 'none';
+  }).catch(function(e) { console.error(e); if($('notif-list')) $('notif-list').innerHTML='<div class="info info-orange">Failed to load</div>'; });
+}
+function markRead(id) { if(!SB)return; SB.from('notifications').update({read:true}).eq('id',id).then(function(){}).catch(function(){}); }
+function markAllRead() { if(!SB)return; SB.from('notifications').update({read:true}).eq('employee_id',ME.id).eq('read',false).then(function(){gxToast('All read','ok');pgNotifications();}).catch(function(e){gxToast('Error: '+e.message,'er');}); }
+
+/* ── SETTINGS ── */
+function pgSettings() {
+  var items = [
+    {i:'&#x1f465;',t:'All Employees',d:'View and manage staff records',a:"goTo('employees')"},
+    {i:'&#x1f3e2;',t:'Departments',d:'View dept budgets and info',a:"goTo('departments')"},
+    {i:'&#x1f4b0;',t:'Budget Requests',d:'Approve or reject budgets',a:"goTo('budgets')"},
+    {i:'&#x1f4e2;',t:'Announcements',d:'Post to all staff',a:"goTo('announcements')"},
+    {i:'&#x1f334;',t:'Leave Requests',d:'Review leave requests',a:"goTo('leave')"},
+    {i:'&#x23f1;',t:'Attendance',d:'View today attendance',a:"goTo('attendance')"},
+    {i:'&#x1f4c8;',t:'Reports',d:'Export reports and data',a:"goTo('reports')"},
+    {i:'&#x1f514;',t:'Notifications',d:'View my notifications',a:"goTo('notifications')"},
+    {i:'&#x1f512;',t:'Emergency Lock',d:'Lock portal for all staff',a:"gxOpen('mLock')"}
+  ];
+  setHTML('MC',
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">' +
+    items.map(function(s) {
+      return '<div class="card" style="margin-bottom:0;cursor:pointer" onclick="' + s.a + '">' +
+        '<div style="font-size:2rem;margin-bottom:.6rem">' + s.i + '</div>' +
+        '<div style="font-weight:700;font-size:.86rem;margin-bottom:.25rem">' + s.t + '</div>' +
+        '<div style="font-size:.74rem;color:var(--tx3)">' + s.d + '</div>' +
+      '</div>';
+    }).join('') + '</div>'
+  );
+}
+
+/* ── PAGE STARTUP ── */
+document.addEventListener('DOMContentLoaded', function() {
+  // Auth check
+  ME = getMe();
+  if (!ME) { window.location.href = 'giddyexpress-login.html'; return; }
+  if (ME.role !== 'admin') { window.location.href = 'giddyexpress-login.html'; return; }
+
+  // Init Supabase
+  SB = getSB();
+  if (!SB) {
+    console.warn('Supabase not ready, retrying in 500ms...');
+    setTimeout(function() { SB = getSB(); }, 500);
+  }
+
+  // Update sidebar
+  var sbAv=$('sbAv'), sbName=$('sbName'), sbRole=$('sbRole');
+  if (sbAv) sbAv.textContent = gxInits(ME.name);
+  if (sbName) sbName.textContent = ME.name;
+  if (sbRole) sbRole.textContent = 'Administrator';
+
+  // Clock, presence, online count
+  gxClock();
+  gxPresence(ME);
+  var oc = $('onlineCnt'); if (oc) oc.textContent = gxOnline().length + ' online';
+
+  // Notification badge
+  if (SB) {
+    SB.from('notifications').select('id',{count:'exact',head:true}).eq('employee_id',ME.id).eq('read',false)
+    .then(function(r) { if((r.count||0)>0){var dot=$('notifDot');if(dot)dot.style.display='block';} })
+    .catch(function(){});
+  }
+
+  // Wire announcement button
+  var annBtn = $('ann-btn');
+  if (annBtn) {
+    annBtn.addEventListener('click', function() {
+      var title = $('ann-title') ? $('ann-title').value.trim() : '';
+      var body = $('ann-body') ? $('ann-body').value.trim() : '';
+      if (!title || !body) { gxToast('Please fill in title and message','er'); return; }
+      if (!SB) { gxToast('Not connected to database','er'); return; }
+      annBtn.disabled = true; annBtn.textContent = 'Posting...';
+      SB.from('announcements').insert({
+        title: title, body: body,
+        type: $('ann-type') ? $('ann-type').value : 'info',
+        department: $('ann-dept') ? $('ann-dept').value : 'all',
+        posted_by: ME.id, poster_name: ME.name
+      }).then(function(r) {
+        annBtn.disabled = false; annBtn.textContent = 'Post Announcement';
+        if (r.error) { gxToast('Error: ' + r.error.message, 'er'); return; }
+        gxClose('mAnn');
+        if ($('ann-title')) $('ann-title').value = '';
+        if ($('ann-body')) $('ann-body').value = '';
+        gxToast('&#x2705; Announcement posted to all staff!', 'ok');
+      }).catch(function(e) { annBtn.disabled=false; annBtn.textContent='Post Announcement'; gxToast('Failed: '+e.message,'er'); });
+    });
+  }
+
+  // Wire lock button
+  var lockBtn = $('lock-btn');
+  if (lockBtn) {
+    lockBtn.addEventListener('click', function() {
+      var reason = $('lock-reason') ? $('lock-reason').value.trim() : '';
+      if (!reason) { gxToast('Please enter a reason for the lock','er'); return; }
+      gxClose('mLock');
+      gxToast('&#x1f512; Portal locked for all staff','wa');
+    });
+  }
+
+  // Close overlay on background click
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('overlay')) e.target.classList.remove('open');
+  });
+
+  // Go to dashboard
+  goTo('dashboard');
+});
+</script>
+</body>
+</html>
