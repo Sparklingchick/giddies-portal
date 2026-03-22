@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express &mdash; Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0F14;--bg2:#161920;--bg3:#1E2128;--br:rgba(255,255,255,.07);--tx:#E8EAF0;--tx2:#9CA3AF;--tx3:#6B7280;--hi:#FF6B00;--hi2:#FF8C38;--ok:#4ADE80;--er:#F87171;--wa:#FCD34D;--bl:#60A5FA;--pu:#A78BFA;--or:#FB923C}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:240px;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--br)}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--hi)}
+.sb-sub{font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--br)}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-nm{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{font-size:.65rem;color:var(--tx3);text-transform:capitalize}
+.sb-nav{flex:1;padding:.5rem 0}
+.nav-sec{font-size:.62rem;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.2rem .3rem}
+.nav-a{display:flex;align-items:center;gap:.65rem;padding:.6rem 1.2rem;cursor:pointer;border-radius:0;font-size:.82rem;color:var(--tx2);transition:all .15s;margin:1px 0;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-a.on{background:rgba(255,107,0,.1);color:var(--hi)}
+.nav-a.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hi);border-radius:0 2px 2px 0}
+.nav-ic{width:16px;text-align:center;font-size:.9rem}
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--br)}
+.btn-logout{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:.55rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.2)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--br);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-weight:600;font-size:.95rem}
+.tb-right{display:flex;align-items:center;gap:.85rem}
+.tb-clock{font-size:.78rem;color:var(--tx3);font-family:monospace}
+.tb-pill{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br);border-radius:100px;padding:.3rem .75rem;font-size:.72rem}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:.4rem .65rem;cursor:pointer;color:var(--tx2);font-size:.9rem;position:relative;transition:all .2s}
+.tb-btn:hover{border-color:var(--hi);color:var(--hi)}
+.rdot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--er);border:1px solid var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:1.1rem}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.c-title{font-weight:600;font-size:.9rem}
+.c-sub{font-size:.72rem;color:var(--tx3);margin-top:.1rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+.stat{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sc),var(--sc2))}
+.s-ic{font-size:1.4rem;margin-bottom:.4rem}
+.s-val{font-size:1.7rem;font-weight:700;line-height:1}
+.s-lbl{font-size:.7rem;color:var(--tx3);margin-top:.25rem}
+.s-sub{font-size:.65rem;color:var(--tx3);margin-top:.15rem}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g21{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+/* BUTTONS */
+.btn{border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-hi{background:var(--hi);color:#fff;border-color:var(--hi)}.btn-hi:hover{background:var(--hi2)}
+.btn-gh{background:var(--bg3);color:var(--tx2);border-color:var(--br)}.btn-gh:hover{border-color:var(--hi);color:var(--hi)}
+.btn-ok{background:rgba(74,222,128,.15);color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-er{background:rgba(239,68,68,.15);color:var(--er);border-color:rgba(239,68,68,.3)}
+.btn-wa{background:rgba(252,211,77,.1);color:var(--wa);border-color:rgba(252,211,77,.2)}
+.btn-bl{background:rgba(96,165,250,.1);color:var(--bl);border-color:rgba(96,165,250,.2)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.68rem}
+.btn-bl2{display:block;width:100%;text-align:left;border-radius:8px;padding:.55rem .8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:.12rem .5rem;border-radius:100px;font-size:.65rem;font-weight:600;text-transform:capitalize}
+.b-ok{background:rgba(74,222,128,.1);color:var(--ok)}
+.b-er{background:rgba(239,68,68,.1);color:var(--er)}
+.b-wa{background:rgba(252,211,77,.1);color:var(--wa)}
+.b-bl{background:rgba(96,165,250,.1);color:var(--bl)}
+.b-pu{background:rgba(167,139,250,.1);color:var(--pu)}
+.b-or{background:rgba(251,146,60,.1);color:var(--or)}
+.b-gy{background:rgba(255,255,255,.07);color:var(--tx3)}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:.6rem .8rem;font-size:.67rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);white-space:nowrap}
+td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:.5rem}
+.td-acts{display:flex;gap:.3rem;flex-wrap:wrap}
+/* TABS */
+.tabs{display:flex;gap:.25rem;margin-bottom:1rem;border-bottom:1px solid var(--br);padding-bottom:0}
+.tab{padding:.5rem .85rem;font-size:.78rem;cursor:pointer;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--hi);border-bottom-color:var(--hi);font-weight:600}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--br);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.4rem;border-bottom:1px solid var(--br)}
+.m-title{font-weight:600;font-size:.95rem}
+.m-x{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:.2rem}
+.m-body{padding:1.4rem}
+.m-ft{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.4rem;border-top:1px solid var(--br)}
+/* FORM */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.75rem;font-weight:500;color:var(--tx2);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1.5px solid var(--br);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--hi)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+/* INFO BOXES */
+.info{padding:.7rem 1rem;border-radius:8px;font-size:.78rem;margin-bottom:1rem}
+.info-blue{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:var(--bl)}
+.info-orange{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);color:var(--or)}
+.info-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--er)}
+.info-green{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--ok)}
+/* PROGRESS */
+.prog-bg{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:var(--hi);transition:width .3s}
+/* SPINNER */
+.spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* APPROVAL ROW */
+.appr-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.appr-row:last-child{border-bottom:none}
+.appr-ic{font-size:1.2rem;width:28px;text-align:center;flex-shrink:0}
+.appr-info{flex:1;min-width:0}
+.appr-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-meta{font-size:.68rem;color:var(--tx3);margin-top:.1rem}
+.appr-acts{display:flex;gap:.3rem;flex-shrink:0}
+/* ANNOUNCEMENT */
+.ann{padding:.85rem 1rem;border-radius:10px;margin-bottom:.65rem;background:var(--bg3)}
+.ann-title{font-weight:600;font-size:.82rem;margin-bottom:.3rem}
+.ann-body{font-size:.78rem;color:var(--tx2);line-height:1.5}
+/* MOBILE */
+@media(max-width:768px){
+.sb{width:200px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.g2,.g21{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.sb{position:fixed;left:-200px;top:0;bottom:0;z-index:100;transition:left .3s}
+.sb.open{left:0}
+.main{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-title">GIDDIES EXPRESS</div>
+    <div class="sb-sub">Admin Portal</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">??</div>
+    <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole"></div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard" onclick="goTo('dashboard','Dashboard')"><span class="nav-ic">&#x1f4ca;</span>Dashboard</div>
+    <div class="nav-a" id="nav-approvals" onclick="goTo('approvals','Approvals')"><span class="nav-ic">&#x1f4cb;</span>Approvals</div>
+    <div class="nav-a" id="nav-sessions" onclick="goTo('sessions','Live Sessions')"><span class="nav-ic">&#x1f7e2;</span>Live Sessions</div>
+    <div class="nav-sec">Staff</div>
+    <div class="nav-a" id="nav-users" onclick="goTo('users','User Management')"><span class="nav-ic">&#x1f510;</span>User Management</div>
+    <div class="nav-a" id="nav-employees" onclick="goTo('employees','All Employees')"><span class="nav-ic">&#x1f465;</span>All Employees</div>
+    <div class="nav-a" id="nav-requests" onclick="goTo('requests','Staff Requests')"><span class="nav-ic">&#x1f4dd;</span>Staff Requests</div>
+    <div class="nav-sec">Operations</div>
+    <div class="nav-a" id="nav-departments" onclick="goTo('departments','Departments')"><span class="nav-ic">&#x1f3e2;</span>Departments</div>
+    <div class="nav-a" id="nav-budgets" onclick="goTo('budgets','Budgets')"><span class="nav-ic">&#x1f4b0;</span>Budgets</div>
+    <div class="nav-a" id="nav-attendance" onclick="goTo('attendance','Attendance')"><span class="nav-ic">&#x23f1;</span>Attendance</div>
+    <div class="nav-a" id="nav-leave" onclick="goTo('leave','Leave Requests')"><span class="nav-ic">&#x1f334;</span>Leave Requests</div>
+    <div class="nav-a" id="nav-announcements" onclick="goTo('announcements','Announcements')"><span class="nav-ic">&#x1f4e2;</span>Announcements</div>
+    <div class="nav-sec">System</div>
+    <div class="nav-a" id="nav-reports" onclick="goTo('reports','Reports')"><span class="nav-ic">&#x1f4c8;</span>Reports</div>
+    <div class="nav-a" id="nav-notifications" onclick="goTo('notifications','Notifications')"><span class="nav-ic">&#x1f514;</span>Notifications</div>
+  </nav>
+  <div class="sb-foot"><button class="btn-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button onclick="toggleSb()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.1rem;padding:.2rem">&#9776;</button>
+      <div class="tb-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span id="onlineTxt">Admin</span></div>
+      <button class="tb-btn" onclick="goTo('notifications','Notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading Admin Dashboard...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CREATE USER MODAL -->
+<div class="overlay" id="mCreateUser">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x2795; Create New User</div><button class="m-x" onclick="cm('mCreateUser')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-blue">This creates an account immediately. For the HR &rarr; Manager &rarr; IT workflow, use Staff Requests.</div>
+    <div class="form-row">
+      <div class="field"><label>Full Name *</label><input id="cu-name" placeholder="John Smith"/></div>
+      <div class="field"><label>Email *</label><input id="cu-email" type="email" placeholder="john@company.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Password *</label><input id="cu-pwd" type="password" placeholder="Min 8 chars, uppercase, number"/></div>
+      <div class="field"><label>Role *</label>
+        <select id="cu-role">
+          <option value="employee">Employee</option>
+          <option value="dept_manager">Department Manager</option>
+          <option value="manager">Company Manager</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Department *</label>
+        <select id="cu-dept">
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Payroll">Payroll</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Customer Service">Customer Service</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Legal">Legal</option>
+          <option value="Management">Management</option>
+          <option value="Administration">Administration</option>
+        </select>
+      </div>
+      <div class="field"><label>Title</label><input id="cu-title" placeholder="Job title"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Salary (&#x20a6;)</label><input id="cu-salary" type="number" placeholder="0"/></div>
+      <div class="field"><label>Phone</label><input id="cu-phone" placeholder="+234..."/></div>
+    </div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="cm('mCreateUser')">Cancel</button>
+    <button class="btn btn-hi" id="cu-btn" onclick="createUser()">Create Account</button>
+  </div>
+</div>
+</div>
+
+<!-- SUSPEND MODAL -->
+<div class="overlay" id="mSuspend">
+<div class="modal">
+  <div class="m-hd"><div class="m-title" style="color:var(--er)">&#x26d4; Suspend Account</div><button class="m-x" onclick="cm('mSuspend')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-red">This will immediately log out the user and block future logins.</div>
+    <div class="field"><label>Reason for Suspension *</label><textarea id="sus-reason" placeholder="Provide a clear reason..."></textarea></div>
+    <input type="hidden" id="sus-uid"/>
+    <input type="hidden" id="sus-name"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="cm('mSuspend')">Cancel</button>
+    <button class="btn btn-er" onclick="doSuspend()">Suspend Account</button>
+  </div>
+</div>
+</div>
+
+<!-- ANNOUNCE MODAL -->
+<div class="overlay" id="mAnn">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4e2; Post Announcement</div><button class="m-x" onclick="cm('mAnn')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Title *</label><input id="ann-title" placeholder="Announcement title"/></div>
+    <div class="field"><label>Message *</label><textarea id="ann-body" placeholder="Message to staff..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Type</label>
+        <select id="ann-type">
+          <option value="info">Info</option>
+          <option value="warn">Warning</option>
+          <option value="ok">Good News</option>
+          <option value="er">Urgent</option>
+        </select>
+      </div>
+      <div class="field"><label>Send To</label>
+        <select id="ann-dept">
+          <option value="all">All Staff</option>
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Management">Management</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="cm('mAnn')">Cancel</button>
+    <button class="btn btn-hi" onclick="postAnn()">Post Now</button>
+  </div>
+</div>
+</div>
+
+<div id="toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<script>
+
+var API = 'https://web-production-50873.up.railway.app';
+var ME = null;
+var TOKEN = null;
+
+/* ── AUTH ── */
+function gxInit(requiredRole, onReady) {
+  TOKEN = sessionStorage.getItem('gx_token');
+  var userStr = sessionStorage.getItem('gx_user');
+  
+  if (!TOKEN || !userStr) {
+    window.location.href = 'giddyexpress-login.html';
+    return;
+  }
+  
+  ME = JSON.parse(userStr);
+  
+  // Verify with server
+  api('GET', '/api/auth/verify-role?required_role=' + requiredRole)
+  .then(function(data) {
+    ME = data.user;
+    // Update UI
+    var av = document.getElementById('sbAv');
+    var nm = document.getElementById('sbName');
+    var rl = document.getElementById('sbRole');
+    if(av) { av.textContent = gxInits(ME.name); av.style.background = ME.color || '#FF6B00'; }
+    if(nm) nm.textContent = ME.name;
+    if(rl) rl.textContent = ME.role.replace(/_/g,' ');
+    gxClock();
+    gxNotifBadge();
+    if(onReady) onReady(ME);
+  })
+  .catch(function(e) {
+    sessionStorage.clear();
+    window.location.href = 'giddyexpress-login.html?reason=' + encodeURIComponent(e.message || 'Session expired');
+  });
+}
+
+/* ── API CALL ── */
+function api(method, path, body) {
+  var opts = {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  return fetch(API + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if(!r.ok) throw new Error(d.detail || 'Request failed');
+      return d;
+    });
+  });
+}
+
+/* ── LOGOUT ── */
+function gxLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  window.location.href = 'giddyexpress-login.html';
+}
+
+/* ── CLOCK ── */
+function gxClock() {
+  function tick() {
+    var e = document.getElementById('tbClock');
+    if(!e) return;
+    try {
+      var n = new Date(new Date().toLocaleString('en-US', {timeZone:'Africa/Lagos'}));
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    } catch(err) {
+      var n = new Date();
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    }
+  }
+  tick(); setInterval(tick, 1000);
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+/* ── NOTIF BADGE ── */
+function gxNotifBadge() {
+  api('GET', '/api/notifications/unread-count').then(function(d) {
+    if((d.count||0) > 0) {
+      var dot = document.getElementById('notifDot');
+      if(dot) dot.style.display = 'block';
+    }
+  }).catch(function(){});
+}
+
+/* ── TOAST ── */
+function toast(msg, type) {
+  var w = document.getElementById('toasts');
+  if(!w) { w = document.createElement('div'); w.id='toasts'; w.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none'; document.body.appendChild(w); }
+  var c={ok:'#4ADE80',er:'#FCA5A5',wa:'#FCD34D',in:'#93C5FD'};
+  var b={ok:'rgba(34,197,94,.3)',er:'rgba(239,68,68,.3)',wa:'rgba(245,158,11,.3)',in:'rgba(96,165,250,.3)'};
+  var t = document.createElement('div');
+  t.style.cssText='background:#1A1D24;border:1px solid '+(b[type]||b.in)+';color:'+(c[type]||c.in)+';padding:.62rem 1rem;border-radius:100px;font-size:.76rem;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateX(110%);transition:transform .28s;font-family:DM Sans,sans-serif;max-width:300px';
+  t.textContent = msg; w.appendChild(t);
+  setTimeout(function(){t.style.transform='translateX(0)';}, 10);
+  setTimeout(function(){t.style.transform='translateX(110%)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);}, 3800);
+}
+
+/* ── MODAL ── */
+function om(id) { var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function cm(id) { var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target&&e.target.classList.contains('overlay')) e.target.classList.remove('open'); });
+
+/* ── HELPERS ── */
+function money(n) { return '\u20a6' + Number(n||0).toLocaleString(); }
+function gxInits(name) { return (name||'?').split(' ').map(function(c){return c[0];}).join('').slice(0,2).toUpperCase(); }
+function gxAgo(d) { if(!d)return''; var m=Math.floor((Date.now()-new Date(d))/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; var h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+function gxToday() { return new Date().toISOString().slice(0,10); }
+function gxAvc(name) { var c=['#FF6B00','#F472B6','#60A5FA','#4ADE80','#A78BFA','#FB923C']; var h=0; for(var i=0;i<(name||'').length;i++) h=(name.charCodeAt(i)+((h<<5)-h)); return c[Math.abs(h)%c.length]; }
+function gxAv(name,sz) { var s=sz||'28px'; return '<div style="width:'+s+';height:'+s+';border-radius:50%;background:'+gxAvc(name)+';display:flex;align-items:center;justify-content:center;font-size:calc('+s+' * 0.35);font-weight:700;color:#fff;flex-shrink:0">'+gxInits(name)+'</div>'; }
+function gxBadge(s) { var m={active:'b-ok',pending:'b-wa',approved:'b-ok',rejected:'b-er','in-progress':'b-bl',done:'b-ok',present:'b-ok',late:'b-wa',absent:'b-er',high:'b-or',urgent:'b-er',medium:'b-wa',low:'b-gy',suspended:'b-er',open:'b-or',resolved:'b-ok',admin:'b-or',manager:'b-pu',dept_manager:'b-wa',employee:'b-bl',completed:'b-ok'}; return '<span class="b '+(m[s]||'b-gy')+'">'+s+'</span>'; }
+function gxPay(g) { var t=Math.round(g*.20),n=Math.round(g*.08),p=Math.round(g*.05); return {gross:g,tax:t,ni:n,pension:p,net:g-t-n-p}; }
+function gxTab(btn) { var p=btn.closest('.tabs'); if(!p)return; p.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); btn.classList.add('on'); }
+function gxNav(id) { document.querySelectorAll('.nav-a').forEach(function(n){n.classList.remove('on');}); var e=document.getElementById('nav-'+id); if(e) e.classList.add('on'); }
+function gxSetPage(id, title) { gxNav(id); var t=document.getElementById('pageTitle'); if(t) t.textContent=title||id; }
+function loading(id) { var e=document.getElementById(id); if(e) e.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>'; }
+function gxPrint(title, html) {
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to print','wa');return;}
+  w.document.write('<!DOCTYPE html><html><head><title>'+title+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:2rem;color:#111;font-size:12px}h2{color:#FF6B00;border-bottom:2px solid #FF6B00;padding-bottom:.5rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;margin:.75rem 0}th{background:#FF6B00;color:#fff;padding:.35rem .6rem;text-align:left;font-size:.7rem}td{padding:.4rem .6rem;border-bottom:1px solid #eee}</style></head><body><h2>Giddies Express &#8212; '+title+'</h2>'+html+'<p style="margin-top:1rem;font-size:.7rem;color:#888">Generated: '+new Date().toLocaleString('en-NG')+'</p><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>');
+  w.document.close();
+}
+
+
+function toggleSb() {
+  document.getElementById('sb').classList.toggle('open');
+}
+
+function goTo(id, title) {
+  gxSetPage(id, title);
+  var mc = document.getElementById('MC');
+  mc.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem"><div class="spin"></div><div style="color:var(--tx3)">Loading...</div></div>';
+  // Timeout fallback
+  var tid = setTimeout(function() {
+    if(document.querySelector('#MC .spin'))
+      document.getElementById('MC').innerHTML = '<div style="text-align:center;padding:3rem"><div style="color:var(--er);margin-bottom:1rem">Took too long. Check connection.</div><button class="btn btn-gh" onclick="goTo(''+id+'',''+title+'')">Retry</button></div>';
+  }, 10000);
+  try {
+    if(id==='dashboard') { clearTimeout(tid); pgDashboard(); }
+    else if(id==='approvals') { clearTimeout(tid); pgApprovals(); }
+    else if(id==='sessions') { clearTimeout(tid); pgSessions(); }
+    else if(id==='users') { clearTimeout(tid); pgUsers(); }
+    else if(id==='employees') { clearTimeout(tid); pgEmployees(); }
+    else if(id==='requests') { clearTimeout(tid); pgRequests(); }
+    else if(id==='departments') { clearTimeout(tid); pgDepartments(); }
+    else if(id==='budgets') { clearTimeout(tid); pgBudgets(); }
+    else if(id==='attendance') { clearTimeout(tid); pgAttendance(); }
+    else if(id==='leave') { clearTimeout(tid); pgLeave(); }
+    else if(id==='announcements') { clearTimeout(tid); pgAnnouncements(); }
+    else if(id==='reports') { clearTimeout(tid); pgReports(); }
+    else if(id==='notifications') { clearTimeout(tid); pgNotifications(); }
+    else { clearTimeout(tid); document.getElementById('MC').innerHTML='<div style="text-align:center;padding:3rem;color:var(--tx3)">Page coming soon</div>'; }
+  } catch(e) {
+    clearTimeout(tid);
+    document.getElementById('MC').innerHTML='<div style="text-align:center;padding:3rem;color:var(--er)">Error: '+e.message+'</div>';
+    console.error(e);
+  }
+}
+
+// ── DASHBOARD ──
+function pgDashboard() {
+  api('GET', '/api/reports/dashboard-stats').then(function(s) {
+    document.getElementById('MC').innerHTML = '';
+    var mc = document.getElementById('MC');
+
+    // Stats row
+    var statsDiv = document.createElement('div');
+    statsDiv.className = 'stats';
+    var statsData = [
+      {sc:'#F59E0B',sc2:'#FBBF24',ic:'&#x1f465;',val:s.total_employees,lbl:'Total Employees'},
+      {sc:'#EF4444',sc2:'#F87171',ic:'&#x1f4cb;',val:(s.pending_leave||0)+(s.pending_budgets||0),lbl:'Pending Approvals',sub:(s.pending_leave||0)+' leave / '+(s.pending_budgets||0)+' budgets'},
+      {sc:'#22C55E',sc2:'#4ADE80',ic:'&#x2705;',val:s.today_present||0,lbl:'Present Today',sub:'Late: '+(s.today_late||0)},
+      {sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f4dd;',val:s.pending_user_requests||0,lbl:'Staff Requests'}
+    ];
+    statsData.forEach(function(s) {
+      var div = document.createElement('div');
+      div.className = 'stat';
+      div.style.setProperty('--sc', s.sc); div.style.setProperty('--sc2', s.sc2);
+      div.innerHTML = '<div class="s-ic">'+s.ic+'</div><div class="s-val">'+s.val+'</div><div class="s-lbl">'+s.lbl+'</div>'+(s.sub?'<div class="s-sub">'+s.sub+'</div>':'');
+      statsDiv.appendChild(div);
+    });
+    mc.appendChild(statsDiv);
+
+    // Grid
+    var grid = document.createElement('div');
+    grid.className = 'g21';
+
+    // Left
+    var left = document.createElement('div');
+
+    // Approvals card
+    var ac = document.createElement('div'); ac.className = 'card';
+    var ach = document.createElement('div'); ach.className = 'c-hd';
+    ach.innerHTML = '<div class="c-title">Pending Approvals</div>';
+    var ab = document.createElement('button'); ab.className='btn btn-gh btn-sm'; ab.textContent='View All'; ab.onclick=function(){goTo('approvals','Approvals');};
+    ach.appendChild(ab); ac.appendChild(ach);
+    var al = document.createElement('div'); al.id='dash-approvals';
+    al.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:1rem"><div class="spin" style="width:24px;height:24px;border-width:2px"></div></div>';
+    ac.appendChild(al); left.appendChild(ac);
+
+    // Announcements card
+    var annc = document.createElement('div'); annc.className='card';
+    var annh = document.createElement('div'); annh.className='c-hd';
+    annh.innerHTML='<div class="c-title">Announcements</div>';
+    var annb = document.createElement('button'); annb.className='btn btn-hi btn-sm'; annb.textContent='+ Post'; annb.onclick=function(){om('mAnn');};
+    annh.appendChild(annb); annc.appendChild(annh);
+    var annl = document.createElement('div'); annl.id='dash-anns';
+    annl.innerHTML='<div style="color:var(--tx3);font-size:.8rem">Loading...</div>';
+    annc.appendChild(annl); left.appendChild(annc);
+
+    // Right
+    var right = document.createElement('div');
+
+    // Quick actions
+    var qc = document.createElement('div'); qc.className='card';
+    qc.innerHTML='<div class="c-hd"><div class="c-title">Quick Actions</div></div>';
+    var ql = document.createElement('div'); ql.style.cssText='display:flex;flex-direction:column;gap:.5rem';
+    [
+      {t:'&#x2795; Create User',f:function(){om('mCreateUser');},'cls':'btn btn-hi btn-bl2'},
+      {t:'&#x1f4cb; Review Approvals',f:function(){goTo('approvals','Approvals');},'cls':'btn btn-gh btn-bl2'},
+      {t:'&#x1f510; User Management',f:function(){goTo('users','User Management');},'cls':'btn btn-gh btn-bl2'},
+      {t:'&#x1f465; All Employees',f:function(){goTo('employees','All Employees');},'cls':'btn btn-gh btn-bl2'},
+      {t:'&#x1f4e2; Announce',f:function(){om('mAnn');},'cls':'btn btn-gh btn-bl2'},
+      {t:'&#x1f4c8; Reports',f:function(){goTo('reports','Reports');},'cls':'btn btn-gh btn-bl2'}
+    ].forEach(function(item){
+      var btn=document.createElement('button'); btn.className=item.cls; btn.innerHTML=item.t; btn.onclick=item.f; ql.appendChild(btn);
+    });
+    qc.appendChild(ql); right.appendChild(qc);
+
+    // System status
+    var sc2 = document.createElement('div'); sc2.className='card'; sc2.style.marginTop='1rem';
+    sc2.innerHTML='<div class="c-hd"><div class="c-title">System Status</div></div>'+
+      '<div style="font-size:.8rem"><div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--tx3)">Suspended Accounts</span><span style="color:var(--er);font-weight:600">'+(s.suspended_users||0)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--tx3)">Open IT Tickets</span><span style="color:var(--or);font-weight:600">'+(s.open_tickets||0)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:.4rem 0"><span style="color:var(--tx3)">Pending Staff Requests</span><span style="color:var(--wa);font-weight:600">'+(s.pending_user_requests||0)+'</span></div></div>';
+    right.appendChild(sc2);
+
+    grid.appendChild(left); grid.appendChild(right);
+    mc.appendChild(grid);
+
+    // Load async data
+    loadDashApprovals();
+    loadDashAnns();
+  }).catch(function(e) {
+    document.getElementById('MC').innerHTML='<div style="text-align:center;padding:3rem"><div style="color:var(--er);margin-bottom:1rem">'+e.message+'</div><button class="btn btn-gh" onclick="pgDashboard()">Retry</button></div>';
+  });
+}
+
+function loadDashApprovals() {
+  Promise.all([
+    api('GET', '/api/leave/?status=pending'),
+    api('GET', '/api/budgets/?status=pending')
+  ]).then(function(r) {
+    var el = document.getElementById('dash-approvals'); if(!el) return;
+    var items = [];
+    (r[0]||[]).slice(0,3).forEach(function(l){items.push({id:l.id,tp:'leave',ic:'&#x1f334;',ti:(l.employee_name||'?')+' — '+l.type+' Leave',me:l.from_date+' to '+l.to_date});});
+    (r[1]||[]).slice(0,2).forEach(function(b){items.push({id:b.id,tp:'budget',ic:'&#x1f4b0;',ti:'Budget: '+b.department,me:money(b.amount)});});
+    el.innerHTML='';
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:1rem;color:var(--tx3)">&#x2705; No pending approvals</div>';return;}
+    items.forEach(function(a){
+      var row=document.createElement('div'); row.className='appr-row';
+      row.innerHTML='<div class="appr-ic">'+a.ic+'</div><div class="appr-info"><div class="appr-title">'+a.ti+'</div><div class="appr-meta">'+a.me+'</div></div>';
+      var acts=document.createElement('div'); acts.className='appr-acts';
+      var appB=document.createElement('button'); appB.className='btn btn-ok btn-xs'; appB.textContent='✓';
+      appB.onclick=function(){quickApprove(a.id,a.tp);};
+      var rejB=document.createElement('button'); rejB.className='btn btn-er btn-xs'; rejB.textContent='✕';
+      rejB.onclick=function(){quickReject(a.id,a.tp);};
+      acts.appendChild(appB); acts.appendChild(rejB); row.appendChild(acts);
+      el.appendChild(row);
+    });
+  }).catch(function(){});
+}
+
+function loadDashAnns() {
+  api('GET', '/api/announcements/').then(function(anns) {
+    var el = document.getElementById('dash-anns'); if(!el) return;
+    var clr={info:'#60A5FA',warn:'var(--wa)',ok:'var(--ok)',er:'var(--er)'};
+    if(!anns||!anns.length){el.innerHTML='<div style="color:var(--tx3);font-size:.8rem">No announcements yet</div>';return;}
+    el.innerHTML='';
+    anns.slice(0,3).forEach(function(a){
+      var div=document.createElement('div');
+      div.style.cssText='padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.03);display:flex;gap:.5rem';
+      div.innerHTML='<div style="width:4px;border-radius:2px;flex-shrink:0;background:'+(clr[a.type]||'#60A5FA')+'"></div><div><div style="font-size:.8rem;font-weight:600">'+a.title+'</div><div style="font-size:.67rem;color:var(--tx3)">'+(a.poster_name||'Admin')+' &bull; '+gxAgo(a.created_at)+'</div></div>';
+      el.appendChild(div);
+    });
+  }).catch(function(){});
+}
+
+function quickApprove(id,tp) {
+  api('POST', '/api/'+(tp==='leave'?'leave/'+id:tp==='budget'?'budgets/'+id:'leave/'+id)+'/action', {approved:true})
+  .then(function(){toast('✅ Approved','ok');loadDashApprovals();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+function quickReject(id,tp) {
+  api('POST', '/api/'+(tp==='leave'?'leave/'+id:tp==='budget'?'budgets/'+id:'leave/'+id)+'/action', {approved:false,note:'Rejected by Admin'})
+  .then(function(){toast('Rejected','wa');loadDashApprovals();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── USER MANAGEMENT ──
+var ALL_USERS = [];
+function pgUsers() {
+  document.getElementById('MC').innerHTML =
+    '<div class="c-hd" style="margin-bottom:1rem"><div><div class="c-title" style="font-size:1rem">User Management</div><div class="c-sub">Create, suspend, delete and manage all accounts</div></div>'+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap">'+
+    '<button class="btn btn-hi" onclick="om('mCreateUser')">&#x2795; Create User</button>'+
+    '<button class="btn btn-gh" onclick="pgUsers()">&#x21bb; Refresh</button></div></div>'+
+    '<div class="tabs"><div class="tab on" onclick="gxTab(this);filterUsers('all')">All</div><div class="tab" onclick="gxTab(this);filterUsers('active')">Active</div><div class="tab" onclick="gxTab(this);filterUsers('suspended')">Suspended</div></div>'+
+    '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead><tbody id="users-tb"><tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr></tbody></table></div></div>';
+
+  api('GET', '/api/users/').then(function(users) {
+    ALL_USERS = users;
+    renderUsers(users);
+  }).catch(function(e){
+    document.getElementById('users-tb').innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';
+  });
+}
+
+function filterUsers(filter) {
+  if(filter==='all') renderUsers(ALL_USERS);
+  else if(filter==='active') renderUsers(ALL_USERS.filter(function(u){return !u.is_suspended && u.is_active;}));
+  else if(filter==='suspended') renderUsers(ALL_USERS.filter(function(u){return u.is_suspended;}));
+}
+
+function renderUsers(users) {
+  var tb = document.getElementById('users-tb'); if(!tb) return;
+  if(!users.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No users found</td></tr>';return;}
+  tb.innerHTML='';
+  users.forEach(function(u) {
+    var tr = document.createElement('tr');
+    var status = u.is_suspended ? 'suspended' : u.is_active ? 'active' : 'inactive';
+    tr.innerHTML='<td><div class="td-user">'+gxAv(u.name||u.email,'24px')+'<span style="font-weight:500">'+(u.name||'—')+'</span></div></td>'+
+      '<td style="font-size:.75rem;color:var(--tx2)">'+u.email+'</td>'+
+      '<td>'+gxBadge(u.role)+'</td>'+
+      '<td style="font-size:.78rem">'+(u.emp_dept||u.department||'—')+'</td>'+
+      '<td>'+gxBadge(status)+'</td>'+
+      '<td style="font-size:.72rem;color:var(--tx3)">'+(u.last_login?gxAgo(u.last_login):'Never')+'</td>'+
+      '<td><div class="td-acts" id="acts-'+u.id+'"></div></td>';
+    tb.appendChild(tr);
+
+    var acts = document.getElementById('acts-'+u.id);
+    if(u.is_suspended) {
+      var unsBtn=document.createElement('button'); unsBtn.className='btn btn-ok btn-xs'; unsBtn.textContent='Unsuspend';
+      unsBtn.onclick=function(){unsuspendUser(u.id, u.name||u.email);}; acts.appendChild(unsBtn);
+    } else {
+      var susBtn=document.createElement('button'); susBtn.className='btn btn-wa btn-xs'; susBtn.textContent='Suspend';
+      susBtn.onclick=function(){openSuspend(u.id, u.name||u.email);}; acts.appendChild(susBtn);
+    }
+    if(u.role !== 'admin') {
+      var delBtn=document.createElement('button'); delBtn.className='btn btn-er btn-xs'; delBtn.textContent='Delete';
+      delBtn.onclick=function(){deleteUser(u.id, u.name||u.email);}; acts.appendChild(delBtn);
+    }
+    var resetBtn=document.createElement('button'); resetBtn.className='btn btn-bl btn-xs'; resetBtn.textContent='Reset Pwd';
+    resetBtn.onclick=function(){resetPassword(u.id, u.name||u.email);}; acts.appendChild(resetBtn);
+  });
+}
+
+function createUser() {
+  var name=document.getElementById('cu-name').value.trim();
+  var email=document.getElementById('cu-email').value.trim();
+  var pwd=document.getElementById('cu-pwd').value;
+  var role=document.getElementById('cu-role').value;
+  var dept=document.getElementById('cu-dept').value;
+  var title=document.getElementById('cu-title').value.trim();
+  var salary=parseFloat(document.getElementById('cu-salary').value)||0;
+  var phone=document.getElementById('cu-phone').value.trim();
+  if(!name||!email||!pwd){toast('Fill in required fields','er');return;}
+  var btn=document.getElementById('cu-btn'); btn.disabled=true; btn.textContent='Creating...';
+  api('POST','/api/users/create',{name:name,email:email,password:pwd,role:role,department:dept,title:title,salary:salary,phone:phone})
+  .then(function(r){
+    btn.disabled=false; btn.textContent='Create Account';
+    cm('mCreateUser');
+    toast('✅ '+r.message,'ok');
+    ['cu-name','cu-email','cu-pwd','cu-title','cu-salary','cu-phone'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  }).catch(function(e){btn.disabled=false;btn.textContent='Create Account';toast('Error: '+e.message,'er');});
+}
+
+function openSuspend(uid, name) {
+  document.getElementById('sus-uid').value=uid;
+  document.getElementById('sus-name').value=name;
+  document.getElementById('sus-reason').value='';
+  om('mSuspend');
+}
+
+function doSuspend() {
+  var uid=document.getElementById('sus-uid').value;
+  var name=document.getElementById('sus-name').value;
+  var reason=document.getElementById('sus-reason').value.trim();
+  if(!reason){toast('Please provide a reason','er');return;}
+  api('POST','/api/users/'+uid+'/suspend',{reason:reason,notify_user:true})
+  .then(function(r){cm('mSuspend');toast('⛔ '+name+' suspended','wa');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+function unsuspendUser(uid, name) {
+  if(!confirm('Reinstate '+name+'?')) return;
+  api('POST','/api/users/'+uid+'/unsuspend')
+  .then(function(r){toast('✅ '+name+' reinstated','ok');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+function deleteUser(uid, name) {
+  if(!confirm('PERMANENTLY delete '+name+'? This cannot be undone!')) return;
+  api('DELETE','/api/users/'+uid)
+  .then(function(r){toast(name+' deleted','wa');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+function resetPassword(uid, name) {
+  if(!confirm('Reset password for '+name+'? They will get a temporary password.')) return;
+  api('POST','/api/users/'+uid+'/reset-password')
+  .then(function(r){toast('✅ Password reset. Temp: '+r.new_password,'ok');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── EMPLOYEES ──
+var ALL_EMPS = [];
+function pgEmployees() {
+  document.getElementById('MC').innerHTML=
+    '<div class="c-hd" style="margin-bottom:1rem"><div class="c-title" style="font-size:1rem">All Employees</div>'+
+    '<div style="display:flex;gap:.5rem"><input id="emp-q" placeholder="Search..." oninput="filterEmps(this.value)" style="padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px"/>'+
+    '<button class="btn btn-gh btn-sm" onclick="printEmps()">&#x1f5a8; Print</button></div></div>'+
+    '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead><tbody id="emp-tb"><tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr></tbody></table></div></div>';
+
+  api('GET','/api/employees/').then(function(emps){
+    ALL_EMPS=emps;
+    renderEmps(emps);
+  }).catch(function(e){document.getElementById('emp-tb').innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+function filterEmps(q) {
+  renderEmps(q?ALL_EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q.toLowerCase())||(e.department||'').toLowerCase().includes(q.toLowerCase());}):ALL_EMPS);
+}
+
+function renderEmps(list) {
+  var tb=document.getElementById('emp-tb'); if(!tb)return;
+  if(!list.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No employees</td></tr>';return;}
+  tb.innerHTML='';
+  list.forEach(function(e){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><div class="td-user">'+gxAv(e.name,'24px')+'<span style="font-weight:500">'+e.name+'</span></div></td>'+
+      '<td>'+(e.department||'—')+'</td><td>'+gxBadge(e.role)+'</td>'+
+      '<td style="font-weight:600">'+(e.salary>0?money(e.salary):'—')+'</td>'+
+      '<td>'+gxBadge(e.status)+'</td>'+
+      '<td><button class="btn btn-gh btn-xs" onclick="printSlip(''+e.name.replace(/'/g,'')+'','+( e.salary||0)+')">Payslip</button></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function printEmps(){gxPrint('Employee Directory','<table><thead><tr><th>Name</th><th>Dept</th><th>Role</th><th>Salary</th><th>Status</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+e.role+'</td><td>'+(e.salary?money(e.salary):'—')+'</td><td>'+e.status+'</td></tr>';}).join('')+'</tbody></table>');}
+function printSlip(name,sal){var p=gxPay(sal);gxPrint('Payslip — '+name,'<p><strong>Employee:</strong> '+name+'</p><p><strong>Period:</strong> '+new Date().toLocaleString('en-NG',{month:'long',year:'numeric'})+'</p><table><thead><tr><th>Component</th><th>Amount</th></tr></thead><tbody><tr><td>Gross</td><td>'+money(p.gross)+'</td></tr><tr><td>Tax 20%</td><td>-'+money(p.tax)+'</td></tr><tr><td>NI 8%</td><td>-'+money(p.ni)+'</td></tr><tr><td>Pension 5%</td><td>-'+money(p.pension)+'</td></tr><tr><td><strong>NET PAY</strong></td><td><strong>'+money(p.net)+'</strong></td></tr></tbody></table>');}
+
+// ── STAFF REQUESTS ──
+function pgRequests() {
+  document.getElementById('MC').innerHTML=
+    '<div class="info info-blue">New staff workflow: HR submits &rarr; Manager approves &rarr; IT creates account</div>'+
+    '<div class="card"><div class="c-hd"><div class="c-title">Staff Account Requests</div><button class="btn btn-gh btn-sm" onclick="pgRequests()">&#x21bb; Refresh</button></div>'+
+    '<div id="req-list"><div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div></div></div>';
+
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('req-list'); if(!el)return;
+    if(!reqs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No requests yet</div>';return;}
+    var html='<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Submitted By</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+    reqs.forEach(function(r){
+      var d=r.request_data||{};
+      html+='<tr><td style="font-weight:500">'+(d.name||'?')+'</td><td>'+gxBadge(d.role||'?')+'</td><td>'+(d.department||'?')+'</td>'+
+        '<td style="font-size:.75rem">'+(r.submitted_by_name||'?')+'</td><td>'+gxBadge(r.status.replace(/_/g,' '))+'</td>'+
+        '<td><div class="td-acts">';
+      if(r.status==='pending_manager'){
+        html+='<button class="btn btn-ok btn-xs" onclick="approveRequest(''+r.id+'','manager')">&#x2713; Approve</button>'+
+              '<button class="btn btn-er btn-xs" onclick="rejectRequest(''+r.id+'','manager')">&#x2715; Reject</button>';
+      } else if(r.status==='pending_it'){
+        html+='<button class="btn btn-bl btn-xs" onclick="finalizeRequest(''+r.id+'')">&#x1f527; Create Account</button>';
+      } else {
+        html+='<span style="color:var(--tx3);font-size:.72rem">'+r.status+'</span>';
+      }
+      html+='</div></td></tr>';
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }).catch(function(e){document.getElementById('req-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function approveRequest(id, stage) {
+  api('POST','/api/users/requests/'+id+'/manager-approve',{approved:true,note:'Approved by Admin'})
+  .then(function(){toast('✅ Request approved','ok');pgRequests();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+function rejectRequest(id, stage) {
+  var note=prompt('Reason for rejection:'); if(!note)return;
+  api('POST','/api/users/requests/'+id+'/manager-approve',{approved:false,note:note})
+  .then(function(){toast('Request rejected','wa');pgRequests();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+function finalizeRequest(id) {
+  var pwd=prompt('Set initial password for new user (min 8 chars, uppercase, number):','Welcome@1234');
+  if(!pwd)return;
+  api('POST','/api/users/requests/'+id+'/it-finalize',{approved:true,initial_password:pwd})
+  .then(function(r){toast('✅ Account created! Password: '+r.initial_password,'ok');pgRequests();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── APPROVALS ──
+function pgApprovals() {
+  document.getElementById('MC').innerHTML=
+    '<div class="card"><div class="c-hd"><div class="c-title">All Pending Approvals</div></div>'+
+    '<div class="tabs"><div class="tab on" onclick="gxTab(this);loadApprovals('leave')">Leave</div><div class="tab" onclick="gxTab(this);loadApprovals('budget')">Budgets</div></div>'+
+    '<div id="appr-list"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div></div>';
+  loadApprovals('leave');
+}
+
+function loadApprovals(type) {
+  loading('appr-list');
+  api('GET', '/api/'+(type==='leave'?'leave':'budgets')+'/?status=pending').then(function(items){
+    var el=document.getElementById('appr-list'); if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">✅ No pending '+type+' requests</div>';return;}
+    el.innerHTML='';
+    items.forEach(function(item){
+      var row=document.createElement('div'); row.className='appr-row';
+      var title = type==='leave' ? (item.employee_name||'?')+' — '+item.type+' Leave' : 'Budget: '+(item.department||'?')+' — '+(item.title||'');
+      var meta = type==='leave' ? item.from_date+' to '+item.to_date+' ('+item.days+' days)' : money(item.amount);
+      row.innerHTML='<div class="appr-ic">'+(type==='leave'?'&#x1f334;':'&#x1f4b0;')+'</div>'+
+        '<div class="appr-info"><div class="appr-title">'+title+'</div><div class="appr-meta">'+meta+'</div>'+
+        (item.reason?'<div style="font-size:.7rem;color:var(--tx3)">'+item.reason+'</div>':'')+'</div>';
+      var acts=document.createElement('div'); acts.className='appr-acts';
+      var appB=document.createElement('button'); appB.className='btn btn-ok btn-sm'; appB.innerHTML='✓ Approve';
+      appB.onclick=function(){api('POST','/api/'+(type==='leave'?'leave/'+item.id:' budgets/'+item.id)+'/action',{approved:true}).then(function(){toast('✅ Approved','ok');loadApprovals(type);}).catch(function(e){toast(e.message,'er');});};
+      var rejB=document.createElement('button'); rejB.className='btn btn-er btn-sm'; rejB.innerHTML='✕ Reject';
+      rejB.onclick=function(){var note=prompt('Reason for rejection:');if(!note)return;api('POST','/api/'+(type==='leave'?'leave/'+item.id:'budgets/'+item.id)+'/action',{approved:false,note:note}).then(function(){toast('Rejected','wa');loadApprovals(type);}).catch(function(e){toast(e.message,'er');});};
+      acts.appendChild(appB); acts.appendChild(rejB); row.appendChild(acts);
+      el.appendChild(row);
+    });
+  }).catch(function(e){document.getElementById('appr-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── SESSIONS ──
+function pgSessions() {
+  document.getElementById('MC').innerHTML=
+    '<div class="card"><div class="c-hd"><div class="c-title">&#x1f7e2; Active Sessions</div><button class="btn btn-gh btn-sm" onclick="pgSessions()">&#x21bb; Refresh</button></div>'+
+    '<div id="sess-list"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div></div>';
+
+  api('GET','/api/users/active-sessions').then(function(sessions){
+    var el=document.getElementById('sess-list'); if(!el)return;
+    if(!sessions.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No active sessions</div>';return;}
+    var html='<div class="tbl-wrap"><table><thead><tr><th>User</th><th>Role</th><th>Department</th><th>IP Address</th><th>Login Time</th><th>Actions</th></tr></thead><tbody>';
+    sessions.forEach(function(s){
+      html+='<tr><td><div class="td-user">'+gxAv(s.name||s.email,'22px')+'<span>'+(s.name||s.email)+'</span></div></td>'+
+        '<td>'+gxBadge(s.role)+'</td><td>'+(s.department||'—')+'</td>'+
+        '<td style="font-size:.72rem;font-family:monospace">'+(s.ip_address||'—')+'</td>'+
+        '<td style="font-size:.72rem;color:var(--tx3)">'+gxAgo(s.created_at)+'</td>'+
+        '<td><button class="btn btn-er btn-xs" onclick="forceLogout(''+s.id+'',''+(s.name||s.email)+'')">Force Logout</button></td></tr>';
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }).catch(function(e){document.getElementById('sess-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function forceLogout(sessId, name) {
+  if(!confirm('Force logout '+name+'?')) return;
+  api('POST','/api/users/sessions/'+sessId+'/force-logout')
+  .then(function(){toast(name+' logged out','wa');pgSessions();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── DEPARTMENTS ──
+function pgDepartments() {
+  document.getElementById('MC').innerHTML='<div id="dept-grid"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div>';
+  api('GET','/api/departments/').then(function(depts){
+    var el=document.getElementById('dept-grid'); if(!el)return;
+    var grid=document.createElement('div'); grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem';
+    depts.forEach(function(d){
+      var p=d.budget>0?Math.round((d.spent||0)/d.budget*100):0;
+      var card=document.createElement('div'); card.className='card'; card.style.marginBottom='0';
+      card.innerHTML='<div style="font-size:1.5rem;margin-bottom:.5rem">'+(d.icon||'&#x1f3e2;')+'</div>'+
+        '<div style="font-weight:700;font-size:.88rem;margin-bottom:.2rem">'+d.name+'</div>'+
+        '<div style="font-size:.7rem;color:var(--tx3);margin-bottom:.5rem">'+(d.head_name||'No head set')+'</div>'+
+        '<div style="font-size:.75rem;color:var(--tx3)">Budget: '+(d.budget>0?money(d.budget):'Not set')+'</div>'+
+        (d.budget>0?'<div class="prog-bg" style="margin-top:.4rem"><div class="prog-fill" style="width:'+Math.min(p,100)+'%;background:'+(p>80?'var(--er)':p>60?'var(--wa)':'var(--hi)')+'"></div></div><div style="font-size:.67rem;color:var(--tx3);margin-top:.2rem">'+p+'% used</div>':'');
+      grid.appendChild(card);
+    });
+    el.innerHTML=''; el.appendChild(grid);
+  }).catch(function(e){document.getElementById('dept-grid').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── BUDGETS ──
+function pgBudgets() {
+  document.getElementById('MC').innerHTML=
+    '<div class="info info-blue">Budget flow: Dept Manager submits &rarr; Admin approves &rarr; Finance allocates</div>'+
+    '<div class="card"><div class="c-hd"><div class="c-title">Budget Requests</div></div>'+
+    '<div class="tabs"><div class="tab on" onclick="gxTab(this);loadBudgets('pending')">Pending</div><div class="tab" onclick="gxTab(this);loadBudgets('approved')">Approved</div><div class="tab" onclick="gxTab(this);loadBudgets('')">All</div></div>'+
+    '<div id="budg-list"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div></div>';
+  loadBudgets('pending');
+}
+
+function loadBudgets(status) {
+  api('GET','/api/budgets/'+(status?'?status='+status:'')).then(function(items){
+    var el=document.getElementById('budg-list'); if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' budget requests</div>';return;}
+    var html='<div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Title</th><th>Amount</th><th>By</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+    items.forEach(function(b){
+      html+='<tr><td><span class="b b-gy">'+b.department+'</span></td><td style="font-weight:500">'+(b.title||'—')+'</td>'+
+        '<td style="font-weight:700;color:var(--hi)">'+money(b.amount)+'</td>'+
+        '<td style="font-size:.76rem">'+(b.submitter_name||'—')+'</td><td>'+gxBadge(b.status)+'</td>'+
+        '<td><div class="td-acts">'+(b.status==='pending'?
+          '<button class="btn btn-ok btn-xs" onclick="actBudget(''+b.id+'',true)">&#x2713;</button>'+
+          '<button class="btn btn-er btn-xs" onclick="actBudget(''+b.id+'',false)">&#x2715;</button>':'—')+'</div></td></tr>';
+    });
+    el.innerHTML=html+'</tbody></table></div>';
+  }).catch(function(e){document.getElementById('budg-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function actBudget(id,approve) {
+  var note=approve?'':prompt('Rejection reason:'); if(!approve&&!note)return;
+  api('POST','/api/budgets/'+id+'/action',{approved:approve,note:note||''})
+  .then(function(){toast(approve?'✅ Budget approved':'Budget rejected',approve?'ok':'wa');loadBudgets('pending');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── ATTENDANCE ──
+function pgAttendance() {
+  document.getElementById('MC').innerHTML=
+    '<div class="c-hd" style="margin-bottom:1rem"><div class="c-title" style="font-size:1rem">Attendance Today</div><button class="btn btn-gh btn-sm" onclick="printAtt()">&#x1f5a8; Print</button></div>'+
+    '<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:1rem">'+
+    '<div class="stat" style="--sc:#22C55E;--sc2:#4ADE80"><div class="s-ic">&#x2705;</div><div class="s-val" id="att-p">—</div><div class="s-lbl">Present</div></div>'+
+    '<div class="stat" style="--sc:var(--wa);--sc2:#FBBF24"><div class="s-ic">&#x23f0;</div><div class="s-val" id="att-l">—</div><div class="s-lbl">Late</div></div>'+
+    '<div class="stat" style="--sc:var(--er);--sc2:#F87171"><div class="s-ic">&#x274c;</div><div class="s-val" id="att-a">—</div><div class="s-lbl">Absent</div></div>'+
+    '<div class="stat" style="--sc:#60A5FA;--sc2:#93C5FD"><div class="s-ic">&#x1f334;</div><div class="s-val">—</div><div class="s-lbl">On Leave</div></div></div>'+
+    '<div class="card"><div class="tbl-wrap"><table><thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th></tr></thead>'+
+    '<tbody id="att-tb"><tr><td colspan="5" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr></tbody></table></div></div>';
+
+  api('GET','/api/attendance/today').then(function(att){
+    var p=att.filter(function(a){return a.status==='present';}).length;
+    var l=att.filter(function(a){return a.status==='late';}).length;
+    var ab=att.filter(function(a){return a.status==='absent';}).length;
+    var ep=document.getElementById('att-p'),el=document.getElementById('att-l'),ea=document.getElementById('att-a');
+    if(ep)ep.textContent=p; if(el)el.textContent=l; if(ea)ea.textContent=ab;
+    var tb=document.getElementById('att-tb'); if(!tb)return;
+    if(!att.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">No attendance records today</td></tr>';return;}
+    tb.innerHTML='';
+    att.forEach(function(a){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><div class="td-user">'+gxAv(a.employee_name||'?','22px')+'<span>'+(a.employee_name||'?')+'</span></div></td>'+
+        '<td>'+(a.department||'—')+'</td><td>'+(a.clock_in||'—')+'</td><td>'+(a.clock_out||'—')+'</td><td>'+gxBadge(a.status)+'</td>';
+      tb.appendChild(tr);
+    });
+  }).catch(function(e){document.getElementById('att-tb').innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">'+e.message+'</td></tr>';});
+}
+function printAtt(){var tb=document.getElementById('att-tb');if(!tb)return;gxPrint('Attendance — '+gxToday(),'<table><thead><tr><th>Employee</th><th>Dept</th><th>Clock In</th><th>Clock Out</th><th>Status</th></tr></thead>'+tb.innerHTML+'</table>');}
+
+// ── LEAVE ──
+var ALL_LEAVE=[];
+function pgLeave() {
+  document.getElementById('MC').innerHTML=
+    '<div class="card"><div class="c-hd"><div class="c-title">Leave Management</div><button class="btn btn-gh btn-sm" onclick="printLeave()">&#x1f5a8; Print</button></div>'+
+    '<div class="tabs"><div class="tab on" onclick="gxTab(this);loadLeave('pending')">Pending</div><div class="tab" onclick="gxTab(this);loadLeave('approved')">Approved</div><div class="tab" onclick="gxTab(this);loadLeave('')">All</div></div>'+
+    '<div class="tbl-wrap"><table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Actions</th></tr></thead>'+
+    '<tbody id="leave-tb"><tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr></tbody></table></div></div>';
+  loadLeave('pending');
+}
+function loadLeave(status) {
+  api('GET','/api/leave/'+(status?'?status='+status:'')).then(function(items){
+    ALL_LEAVE=items;
+    var tb=document.getElementById('leave-tb'); if(!tb)return;
+    if(!items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' leave requests</td></tr>';return;}
+    tb.innerHTML='';
+    items.forEach(function(l){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><div class="td-user">'+gxAv(l.employee_name||'?','22px')+'<span>'+(l.employee_name||'?')+'</span></div></td>'+
+        '<td><span class="b b-bl">'+l.type+'</span></td><td>'+l.from_date+'</td><td>'+l.to_date+'</td><td>'+l.days+'</td>'+
+        '<td>'+gxBadge(l.status)+'</td>';
+      var actTd=document.createElement('td');
+      var acts=document.createElement('div'); acts.className='td-acts';
+      if(l.status==='pending'){
+        var appB=document.createElement('button'); appB.className='btn btn-ok btn-xs'; appB.textContent='✓';
+        appB.onclick=function(){api('POST','/api/leave/'+l.id+'/action',{approved:true}).then(function(){toast('✅ Approved','ok');loadLeave('pending');}).catch(function(e){toast(e.message,'er');});};
+        var rejB=document.createElement('button'); rejB.className='btn btn-er btn-xs'; rejB.textContent='✕';
+        rejB.onclick=function(){var note=prompt('Reason:');if(!note)return;api('POST','/api/leave/'+l.id+'/action',{approved:false,note:note}).then(function(){toast('Rejected','wa');loadLeave('pending');}).catch(function(e){toast(e.message,'er');});};
+        acts.appendChild(appB); acts.appendChild(rejB);
+      }
+      actTd.appendChild(acts); tr.appendChild(actTd);
+      tb.appendChild(tr);
+    });
+  }).catch(function(e){document.getElementById('leave-tb').innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function printLeave(){gxPrint('Leave Report','<table><thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead><tbody>'+ALL_LEAVE.map(function(l){return'<tr><td>'+(l.employee_name||'?')+'</td><td>'+l.type+'</td><td>'+l.from_date+'</td><td>'+l.to_date+'</td><td>'+l.days+'</td><td>'+l.status+'</td></tr>';}).join('')+'</tbody></table>');}
+
+// ── ANNOUNCEMENTS ──
+function pgAnnouncements() {
+  document.getElementById('MC').innerHTML=
+    '<div class="card"><div class="c-hd"><div class="c-title">Announcements</div><button class="btn btn-hi btn-sm" onclick="om('mAnn')">+ Post New</button></div>'+
+    '<div id="ann-list"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div></div>';
+  api('GET','/api/announcements/').then(function(anns){
+    var el=document.getElementById('ann-list'); if(!el)return;
+    if(!anns.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No announcements yet</div>';return;}
+    var clr={info:'#60A5FA',warn:'var(--wa)',ok:'var(--ok)',er:'var(--er)'};
+    el.innerHTML='';
+    anns.forEach(function(a){
+      var div=document.createElement('div'); div.className='ann';
+      div.style.borderLeft='4px solid '+(clr[a.type]||'#60A5FA');
+      div.innerHTML='<div class="ann-title">'+a.title+'</div><div class="ann-body">'+a.body+'</div>'+
+        '<div style="font-size:.68rem;color:var(--tx3);margin-top:.4rem">'+(a.poster_name||'Admin')+' &bull; '+(a.department==='all'?'All Staff':a.department)+' &bull; '+gxAgo(a.created_at)+'</div>';
+      el.appendChild(div);
+    });
+  }).catch(function(e){document.getElementById('ann-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function postAnn() {
+  var title=document.getElementById('ann-title').value.trim();
+  var body=document.getElementById('ann-body').value.trim();
+  if(!title||!body){toast('Fill in all fields','er');return;}
+  api('POST','/api/announcements/',{title:title,body:body,type:document.getElementById('ann-type').value,department:document.getElementById('ann-dept').value})
+  .then(function(){cm('mAnn');toast('✅ Announcement posted','ok');document.getElementById('ann-title').value='';document.getElementById('ann-body').value='';})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── REPORTS ──
+function pgReports() {
+  document.getElementById('MC').innerHTML='<div id="rep-cont"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div>';
+  api('GET','/api/reports/payroll-summary').then(function(r){
+    document.getElementById('rep-cont').innerHTML=
+      '<div class="g2">'+
+      '<div class="card"><div class="c-hd"><div class="c-title">Export Reports</div></div><div style="display:flex;flex-direction:column;gap:.5rem">'+
+      '<button class="btn btn-gh btn-bl2" onclick="printEmps()">&#x1f5a8; Employee Directory PDF</button>'+
+      '<button class="btn btn-gh btn-bl2" onclick="printLeave()">&#x1f5a8; Leave Report PDF</button>'+
+      '<button class="btn btn-gh btn-bl2" onclick="printAtt()">&#x1f5a8; Attendance PDF</button></div></div>'+
+      '<div class="card"><div class="c-hd"><div class="c-title">Payroll Summary</div></div>'+
+      '<div style="font-size:.85rem"><div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--tx3)">Active Staff</span><strong>'+r.total_employees+'</strong></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--tx3)">Gross Payroll</span><strong style="color:var(--hi)">'+money(r.gross_payroll)+'</strong></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--tx3)">Total Tax</span><span style="color:var(--er)">-'+money(r.tax)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:.5rem 0"><span style="color:var(--tx3)">Net Payroll</span><strong style="color:var(--ok)">'+money(r.net_payroll)+'</strong></div></div></div></div>';
+  }).catch(function(e){document.getElementById('rep-cont').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications() {
+  document.getElementById('MC').innerHTML=
+    '<div class="card"><div class="c-hd"><div class="c-title">My Notifications</div><button class="btn btn-gh btn-sm" onclick="markAllRead()">Mark All Read</button></div>'+
+    '<div id="notif-list"><div style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></div></div></div>';
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list'); if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};
+    el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer';
+      row.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem"></div>'+
+        '<div style="flex:1"><div style="font-size:.82rem;font-weight:'+(n.read?400:600)+'">'+n.title+'</div>'+
+        '<div style="font-size:.75rem;color:var(--tx2)">'+n.message+'</div>'+
+        '<div style="font-size:.65rem;color:var(--tx3);margin-top:.15rem">'+gxAgo(n.created_at)+'</div></div>'+
+        (n.read?'':'<span class="b b-or">New</span>');
+      row.onclick=function(){api('POST','/api/notifications/'+n.id+'/read').catch(function(){});row.querySelector('.b-or') && (row.querySelector('.b-or').style.display='none');};
+      el.appendChild(row);
+    });
+    document.getElementById('notifDot').style.display='none';
+  }).catch(function(e){document.getElementById('notif-list').innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function markAllRead() {
+  api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});
+}
+
+// ── START ──
+document.addEventListener('DOMContentLoaded', function() {
+  gxInit('admin', function(user) {
+    pgDashboard();
+  });
+});
+</script>
+</body>
+</html>
