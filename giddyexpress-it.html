@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="/giddies-portal/manifest.json"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="GX Portal"/>
+  <meta name="theme-color" content="#FF6B00"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express - IT Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0F14;--bg2:#161920;--bg3:#1E2128;--br:rgba(255,255,255,.07);--tx:#E8EAF0;--tx2:#9CA3AF;--tx3:#6B7280;--hi:#FF6B00;--hi2:#FF8C38;--ok:#4ADE80;--er:#F87171;--wa:#FCD34D;--bl:#60A5FA;--pu:#A78BFA;--or:#FB923C}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:240px;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--br)}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--hi)}
+.sb-sub{font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--br)}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-nm{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{font-size:.65rem;color:var(--tx3);text-transform:capitalize}
+.sb-nav{flex:1;padding:.5rem 0}
+.nav-sec{font-size:.62rem;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.2rem .3rem}
+.nav-a{display:flex;align-items:center;gap:.65rem;padding:.6rem 1.2rem;cursor:pointer;border-radius:0;font-size:.82rem;color:var(--tx2);transition:all .15s;margin:1px 0;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-a.on{background:rgba(255,107,0,.1);color:var(--hi)}
+.nav-a.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hi);border-radius:0 2px 2px 0}
+.nav-ic{width:16px;text-align:center;font-size:.9rem}
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--br)}
+.btn-logout{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:.55rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.2)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--br);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-weight:600;font-size:.95rem}
+.tb-right{display:flex;align-items:center;gap:.85rem}
+.tb-clock{font-size:.78rem;color:var(--tx3);font-family:monospace}
+.tb-pill{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br);border-radius:100px;padding:.3rem .75rem;font-size:.72rem}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:.4rem .65rem;cursor:pointer;color:var(--tx2);font-size:.9rem;position:relative;transition:all .2s}
+.tb-btn:hover{border-color:var(--hi);color:var(--hi)}
+.rdot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--er);border:1px solid var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:1.1rem}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.c-title{font-weight:600;font-size:.9rem}
+.c-sub{font-size:.72rem;color:var(--tx3);margin-top:.1rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+.stat{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sc),var(--sc2))}
+.s-ic{font-size:1.4rem;margin-bottom:.4rem}
+.s-val{font-size:1.7rem;font-weight:700;line-height:1}
+.s-lbl{font-size:.7rem;color:var(--tx3);margin-top:.25rem}
+.s-sub{font-size:.65rem;color:var(--tx3);margin-top:.15rem}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g21{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+/* BUTTONS */
+.btn{border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-hi{background:var(--hi);color:#fff;border-color:var(--hi)}.btn-hi:hover{background:var(--hi2)}
+.btn-gh{background:var(--bg3);color:var(--tx2);border-color:var(--br)}.btn-gh:hover{border-color:var(--hi);color:var(--hi)}
+.btn-ok{background:rgba(74,222,128,.15);color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-er{background:rgba(239,68,68,.15);color:var(--er);border-color:rgba(239,68,68,.3)}
+.btn-wa{background:rgba(252,211,77,.1);color:var(--wa);border-color:rgba(252,211,77,.2)}
+.btn-bl{background:rgba(96,165,250,.1);color:var(--bl);border-color:rgba(96,165,250,.2)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.68rem}
+.btn-bl2{display:block;width:100%;text-align:left;border-radius:8px;padding:.55rem .8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:.12rem .5rem;border-radius:100px;font-size:.65rem;font-weight:600;text-transform:capitalize}
+.b-ok{background:rgba(74,222,128,.1);color:var(--ok)}
+.b-er{background:rgba(239,68,68,.1);color:var(--er)}
+.b-wa{background:rgba(252,211,77,.1);color:var(--wa)}
+.b-bl{background:rgba(96,165,250,.1);color:var(--bl)}
+.b-pu{background:rgba(167,139,250,.1);color:var(--pu)}
+.b-or{background:rgba(251,146,60,.1);color:var(--or)}
+.b-gy{background:rgba(255,255,255,.07);color:var(--tx3)}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:.6rem .8rem;font-size:.67rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);white-space:nowrap}
+td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:.5rem}
+.td-acts{display:flex;gap:.3rem;flex-wrap:wrap}
+/* TABS */
+.tabs{display:flex;gap:.25rem;margin-bottom:1rem;border-bottom:1px solid var(--br);padding-bottom:0}
+.tab{padding:.5rem .85rem;font-size:.78rem;cursor:pointer;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--hi);border-bottom-color:var(--hi);font-weight:600}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--br);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.4rem;border-bottom:1px solid var(--br)}
+.m-title{font-weight:600;font-size:.95rem}
+.m-x{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:.2rem}
+.m-body{padding:1.4rem}
+.m-ft{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.4rem;border-top:1px solid var(--br)}
+/* FORM */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.75rem;font-weight:500;color:var(--tx2);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1.5px solid var(--br);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--hi)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+/* INFO BOXES */
+.info{padding:.7rem 1rem;border-radius:8px;font-size:.78rem;margin-bottom:1rem}
+.info-blue{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:var(--bl)}
+.info-orange{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);color:var(--or)}
+.info-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--er)}
+.info-green{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--ok)}
+/* PROGRESS */
+.prog-bg{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:var(--hi);transition:width .3s}
+/* SPINNER */
+.spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* APPROVAL ROW */
+.appr-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.appr-row:last-child{border-bottom:none}
+.appr-ic{font-size:1.2rem;width:28px;text-align:center;flex-shrink:0}
+.appr-info{flex:1;min-width:0}
+.appr-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-meta{font-size:.68rem;color:var(--tx3);margin-top:.1rem}
+.appr-acts{display:flex;gap:.3rem;flex-shrink:0}
+/* ANNOUNCEMENT */
+.ann{padding:.85rem 1rem;border-radius:10px;margin-bottom:.65rem;background:var(--bg3)}
+.ann-title{font-weight:600;font-size:.82rem;margin-bottom:.3rem}
+.ann-body{font-size:.78rem;color:var(--tx2);line-height:1.5}
+/* MOBILE */
+@media(max-width:768px){
+.sb{width:200px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.g2,.g21{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.sb{position:fixed;left:-200px;top:0;bottom:0;z-index:100;transition:left .3s}
+.sb.open{left:0}
+.main{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="sb-overlay" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99"></div>
+<div class="shell">
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-title">GIDDIES EXPRESS</div>
+    <div class="sb-sub">IT Support</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">??</div>
+    <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole">IT Support</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard"   onclick="goTo('dashboard')"><span class="nav-ic">&#x1f4ca;</span>Dashboard</div>
+    <div class="nav-a" id="nav-health"      onclick="goTo('health')"><span class="nav-ic">&#x1f7e2;</span>System Health</div>
+    <div class="nav-a" id="nav-sessions"    onclick="goTo('sessions')"><span class="nav-ic">&#x1f464;</span>Live Sessions</div>
+    <div class="nav-a" id="nav-logs"        onclick="goTo('logs')"><span class="nav-ic">&#x1f4dc;</span>Activity Logs</div>
+    <div class="nav-sec">User Management</div>
+    <div class="nav-a" id="nav-users"       onclick="goTo('users')"><span class="nav-ic">&#x1f510;</span>All Users</div>
+    <div class="nav-a" id="nav-finalize"    onclick="goTo('finalize')"><span class="nav-ic">&#x2795;</span>Create Accounts</div>
+    <div class="nav-a" id="nav-suspended"   onclick="goTo('suspended')"><span class="nav-ic">&#x26d4;</span>Suspended Users</div>
+    <div class="nav-sec">Support</div>
+    <div class="nav-a" id="nav-tickets"     onclick="goTo('tickets')"><span class="nav-ic">&#x1f3ab;</span>IT Tickets</div>
+    <div class="nav-a" id="nav-locked"      onclick="goTo('locked')"><span class="nav-ic">&#x1f512;</span>Locked Accounts</div>
+    <div class="nav-a" id="nav-assets"      onclick="goTo('assets')"><span class="nav-ic">&#x1f4bb;</span>Asset Register</div>
+    <div class="nav-a" id="nav-licenses"    onclick="goTo('licenses')"><span class="nav-ic">&#x1f4dc;</span>Software Licenses</div>
+    <div class="nav-a" id="nav-sla"         onclick="goTo('sla')"><span class="nav-ic">&#x23f0;</span>SLA Tracker</div>
+    <div class="nav-a" id="nav-session-notes" onclick="goTo('session-notes')"><span class="nav-ic">&#x1f4dd;</span>Session Notes</div>
+    <div class="nav-sec">System</div>
+    <div class="nav-a" id="nav-notifications" onclick="goTo('notifications')"><span class="nav-ic">&#x1f514;</span>Notifications</div>
+  </nav>
+  <div class="sb-foot"><button class="btn-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button onclick="toggleSb()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.1rem">&#9776;</button>
+      <div class="tb-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span>IT</span></div>
+      <button class="tb-btn" onclick="goTo('notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading IT Portal...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TICKET UPDATE MODAL -->
+<div class="overlay" id="mTicket">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">Update IT Ticket</div><button class="m-x" onclick="gxClose('mTicket')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="ticket-info" style="background:var(--bg3);border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem;font-size:.82rem;line-height:1.7"></div>
+    <div class="field"><label>Status</label>
+      <select id="tk-status">
+        <option value="open">Open</option>
+        <option value="in-progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+    <div class="field"><label>Assigned To</label><input id="tk-assigned" placeholder="IT staff name handling this"/></div>
+    <div class="field"><label>Resolution / Notes</label><textarea id="tk-resolution" placeholder="What was done to resolve this issue..."></textarea></div>
+    <input type="hidden" id="tk-id"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mTicket')">Cancel</button>
+    <button class="btn btn-hi" onclick="submitTicketUpdate()">Update Ticket</button>
+  </div>
+</div>
+</div>
+
+<!-- CREATE USER MODAL -->
+<div class="overlay" id="mCreateUser">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x2795; Create User Account</div><button class="m-x" onclick="gxClose('mCreateUser')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-blue">Creating account directly (bypasses HR workflow). Use this for emergency or admin accounts only.</div>
+    <div class="form-row">
+      <div class="field"><label>Full Name *</label><input id="cu-name" placeholder="John Smith"/></div>
+      <div class="field"><label>Email *</label><input id="cu-email" type="email" placeholder="any@email.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Password *</label><input id="cu-pwd" type="password" placeholder="Min 8 chars, uppercase, number"/></div>
+      <div class="field"><label>Role *</label>
+        <select id="cu-role">
+          <option value="employee">Employee</option>
+          <option value="dept_manager">Department Manager</option>
+          <option value="manager">Company Manager</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Department *</label>
+        <select id="cu-dept">
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Payroll">Payroll</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Customer Service">Customer Service</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Legal">Legal</option>
+          <option value="Management">Management</option>
+          <option value="Administration">Administration</option>
+        </select>
+      </div>
+      <div class="field"><label>Title</label><input id="cu-title" placeholder="Job title"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Salary (&#x20a6;)</label><input id="cu-salary" type="number" placeholder="0"/></div>
+      <div class="field"><label>Phone</label><input id="cu-phone" placeholder="+234..."/></div>
+    </div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mCreateUser')">Cancel</button>
+    <button class="btn btn-hi" id="cu-btn" onclick="createUser()">Create Account</button>
+  </div>
+</div>
+</div>
+
+<!-- RESET PASSWORD MODAL -->
+<div class="overlay" id="mResetPwd">
+<div class="modal" style="max-width:420px">
+  <div class="m-hd"><div class="m-title">&#x1f511; Reset Password</div><button class="m-x" onclick="gxClose('mResetPwd')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-orange">A temporary password will be generated. User must change it on next login.</div>
+    <div id="reset-user-info" style="font-weight:600;margin-bottom:1rem;font-size:.9rem;background:var(--bg3);padding:.75rem;border-radius:8px"></div>
+    <div class="field"><label>New Temporary Password</label><input id="reset-pwd" value="Welcome@1234" type="text"/></div>
+    <input type="hidden" id="reset-uid"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mResetPwd')">Cancel</button>
+    <button class="btn btn-hi" onclick="doResetPwd()">Reset Password</button>
+  </div>
+</div>
+</div>
+
+<!-- SUSPEND MODAL -->
+<div class="overlay" id="mSuspend">
+<div class="modal" style="max-width:440px">
+  <div class="m-hd"><div class="m-title" style="color:var(--er)">&#x26d4; Suspend Account</div><button class="m-x" onclick="gxClose('mSuspend')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-red">This will immediately log out the user and block all future logins.</div>
+    <div id="sus-user-info" style="font-weight:600;margin-bottom:1rem;background:var(--bg3);padding:.75rem;border-radius:8px"></div>
+    <div class="field"><label>Reason for Suspension *</label><textarea id="sus-reason" placeholder="Provide a clear reason — this will be logged and sent to the user..."></textarea></div>
+    <input type="hidden" id="sus-uid"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mSuspend')">Cancel</button>
+    <button class="btn btn-er" onclick="doSuspend()">Suspend Account</button>
+  </div>
+</div>
+</div>
+
+<!-- FINALIZE ACCOUNT MODAL -->
+<div class="overlay" id="mFinalize">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f527; Create Staff Account</div><button class="m-x" onclick="gxClose('mFinalize')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-blue">Manager has approved this request. Review the details and create the account.</div>
+    <div id="finalize-info" style="background:var(--bg3);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.85rem;line-height:1.9"></div>
+    <div class="field"><label>Initial Password</label><input id="fin-pwd" value="Welcome@1234" type="text" placeholder="Minimum 8 chars, uppercase, number"/></div>
+    <div class="field"><label>IT Notes (optional)</label><textarea id="fin-note" placeholder="Any notes about this account setup..."></textarea></div>
+    <input type="hidden" id="fin-rid"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mFinalize')">Cancel</button>
+    <button class="btn btn-er btn-sm" onclick="rejectRequest()" style="margin-right:auto">Reject</button>
+    <button class="btn btn-hi" id="fin-btn" onclick="finalizeAccount()">Create Account</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="mConfirm">
+<div class="modal" style="max-width:400px">
+  <div class="m-hd"><div class="m-title" id="mc-title">Confirm Action</div><button class="m-x" onclick="gxClose('mConfirm')">&#x2715;</button></div>
+  <div class="m-body"><div id="mc-msg" style="font-size:.88rem;color:var(--tx2);line-height:1.6"></div></div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mConfirm')">Cancel</button>
+    <button class="btn" id="mc-btn" onclick="window._mcOk&&window._mcOk();gxClose('mConfirm')">Confirm</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mLock">
+<div class="modal" style="max-width:420px">
+  <div class="m-hd"><div class="m-title" style="color:var(--er)">&#x1f512; Lock Account</div><button class="m-x" onclick="gxClose('mLock')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-red">User will be immediately logged out and cannot log back in until unlocked.</div>
+    <div id="lock-user-info" style="font-weight:600;margin-bottom:1rem;background:var(--bg3);padding:.75rem;border-radius:8px"></div>
+    <div class="field"><label>Reason *</label><textarea id="lock-reason" placeholder="Why is this account being locked? This will be shown to the user..."></textarea></div>
+    <input type="hidden" id="lock-uid"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mLock')">Cancel</button>
+    <button class="btn btn-er" onclick="doLockAccount()">Lock Account</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mAsset">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4bb; Add Asset</div><button class="m-x" onclick="gxClose('mAsset')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="form-row">
+      <div class="field"><label>Asset Name *</label><input id="ast-name" placeholder="e.g. HP Laptop 15"/></div>
+      <div class="field"><label>Category *</label>
+        <select id="ast-cat">
+          <option value="Laptop">Laptop</option><option value="Desktop">Desktop</option>
+          <option value="Phone">Phone</option><option value="Tablet">Tablet</option>
+          <option value="Printer">Printer</option><option value="Monitor">Monitor</option>
+          <option value="Network">Network Equipment</option><option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Brand</label><input id="ast-brand" placeholder="HP, Dell, Apple..."/></div>
+      <div class="field"><label>Model</label><input id="ast-model" placeholder="Model number"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Serial Number</label><input id="ast-serial" placeholder="SN..."/></div>
+      <div class="field"><label>Condition</label>
+        <select id="ast-condition"><option value="new">New</option><option value="good" selected>Good</option><option value="fair">Fair</option><option value="poor">Poor</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Purchase Date</label><input id="ast-purchase" type="date"/></div>
+      <div class="field"><label>Purchase Price (&#x20a6;)</label><input id="ast-price" type="number" placeholder="0"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Warranty Expiry</label><input id="ast-warranty" type="date"/></div>
+      <div class="field"><label>Location</label><input id="ast-location" placeholder="Office, Warehouse..."/></div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="ast-notes" placeholder="Any additional info..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mAsset')">Cancel</button>
+    <button class="btn btn-hi" id="ast-btn" onclick="submitAsset()">Add Asset</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mAssign">
+<div class="modal" style="max-width:420px">
+  <div class="m-hd"><div class="m-title">&#x1f4ce; Assign Asset</div><button class="m-x" onclick="gxClose('mAssign')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="assign-asset-info" style="background:var(--bg3);border-radius:8px;padding:.75rem;margin-bottom:1rem;font-size:.85rem"></div>
+    <div class="field"><label>Assign To *</label><select id="assign-emp"><option value="">Select employee...</option></select></div>
+    <input type="hidden" id="assign-asset-id"/>
+    <input type="hidden" id="assign-asset-name"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mAssign')">Cancel</button>
+    <button class="btn btn-hi" id="assign-btn" onclick="submitAssign()">Assign Asset</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mLicense">
+<div class="modal" style="max-width:460px">
+  <div class="m-hd"><div class="m-title">&#x1f4dc; Add Software License</div><button class="m-x" onclick="gxClose('mLicense')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="form-row">
+      <div class="field"><label>Software Name *</label><input id="lic-name" placeholder="e.g. Microsoft Office 365"/></div>
+      <div class="field"><label>Vendor</label><input id="lic-vendor" placeholder="Microsoft, Adobe..."/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Category</label>
+        <select id="lic-cat"><option value="Productivity">Productivity</option><option value="Security">Security</option><option value="Design">Design</option><option value="Development">Development</option><option value="Communication">Communication</option><option value="Other">Other</option></select>
+      </div>
+      <div class="field"><label>Number of Seats</label><input id="lic-seats" type="number" value="1" min="1"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Annual Cost (&#x20a6;)</label><input id="lic-cost" type="number" placeholder="0"/></div>
+      <div class="field"><label>Expiry Date</label><input id="lic-expiry" type="date"/></div>
+    </div>
+    <div class="field"><label>License Key</label><input id="lic-key" placeholder="License key or serial..."/></div>
+    <div class="field"><label>Notes</label><textarea id="lic-notes" placeholder="Notes..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mLicense')">Cancel</button>
+    <button class="btn btn-hi" id="lic-btn" onclick="submitLicense()">Add License</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mSession">
+<div class="modal" style="max-width:440px">
+  <div class="m-hd"><div class="m-title">&#x1f4dd; Log Session Note</div><button class="m-x" onclick="gxClose('mSession')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="form-row">
+      <div class="field"><label>Employee</label><select id="sn-emp"><option value="">Select employee...</option></select></div>
+      <div class="field"><label>Session Type</label>
+        <select id="sn-type"><option value="Remote">Remote Support</option><option value="On-site">On-site Visit</option><option value="Phone">Phone Support</option><option value="Training">Training Session</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Duration (minutes)</label><input id="sn-duration" type="number" placeholder="30" value="30"/></div>
+    <div class="field"><label>Work Done *</label><textarea id="sn-work" placeholder="Describe what was done, issues resolved, changes made..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mSession')">Cancel</button>
+    <button class="btn btn-hi" id="sn-btn" onclick="submitSessionNote()">Save Note</button>
+  </div>
+</div>
+</div>
+<div id="toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<script>
+
+var API = 'https://web-production-50873.up.railway.app';
+var ME = null;
+var TOKEN = null;
+
+
+/* ── AI HELPER (Claude API) ── */
+var GX_AI_MODEL = 'claude-sonnet-4-20250514';
+
+function gxAI(systemPrompt, userMessage, onChunk, onDone, onError) {
+  // Show typing indicator if onChunk provided
+  var url = 'https://api.anthropic.com/v1/messages';
+  var payload = {
+    model: GX_AI_MODEL,
+    max_tokens: 1000,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }]
+  };
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  , body: JSON.stringify(payload) })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) { if(onError) onError(d.error.message); return; }
+    var text = (d.content && d.content[0]) ? d.content[0].text : '';
+    if (onDone) onDone(text);
+  })
+  .catch(function(e) { if(onError) onError(e.message); });
+}
+
+function gxAIBox(containerId, label) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  el.style.cssText = 'background:var(--bg3);border:1px solid rgba(255,107,0,.2);border-radius:10px;padding:1rem;margin-top:.75rem';
+  var hd = document.createElement('div');
+  hd.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;font-size:.78rem;font-weight:600;color:var(--hi)';
+  hd.innerHTML = '&#x1f916; ' + (label || 'AI Analysis');
+  el.appendChild(hd);
+  var body = document.createElement('div');
+  body.id = containerId + '-body';
+  body.style.cssText = 'font-size:.82rem;color:var(--tx2);line-height:1.6;white-space:pre-wrap';
+  body.innerHTML = '<span style="color:var(--tx3)">&#x23f3; Analyzing...</span>';
+  el.appendChild(body);
+  return body;
+}
+
+function gxAISetText(containerId, text) {
+  var el = document.getElementById(containerId + '-body');
+  if (el) el.textContent = text;
+}
+
+
+/* ── AUTH ── */
+function gxInit(requiredRole, onReady) {
+  TOKEN = sessionStorage.getItem('gx_token');
+  var userStr = sessionStorage.getItem('gx_user');
+  
+  if (!TOKEN || !userStr) {
+    window.location.href = 'giddyexpress-login.html';
+    return;
+  }
+  
+  ME = JSON.parse(userStr);
+  
+  // Verify with server
+  api('GET', '/api/auth/verify-role?required_role=' + requiredRole)
+  .then(function(data) {
+    ME = data.user;
+    // Update UI
+    var av = document.getElementById('sbAv');
+    var nm = document.getElementById('sbName');
+    var rl = document.getElementById('sbRole');
+    if(av) { av.textContent = gxInits(ME.name); av.style.background = ME.color || '#FF6B00'; }
+    if(nm) nm.textContent = ME.name;
+    if(rl) rl.textContent = ME.role.replace(/_/g,' ');
+    gxClock();
+    gxNotifBadge();
+    gxStartInactivityWatch();
+    gxShowLastLogin(ME);
+    if(onReady) onReady(ME);
+  })
+  .catch(function(e) {
+    sessionStorage.clear();
+    window.location.href = 'giddyexpress-login.html?reason=' + encodeURIComponent(e.message || 'Session expired');
+  });
+}
+
+/* ── API CALL ── */
+function api(method, path, body) {
+  var opts = {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  return fetch(API + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if(!r.ok) {
+        var msg = d.detail || 'Request failed';
+        // Handle locked account
+        if(r.status === 423 || (msg && msg.indexOf('|||LOCKED') !== -1)) {
+          var reason = msg.replace('|||LOCKED','').trim();
+          gxShowLockedScreen(reason);
+          throw new Error(reason);
+        }
+        // Handle portal closed
+        if(r.status === 503) {
+          gxShowPortalClosed(msg);
+          throw new Error(msg);
+        }
+        throw new Error(msg);
+      }
+      return d;
+    });
+  });
+}
+
+/* ── LOGOUT ── */
+function gxLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+
+/* ── ACCOUNT LOCKED SCREEN ── */
+function gxShowLockedScreen(reason) {
+  sessionStorage.clear();
+  document.body.innerHTML = '';
+  document.body.style.cssText = 'margin:0;padding:0;background:#0D0F14;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:DM Sans,sans-serif';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1A1D24;border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center';
+  box.innerHTML = '<div style="font-size:3rem;margin-bottom:1rem">🔒</div>' +
+    '<div style="color:#EF4444;font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Account Locked</div>' +
+    '<div style="color:#9CA3AF;font-size:.85rem;line-height:1.6;margin-bottom:1.5rem">' + (reason || 'Your account has been locked. Please contact IT Support to resolve this.') + '</div>' +
+    '<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:1rem;margin-bottom:1.5rem">' +
+    '<div style="color:#EF4444;font-weight:600;font-size:.85rem">&#x1f4de; Contact IT Support</div>' +
+    '<div style="color:#9CA3AF;font-size:.78rem;margin-top:.25rem">Reach out to your IT team to have your account unlocked</div>' +
+    '</div>' +
+    '<div style="color:#6B7280;font-size:.72rem">Giddies Express HR Portal</div>';
+  document.body.appendChild(box);
+}
+
+/* ── PORTAL CLOSED SCREEN ── */
+function gxShowPortalClosed(message) {
+  sessionStorage.clear();
+  document.body.innerHTML = '';
+  document.body.style.cssText = 'margin:0;padding:0;background:#0D0F14;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:DM Sans,sans-serif';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1A1D24;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center';
+  box.innerHTML = '<div style="font-size:3rem;margin-bottom:1rem">🚧</div>' +
+    '<div style="color:#F59E0B;font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Portal Temporarily Closed</div>' +
+    '<div style="color:#9CA3AF;font-size:.85rem;line-height:1.6;margin-bottom:1.5rem">' + (message || 'The portal is currently closed. Please check back later.') + '</div>' +
+    '<div style="color:#6B7280;font-size:.72rem">Giddies Express HR Portal &mdash; Contact Admin for more info</div>';
+  document.body.appendChild(box);
+}
+
+/* ── INACTIVITY LOGOUT (1 hour) ── */
+var GX_INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour in ms
+var GX_WARN_BEFORE = 2 * 60 * 1000;       // warn 2 minutes before
+var _gxInactTimer = null;
+var _gxWarnTimer = null;
+var _gxWarnShown = false;
+
+function gxResetInactivity() {
+  clearTimeout(_gxInactTimer);
+  clearTimeout(_gxWarnTimer);
+  _gxWarnShown = false;
+  // Remove warning banner if visible
+  var wb = document.getElementById('gx-inact-warn');
+  if(wb) wb.remove();
+  // Warn 2 mins before
+  _gxWarnTimer = setTimeout(function() {
+    if(_gxWarnShown) return;
+    _gxWarnShown = true;
+    var warn = document.createElement('div');
+    warn.id = 'gx-inact-warn';
+    warn.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#EF4444;color:#fff;text-align:center;padding:.6rem 1rem;font-size:.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:1rem;font-family:DM Sans,sans-serif';
+    warn.innerHTML = '&#x26a0; Your session will expire in 2 minutes due to inactivity. <button onclick="gxResetInactivity()" style="background:#fff;color:#EF4444;border:none;padding:.3rem .8rem;border-radius:20px;font-weight:700;cursor:pointer;font-size:.78rem">Stay Logged In</button>';
+    document.body.appendChild(warn);
+  }, GX_INACTIVITY_LIMIT - GX_WARN_BEFORE);
+  // Auto logout
+  _gxInactTimer = setTimeout(function() {
+    toast('Session expired due to inactivity', 'wa');
+    setTimeout(function() {
+      api('POST', '/api/auth/logout').catch(function(){});
+      sessionStorage.clear();
+      window.location.href = 'giddyexpress-login.html?reason=Session+expired+due+to+inactivity';
+    }, 1500);
+  }, GX_INACTIVITY_LIMIT);
+}
+
+function gxStartInactivityWatch() {
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(function(evt) {
+    document.addEventListener(evt, gxResetInactivity, {passive:true});
+  });
+  gxResetInactivity();
+}
+
+/* ── LAST LOGIN DISPLAY ── */
+function gxShowLastLogin(user) {
+  // Show last login info in a subtle bar below topbar
+  if(!user || !user.last_login) return;
+  var existing = document.getElementById('gx-last-login');
+  if(existing) existing.remove();
+  var bar = document.createElement('div');
+  bar.id = 'gx-last-login';
+  var lastTime = new Date(user.last_login);
+  var now = new Date();
+  var diffMs = now - lastTime;
+  var diffH = Math.floor(diffMs / 3600000);
+  var diffD = Math.floor(diffMs / 86400000);
+  var timeStr = diffD > 0 ? diffD + ' day'+(diffD>1?'s':'')+' ago' : diffH > 0 ? diffH + ' hour'+(diffH>1?'s':'')+' ago' : 'Less than an hour ago';
+  // Format the exact date
+  var exactStr = lastTime.toLocaleString('en-NG', {weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  bar.style.cssText = 'background:rgba(255,107,0,.06);border-bottom:1px solid rgba(255,107,0,.1);padding:.35rem 1.2rem;font-size:.72rem;color:var(--tx3);display:flex;align-items:center;gap:.4rem;font-family:DM Sans,sans-serif';
+  bar.innerHTML = '<span style="color:var(--tx3)">&#x1f552;</span> Last login: <strong style="color:var(--tx2)">'+exactStr+'</strong> <span style="color:rgba(255,255,255,.2)">|</span> <span>'+timeStr+'</span>';
+  // Insert after topbar
+  var topbar = document.querySelector('.topbar');
+  if(topbar && topbar.parentNode) {
+    topbar.parentNode.insertBefore(bar, topbar.nextSibling);
+  }
+}
+
+/* ── DISABLE BACK BUTTON AFTER LOGOUT ── */
+function gxSecureLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  // Replace history so back button can't return to portal
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+/* ── CLOCK ── */
+function gxClock() {
+  function tick() {
+    var e = document.getElementById('tbClock');
+    if(!e) return;
+    try {
+      var n = new Date(new Date().toLocaleString('en-US', {timeZone:'Africa/Lagos'}));
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    } catch(err) {
+      var n = new Date();
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    }
+  }
+  tick(); setInterval(tick, 1000);
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+/* ── NOTIF BADGE ── */
+function gxNotifBadge() {
+  api('GET', '/api/notifications/unread-count').then(function(d) {
+    if((d.count||0) > 0) {
+      var dot = document.getElementById('notifDot');
+      if(dot) dot.style.display = 'block';
+    }
+  }).catch(function(){});
+}
+
+/* ── TOAST ── */
+function toast(msg, type) {
+  var w = document.getElementById('toasts');
+  if(!w) { w = document.createElement('div'); w.id='toasts'; w.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none'; document.body.appendChild(w); }
+  var c={ok:'#4ADE80',er:'#FCA5A5',wa:'#FCD34D',in:'#93C5FD'};
+  var b={ok:'rgba(34,197,94,.3)',er:'rgba(239,68,68,.3)',wa:'rgba(245,158,11,.3)',in:'rgba(96,165,250,.3)'};
+  var t = document.createElement('div');
+  t.style.cssText='background:#1A1D24;border:1px solid '+(b[type]||b.in)+';color:'+(c[type]||c.in)+';padding:.62rem 1rem;border-radius:100px;font-size:.76rem;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateX(110%);transition:transform .28s;font-family:DM Sans,sans-serif;max-width:300px';
+  t.textContent = msg; w.appendChild(t);
+  setTimeout(function(){t.style.transform='translateX(0)';}, 10);
+  setTimeout(function(){t.style.transform='translateX(110%)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);}, 3800);
+}
+
+/* ── MODAL ── */
+function om(id) { var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function cm(id) { var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target&&e.target.classList.contains('overlay')) e.target.classList.remove('open'); });
+
+/* ── HELPERS ── */
+function money(n) { return '\u20a6' + Number(n||0).toLocaleString(); }
+function gxInits(name) { return (name||'?').split(' ').map(function(c){return c[0];}).join('').slice(0,2).toUpperCase(); }
+function gxAgo(d) { if(!d)return''; var m=Math.floor((Date.now()-new Date(d))/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; var h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+function gxToday() { return new Date().toISOString().slice(0,10); }
+function gxAvc(name) { var c=['#FF6B00','#F472B6','#60A5FA','#4ADE80','#A78BFA','#FB923C']; var h=0; for(var i=0;i<(name||'').length;i++) h=(name.charCodeAt(i)+((h<<5)-h)); return c[Math.abs(h)%c.length]; }
+function gxAv(name,sz) { var s=sz||'28px'; return '<div style="width:'+s+';height:'+s+';border-radius:50%;background:'+gxAvc(name)+';display:flex;align-items:center;justify-content:center;font-size:calc('+s+' * 0.35);font-weight:700;color:#fff;flex-shrink:0">'+gxInits(name)+'</div>'; }
+function gxBadge(s) { var m={active:'b-ok',pending:'b-wa',approved:'b-ok',rejected:'b-er','in-progress':'b-bl',done:'b-ok',present:'b-ok',late:'b-wa',absent:'b-er',high:'b-or',urgent:'b-er',medium:'b-wa',low:'b-gy',suspended:'b-er',open:'b-or',resolved:'b-ok',admin:'b-or',manager:'b-pu',dept_manager:'b-wa',employee:'b-bl',completed:'b-ok'}; return '<span class="b '+(m[s]||'b-gy')+'">'+s+'</span>'; }
+function gxPay(g) { var t=Math.round(g*.20),n=Math.round(g*.08),p=Math.round(g*.05); return {gross:g,tax:t,ni:n,pension:p,net:g-t-n-p}; }
+function gxTab(btn) { var p=btn.closest('.tabs'); if(!p)return; p.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); btn.classList.add('on'); }
+function gxNav(id) { document.querySelectorAll('.nav-a').forEach(function(n){n.classList.remove('on');}); var e=document.getElementById('nav-'+id); if(e) e.classList.add('on'); }
+function gxSetPage(id, title) { gxNav(id); var t=document.getElementById('pageTitle'); if(t) t.textContent=title||id; }
+function loading(id) { var e=document.getElementById(id); if(e) e.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>'; }
+function gxPrint(title, html) {
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to print','wa');return;}
+  w.document.write('<!DOCTYPE html><html><head><title>'+title+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:2rem;color:#111;font-size:12px}h2{color:#FF6B00;border-bottom:2px solid #FF6B00;padding-bottom:.5rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;margin:.75rem 0}th{background:#FF6B00;color:#fff;padding:.35rem .6rem;text-align:left;font-size:.7rem}td{padding:.4rem .6rem;border-bottom:1px solid #eee}</style></head><body><h2>Giddies Express &#8212; '+title+'</h2>'+html+'<p style="margin-top:1rem;font-size:.7rem;color:#888">Generated: '+new Date().toLocaleString('en-NG')+'</p><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></'+'body></'+'html>');
+  w.document.close();
+}
+
+
+function goTo(id){
+  closeSb();gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='health')pgHealth();
+    else if(id==='sessions')pgSessions();
+    else if(id==='logs')pgLogs();
+    else if(id==='users')pgUsers();
+    else if(id==='finalize')pgFinalize();
+    else if(id==='suspended')pgSuspended();
+    else if(id==='tickets')pgTickets();
+    else if(id==='notifications')pgNotifications();
+    else if(id==='locked')pgITLocked();
+    else if(id==='assets')pgAssets();
+    else if(id==='licenses')pgLicenses();
+    else if(id==='sla')pgSLA();
+    else if(id==='session-notes')pgSessionNotes();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+// ── DASHBOARD ──
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/it/system-health'),
+    api('GET','/api/it/tickets?status=open'),
+    api('GET','/api/users/requests'),
+    api('GET','/api/users/active-sessions')
+  ]).then(function(r){
+    var health=r[0], tickets=r[1], reqs=r[2], sessions=r[3];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Stats
+    var sg=mk('div','stats');
+    [{sc:'#22C55E',sc2:'#4ADE80',ic:'&#x1f465;',val:health.active_users||0,lbl:'Active Users'},{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f3ab;',val:health.open_tickets||0,lbl:'Open Tickets'},{sc:'#60A5FA',sc2:'#93C5FD',ic:'&#x1f7e2;',val:health.active_sessions||0,lbl:'Live Sessions'},{sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f4dd;',val:health.pending_user_requests||0,lbl:'Pending Accounts'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val');v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    // Pending accounts card
+    var ac=mk('div','card');var ach=mk('div','c-hd');ach.innerHTML='<div class="c-title">Accounts to Create</div>';addBtn(ach,'View All','btn-gh btn-sm',function(){goTo('finalize');});ac.appendChild(ach);
+    var al=mk('div');
+    var pendingIT=reqs.filter(function(r){return r.status==='pending_it';});
+    if(!pendingIT.length){
+      var nd=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');nd.textContent='No accounts waiting to be created';al.appendChild(nd);
+    } else {
+      pendingIT.slice(0,4).forEach(function(r){
+        var d2=r.request_data||{};
+        var row=mk('div','appr-row');
+        var ic=mk('div','appr-ic');ic.innerHTML='&#x1f4dd;';row.appendChild(ic);
+        var info=mk('div','appr-info');var ti=mk('div','appr-title');ti.textContent=(d2.name||'?')+' - '+d2.role;info.appendChild(ti);var me=mk('div','appr-meta');me.textContent=d2.department+' - Approved by: '+(r.manager_name||'Manager');info.appendChild(me);row.appendChild(info);
+        var cb=mk('button','btn btn-hi btn-xs');cb.textContent='Create';
+        (function(req){cb.onclick=function(){openFinalize(req);};})(r);
+        row.appendChild(cb);al.appendChild(row);
+      });
+    }
+    ac.appendChild(al);left.appendChild(ac);
+
+    // Open tickets
+    var tc=mk('div','card');var th=mk('div','c-hd');th.innerHTML='<div class="c-title">Open IT Tickets</div>';addBtn(th,'All Tickets','btn-gh btn-sm',function(){goTo('tickets');});tc.appendChild(th);
+    var tl=mk('div');
+    if(!tickets||!tickets.length){
+      var td2=mk('div','','text-align:center;padding:1rem;color:var(--ok)');td2.textContent='No open tickets!';tl.appendChild(td2);
+    } else {
+      tickets.slice(0,5).forEach(function(t){
+        var row=mk('div','','display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+        var dot=mk('div','','width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(t.priority==='urgent'?'var(--er)':t.priority==='high'?'var(--or)':'var(--wa)'));
+        var info=mk('div','','flex:1');var ti=mk('div','','font-size:.8rem;font-weight:500');ti.textContent=t.subject;info.appendChild(ti);var me=mk('div','','font-size:.68rem;color:var(--tx3)');me.textContent=(t.submitter_name||'?')+' - '+(t.department||'?');info.appendChild(me);
+        row.appendChild(dot);row.appendChild(info);
+        var cb2=mk('button','btn btn-gh btn-xs');cb2.textContent='Update';
+        (function(tk){cb2.onclick=function(){openTicketUpdate(tk);};})(t);
+        row.appendChild(cb2);tl.appendChild(row);
+      });
+    }
+    tc.appendChild(tl);left.appendChild(tc);
+
+    // Quick actions
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">Quick Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['System Health','btn-hi btn-bl2',function(){goTo('health');}],['Live Sessions','btn-gh btn-bl2',function(){goTo('sessions');}],['Create Account','btn-gh btn-bl2',function(){gxOpen('mCreateUser');}],['Activity Logs','btn-gh btn-bl2',function(){goTo('logs');}],['IT Tickets','btn-gh btn-bl2',function(){goTo('tickets');}],['All Users','btn-gh btn-bl2',function(){goTo('users');}]].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    // System quick stats
+    var sc2=mk('div','card','margin-top:1rem');sc2.innerHTML='<div class="c-hd"><div class="c-title">System Overview</div></div>';
+    [['Total Users',health.total_users||0,'var(--tx)'],['Active Users',health.active_users||0,'var(--ok)'],['Suspended',health.suspended_users||0,'var(--er)'],['Database Size',health.db_size_kb+'KB','var(--bl)'],['Logins Today',health.today_logins||0,'var(--ok)'],['Failed Logins Today',health.today_failed_logins||0,'var(--wa)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);sc2.appendChild(d);
+    });
+    right.appendChild(sc2);
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+// ── SYSTEM HEALTH ──
+function pgHealth(){
+  api('GET','/api/it/system-health').then(function(h){
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Status banner
+    var banner=mk('div','','background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem');
+    var dot=mk('div','','width:12px;height:12px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite');
+    var txt=mk('div');var t1=mk('div','','font-weight:700;color:var(--ok)');t1.textContent='System Status: '+h.status.toUpperCase();txt.appendChild(t1);
+    var t2=mk('div','','font-size:.75rem;color:var(--tx3)');t2.textContent='All systems operational';txt.appendChild(t2);
+    banner.appendChild(dot);banner.appendChild(txt);mc.appendChild(banner);
+
+    var grid=mk('div','g2');
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">User Statistics</div></div>';
+    [['Total Users',h.total_users,'var(--tx)'],['Active Users',h.active_users,'var(--ok)'],['Suspended Users',h.suspended_users,'var(--er)'],['Active Sessions',h.active_sessions,'var(--bl)'],['Total Employees',h.total_employees,'var(--tx)'],['Pending Staff Requests',h.pending_user_requests,'var(--wa)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)');
+      var lb=mk('span','','font-size:.82rem;color:var(--tx3)');lb.textContent=row[0];
+      var vl=mk('span','','font-weight:700;font-size:1rem;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);left.appendChild(d);
+    });
+
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Activity Today</div></div>';
+    [['Successful Logins',h.today_logins,'var(--ok)'],['Failed Login Attempts',h.today_failed_logins,'var(--er)'],['Open IT Tickets',h.open_tickets,'var(--or)'],['Database Size',h.db_size_kb+' KB','var(--bl)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)');
+      var lb=mk('span','','font-size:.82rem;color:var(--tx3)');lb.textContent=row[0];
+      var vl=mk('span','','font-weight:700;font-size:1rem;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+
+    // Quick links
+    addBtn(left,'View All Users','btn-gh btn-bl2 btn-sm',function(){goTo('users');});
+    addBtn(right,'View Activity Logs','btn-gh btn-bl2 btn-sm',function(){goTo('logs');});
+
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgHealth);});
+}
+
+// ── LIVE SESSIONS ──
+function pgSessions(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Live Sessions</div><div style="font-size:.75rem;color:var(--tx3)">Users currently logged in</div>';hd.appendChild(ht);
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgSessions);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>User</th><th>Role</th><th>Department</th><th>IP Address</th><th>Login Time</th><th>Expires</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='sess-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/users/active-sessions').then(function(sessions){
+    var tb=document.getElementById('sess-tb');if(!tb)return;tb.innerHTML='';
+    if(!sessions.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No active sessions right now</td></tr>';return;}
+    sessions.forEach(function(s){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(s.name||s.email,'24px')+'<div><div style="font-weight:500;font-size:.8rem">'+(s.name||'?')+'</div><div style="font-size:.68rem;color:var(--tx3)">'+s.email+'</div></div></div>';
+      var r=document.createElement('td');r.innerHTML=gxBadge(s.role);
+      var d=document.createElement('td');d.style.fontSize='.78rem';d.textContent=s.department||'-';
+      var ip=document.createElement('td');ip.style.cssText='font-size:.75rem;font-family:monospace;color:var(--bl)';ip.textContent=s.ip_address||'-';
+      var lt=document.createElement('td');lt.style.cssText='font-size:.72rem;color:var(--tx3)';lt.textContent=gxAgo(s.created_at);
+      var ex=document.createElement('td');ex.style.cssText='font-size:.72rem;color:var(--tx3)';ex.textContent=s.expires_at?s.expires_at.slice(0,16).replace('T',' ')+' UTC':'-';
+      var at=document.createElement('td');
+      var flBtn=mk('button','btn btn-er btn-xs');flBtn.textContent='Force Logout';
+      (function(sid,nm){flBtn.onclick=function(){gxConfirm('Force logout <strong>'+nm+'</strong>? They will be immediately disconnected.','Force Logout','Yes, Logout','btn-er',function(){api('POST','/api/users/sessions/'+sid+'/force-logout').then(function(){toast(nm+' logged out','wa');pgSessions();}).catch(function(e){toast('Error: '+e.message,'er');});});};})(s.id,s.name||s.email);
+      at.appendChild(flBtn);[n,r,d,ip,lt,ex,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    // Summary
+    var info=mk('div','','margin-top:.75rem;font-size:.78rem;color:var(--tx3);text-align:right');info.textContent=sessions.length+' active session'+(sessions.length!==1?'s':'');card.appendChild(info);
+  }).catch(function(e){var tb=document.getElementById('sess-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+// ── ACTIVITY LOGS ──
+function pgLogs(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Activity Logs</div><div style="font-size:.75rem;color:var(--tx3)">Every login, action and system event</div>';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Filter by action...';inp.id='log-filter';inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:160px';
+  inp.oninput=function(){filterLogs(this.value);};hdR.appendChild(inp);
+  addBtn(hdR,'Refresh','btn-gh btn-sm',pgLogs);hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Time</th><th>User</th><th>Role</th><th>Action</th><th>Details</th><th>Status</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='log-tb';tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadLogs();
+}
+
+var ALL_LOGS=[];
+function loadLogs(){
+  api('GET','/api/it/logs?limit=100').then(function(logs){
+    ALL_LOGS=logs;renderLogs(logs);
+  }).catch(function(e){var tb=document.getElementById('log-tb');if(tb)tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function filterLogs(q){renderLogs(q?ALL_LOGS.filter(function(l){return(l.action||'').toLowerCase().includes(q.toLowerCase())||(l.user_name||'').toLowerCase().includes(q.toLowerCase());}):ALL_LOGS);}
+function renderLogs(logs){
+  var tb=document.getElementById('log-tb');if(!tb)return;tb.innerHTML='';
+  if(!logs.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No logs found</td></tr>';return;}
+  var actionClr={LOGIN_SUCCESS:'var(--ok)',LOGIN_FAILED:'var(--er)',USER_SUSPENDED:'var(--wa)',USER_DELETED:'var(--er)',PASSWORD_RESET:'var(--bl)',USER_CREATED:'var(--ok)',FORCE_LOGOUT:'var(--or)'};
+  logs.forEach(function(l){
+    var tr=document.createElement('tr');
+    var tm=document.createElement('td');tm.style.cssText='font-size:.7rem;color:var(--tx3);white-space:nowrap';tm.textContent=l.created_at?l.created_at.slice(0,16).replace('T',' '):'-';
+    var un=document.createElement('td');un.innerHTML='<span style="font-size:.78rem;font-weight:500">'+(l.user_name||'System')+'</span>';
+    var ur=document.createElement('td');ur.innerHTML=l.user_role?gxBadge(l.user_role):'<span class="b b-gy">system</span>';
+    var ac=document.createElement('td');
+    var acTag=mk('span','','font-size:.72rem;font-weight:600;color:'+(actionClr[l.action]||'var(--tx2)'));acTag.textContent=l.action||'-';ac.appendChild(acTag);
+    var det=document.createElement('td');det.style.cssText='font-size:.7rem;color:var(--tx3);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    det.textContent=l.details?JSON.stringify(l.details).slice(0,60):'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(l.status||'success');
+    [tm,un,ur,ac,det,st].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+// ── ALL USERS ──
+var ALL_USERS=[];
+function pgUsers(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">All Users</div><div style="font-size:.75rem;color:var(--tx3)">Manage accounts, reset passwords, suspend users</div>';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Search...';inp.oninput=function(){filterUsers(this.value);};inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';hdR.appendChild(inp);
+  addBtn(hdR,'+ Create User','btn-hi btn-sm',function(){gxOpen('mCreateUser');});
+  addBtn(hdR,'Refresh','btn-gh btn-sm',pgUsers);hd.appendChild(hdR);mc.appendChild(hd);
+
+  var tabs=mk('div','tabs');
+  [['all','All'],['active','Active'],['suspended','Suspended']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(f){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');filterUsersByStatus(f);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='users-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/users/').then(function(u){ALL_USERS=u;renderUsers(u);}).catch(function(e){var tb=document.getElementById('users-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function filterUsers(q){renderUsers(q?ALL_USERS.filter(function(u){return(u.name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase())||(u.department||'').toLowerCase().includes(q.toLowerCase());}):ALL_USERS);}
+function filterUsersByStatus(f){
+  if(f==='all')renderUsers(ALL_USERS);
+  else if(f==='active')renderUsers(ALL_USERS.filter(function(u){return !u.is_suspended&&u.is_active;}));
+  else renderUsers(ALL_USERS.filter(function(u){return u.is_suspended;}));
+}
+function renderUsers(users){
+  var tb=document.getElementById('users-tb');if(!tb)return;tb.innerHTML='';
+  if(!users.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No users found</td></tr>';return;}
+  users.forEach(function(u){
+    var tr=document.createElement('tr');
+    var status=u.is_suspended?'suspended':u.is_active?'active':'inactive';
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(u.name||u.email,'24px')+'<div><div style="font-weight:500;font-size:.8rem">'+(u.name||'-')+'</div>'+(u.password_reset_required?'<div style="font-size:.65rem;color:var(--wa)">Password reset required</div>':'')+'</div></div>';
+    var em=document.createElement('td');em.style.cssText='font-size:.75rem;color:var(--tx2)';em.textContent=u.email;
+    var ro=document.createElement('td');ro.innerHTML=gxBadge(u.role);
+    var de=document.createElement('td');de.style.fontSize='.78rem';de.textContent=u.emp_dept||u.department||'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(status)+(u.login_attempts>=3?'<span class="b b-wa" style="margin-left:.3rem">'+u.login_attempts+' fails</span>':'');
+    var lg=document.createElement('td');lg.style.cssText='font-size:.72rem;color:var(--tx3)';lg.textContent=u.last_login?gxAgo(u.last_login):'Never';
+    var at=document.createElement('td');var acts=mk('div','td-acts');
+
+    var pwdBtn=mk('button','btn btn-bl btn-xs');pwdBtn.textContent='Reset Pwd';
+    (function(uid,nm){pwdBtn.onclick=function(){openResetPwd(uid,nm);};})(u.id,u.name||u.email);acts.appendChild(pwdBtn);
+
+    if(u.is_suspended){
+      var unsBtn=mk('button','btn btn-ok btn-xs');unsBtn.textContent='Reinstate';
+      (function(uid,nm){unsBtn.onclick=function(){gxConfirm('Reinstate <strong>'+nm+'</strong>? They will regain full access.','Reinstate Account','Yes, Reinstate','btn-ok',function(){api('POST','/api/users/'+uid+'/unsuspend').then(function(r){toast(r.message,'ok');pgUsers();}).catch(function(e){toast('Error: '+e.message,'er');});});};})(u.id,u.name||u.email);acts.appendChild(unsBtn);
+    } else if(u.role!=='admin'){
+      var lockBtn=mk('button','btn btn-er btn-xs');lockBtn.textContent='Lock';
+    (function(uid,nm){lockBtn.onclick=function(){openLockAccount(uid,nm);};})(u.id,u.name||u.email);acts.appendChild(lockBtn);
+    var susBtn=mk('button','btn btn-wa btn-xs');susBtn.textContent='Suspend';
+      (function(uid,nm){susBtn.onclick=function(){openSuspend(uid,nm);};})(u.id,u.name||u.email);acts.appendChild(susBtn);
+    }
+
+    at.appendChild(acts);[n,em,ro,de,st,lg,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+function openResetPwd(uid,name){
+  document.getElementById('reset-uid').value=uid;
+  document.getElementById('reset-user-info').textContent='Resetting password for: '+name;
+  document.getElementById('reset-pwd').value='Welcome@1234';
+  gxOpen('mResetPwd');
+}
+function doResetPwd(){
+  var uid=document.getElementById('reset-uid').value;
+  var pwd=document.getElementById('reset-pwd').value.trim();
+  if(!pwd){toast('Enter a password','er');return;}
+  api('POST','/api/users/'+uid+'/reset-password').then(function(r){
+    gxClose('mResetPwd');
+    toast('Password reset! New temp pwd: '+r.new_password,'ok');
+    pgUsers();
+  }).catch(function(e){toast('Error: '+e.message,'er');});
+}
+function openSuspend(uid,name){
+  document.getElementById('sus-uid').value=uid;
+  document.getElementById('sus-user-info').textContent='Suspending: '+name;
+  document.getElementById('sus-reason').value='';
+  gxOpen('mSuspend');
+}
+function doSuspend(){
+  var uid=document.getElementById('sus-uid').value;
+  var reason=document.getElementById('sus-reason').value.trim();
+  if(!reason){toast('A reason is required','er');return;}
+  api('POST','/api/users/'+uid+'/suspend',{reason:reason,notify_user:true})
+  .then(function(r){gxClose('mSuspend');toast(r.message,'wa');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+function createUser(){
+  var name=document.getElementById('cu-name').value.trim(),email=document.getElementById('cu-email').value.trim(),pwd=document.getElementById('cu-pwd').value;
+  var role=document.getElementById('cu-role').value,dept=document.getElementById('cu-dept').value;
+  if(!name||!email||!pwd){toast('Fill in Name, Email, Password','er');return;}
+  var btn=document.getElementById('cu-btn');btn.disabled=true;btn.textContent='Creating...';
+  api('POST','/api/users/create',{name:name,email:email,password:pwd,role:role,department:dept,title:document.getElementById('cu-title').value.trim(),salary:parseFloat(document.getElementById('cu-salary').value)||0,phone:document.getElementById('cu-phone').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Create Account';gxClose('mCreateUser');toast(r.message,'ok');['cu-name','cu-email','cu-pwd','cu-title','cu-salary','cu-phone'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});pgUsers();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Create Account';toast('Error: '+e.message,'er');});
+}
+
+// ── CREATE ACCOUNTS (Finalize HR Requests) ──
+function pgFinalize(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='These are staff requests approved by Manager. Create their accounts below.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Approved Requests — Ready to Create</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgFinalize);card.appendChild(hd);
+  var list=mk('div');list.id='fin-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('fin-list');if(!el)return;
+    var pending=reqs.filter(function(r){return r.status==='pending_it';});
+    if(!pending.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No approved requests waiting. Check back later.</div>';return;}
+    pending.forEach(function(r){
+      var d=r.request_data||{};
+      var card2=mk('div','','background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:.85rem');
+      // Header
+      var hdr=mk('div','','display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem');
+      var left2=mk('div');var nm=mk('div','','font-weight:700;font-size:.95rem');nm.textContent=d.name||'?';left2.appendChild(nm);
+      var meta=mk('div','','font-size:.75rem;color:var(--tx3);margin-top:.2rem');meta.textContent='Submitted by '+r.submitted_by_name+' - Approved by '+(r.manager_name||'Manager')+' - '+gxAgo(r.created_at);left2.appendChild(meta);hdr.appendChild(left2);
+      var acts=mk('div','','display:flex;gap:.5rem');
+      var cb=mk('button','btn btn-hi btn-sm');cb.textContent='Create Account';
+      (function(req){cb.onclick=function(){openFinalize(req);};})(r);
+      acts.appendChild(cb);hdr.appendChild(acts);card2.appendChild(hdr);
+      // Details grid
+      var grid=mk('div','','display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;font-size:.78rem');
+      [['Email',d.email||'?'],['Role',d.role||'?'],['Department',d.department||'?'],['Title',d.title||'-'],['Salary',d.salary>0?money(d.salary):'-'],['Contract',d.contract_type||'Permanent']].forEach(function(f){
+        var dv=mk('div','','background:var(--bg2);border-radius:7px;padding:.5rem .7rem');var lb=mk('div','','font-size:.65rem;color:var(--tx3)');lb.textContent=f[0];var vl=mk('div','','font-weight:500;margin-top:.1rem');vl.textContent=f[1];dv.appendChild(lb);dv.appendChild(vl);grid.appendChild(dv);
+      });
+      card2.appendChild(grid);el.appendChild(card2);
+    });
+  }).catch(function(e){var el2=document.getElementById('fin-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function openFinalize(req){
+  var d=req.request_data||{};
+  document.getElementById('fin-rid').value=req.id;
+  document.getElementById('fin-pwd').value='Welcome@1234';
+  document.getElementById('fin-note').value='';
+  var info=document.getElementById('finalize-info');
+  info.innerHTML='<strong>Name:</strong> '+d.name+'<br><strong>Email:</strong> '+d.email+'<br><strong>Role:</strong> '+d.role+'<br><strong>Department:</strong> '+d.department+(d.title?'<br><strong>Title:</strong> '+d.title:'')+(d.salary>0?'<br><strong>Salary:</strong> '+money(d.salary):'')+'<br><strong>Approved by:</strong> '+(req.manager_name||'Manager');
+  gxOpen('mFinalize');
+}
+function finalizeAccount(){
+  var rid=document.getElementById('fin-rid').value;
+  var pwd=document.getElementById('fin-pwd').value.trim();
+  var note=document.getElementById('fin-note').value.trim();
+  if(!pwd){toast('Set an initial password','er');return;}
+  var btn=document.getElementById('fin-btn');btn.disabled=true;btn.textContent='Creating...';
+  api('POST','/api/users/requests/'+rid+'/it-finalize',{approved:true,initial_password:pwd,note:note})
+  .then(function(r){btn.disabled=false;btn.textContent='Create Account';gxClose('mFinalize');toast('Account created! Temp password: '+r.initial_password,'ok');pgFinalize();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Create Account';toast('Error: '+e.message,'er');});
+}
+function rejectRequest(){
+  var rid=document.getElementById('fin-rid').value;
+  var note=document.getElementById('fin-note').value.trim();
+  if(!note){toast('Provide a reason in the notes field before rejecting','er');return;}
+  api('POST','/api/users/requests/'+rid+'/it-finalize',{approved:false,note:note})
+  .then(function(r){gxClose('mFinalize');toast('Request rejected','wa');pgFinalize();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── SUSPENDED USERS ──
+function pgSuspended(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Suspended Accounts</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgSuspended);card.appendChild(hd);
+  var list=mk('div');list.id='sus-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/').then(function(users){
+    var el=document.getElementById('sus-list');if(!el)return;
+    var suspended=users.filter(function(u){return u.is_suspended;});
+    if(!suspended.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ok)">No suspended users</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Reason</th><th>Suspended</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    suspended.forEach(function(u){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(u.name||u.email,'24px')+'<span style="font-weight:500">'+(u.name||'-')+'</span></div>';
+      var em=document.createElement('td');em.style.cssText='font-size:.75rem;color:var(--tx2)';em.textContent=u.email;
+      var ro=document.createElement('td');ro.innerHTML=gxBadge(u.role);
+      var rs=document.createElement('td');rs.style.cssText='font-size:.75rem;color:var(--wa);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.textContent=u.suspension_reason||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=u.suspended_at?gxAgo(u.suspended_at):'-';
+      var at=document.createElement('td');
+      var unsBtn=mk('button','btn btn-ok btn-sm');unsBtn.textContent='Reinstate';
+      (function(uid,nm){unsBtn.onclick=function(){gxConfirm('Reinstate <strong>'+nm+'</strong>? They will regain full access.','Reinstate Account','Yes, Reinstate','btn-ok',function(){api('POST','/api/users/'+uid+'/unsuspend').then(function(r){toast(r.message,'ok');pgSuspended();}).catch(function(e){toast('Error: '+e.message,'er');});});};})(u.id,u.name||u.email);
+      at.appendChild(unsBtn);[n,em,ro,rs,dt,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('sus-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── IT TICKETS ──
+var ALL_TICKETS=[];
+function pgTickets(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">IT Tickets</div>';hd.appendChild(ht);
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgTickets);mc.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['open','Open'],['in-progress','In Progress'],['resolved','Resolved'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');renderTickets(st?ALL_TICKETS.filter(function(tk){return tk.status===st;}):ALL_TICKETS);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Subject</th><th>Submitted By</th><th>Dept</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Date</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='ticket-tb';tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/it/tickets').then(function(tickets){ALL_TICKETS=tickets;renderTickets(tickets.filter(function(t){return t.status==='open';}));}).catch(function(e){var tb=document.getElementById('ticket-tb');if(tb)tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function renderTickets(list){
+  var tb=document.getElementById('ticket-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--tx3)">No tickets found</td></tr>';return;}
+  list.forEach(function(t){
+    var tr=document.createElement('tr');
+    var sub=document.createElement('td');sub.style.fontWeight='500';sub.textContent=t.subject;
+    var by=document.createElement('td');by.style.fontSize='.78rem';by.textContent=t.submitter_name||'-';
+    var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=t.department||'-';
+    var pr=document.createElement('td');pr.innerHTML=gxBadge(t.priority);
+    var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+    var as=document.createElement('td');as.style.cssText='font-size:.75rem;color:var(--tx3)';as.textContent=t.assigned_name||'Unassigned';
+    var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(t.created_at);
+    var at=document.createElement('td');var upBtn=mk('button','btn btn-gh btn-xs');upBtn.textContent='Update';
+    (function(tk){upBtn.onclick=function(){openTicketUpdate(tk);};})(t);at.appendChild(upBtn);
+    [sub,by,dep,pr,st,as,dt,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+function openTicketUpdate(t){
+  document.getElementById('tk-id').value=t.id;
+  document.getElementById('tk-status').value=t.status||'open';
+  document.getElementById('tk-assigned').value=t.assigned_name||'';
+  document.getElementById('tk-resolution').value=t.resolution||'';
+  var info=document.getElementById('ticket-info');
+  info.innerHTML='<strong>Subject:</strong> '+t.subject+'<br><strong>From:</strong> '+(t.submitter_name||'?')+' ('+( t.department||'?')+')<br><strong>Priority:</strong> '+t.priority+(t.description?'<br><strong>Description:</strong> '+t.description:'');
+  gxOpen('mTicket');
+}
+function submitTicketUpdate(){
+  var id=document.getElementById('tk-id').value;
+  var status=document.getElementById('tk-status').value;
+  var assigned=document.getElementById('tk-assigned').value.trim();
+  var resolution=document.getElementById('tk-resolution').value.trim();
+  api('PATCH','/api/it/tickets/'+id,{status:status,resolution:resolution,assigned_name:assigned})
+  .then(function(){gxClose('mTicket');toast('Ticket updated','ok');pgTickets();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+
+function gxConfirm(msg,title,btnText,btnCls,onOk){
+  var mc=document.getElementById('mc-title');if(mc)mc.textContent=title||'Confirm';
+  var mm=document.getElementById('mc-msg');if(mm)mm.innerHTML=msg;
+  var mb=document.getElementById('mc-btn');if(mb){mb.textContent=btnText||'Confirm';mb.className='btn '+(btnCls||'btn-hi');}
+  window._mcOk=onOk;gxOpen('mConfirm');
+}
+
+
+// ── LOCKED ACCOUNTS (IT) ──
+function pgITLocked(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='Lock accounts for security violations. Locked users see a "Contact IT" screen and cannot log in.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">&#x1f512; Locked Accounts</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgITLocked);card.appendChild(hd);
+  var list=mk('div');list.id='it-locked-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/locked').then(function(users){
+    var el=document.getElementById('it-locked-list');if(!el)return;
+    if(!users.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ok)">&#x2705; No locked accounts</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Employee</th><th>Email</th><th>Reason</th><th>Locked By</th><th>Locked At</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    users.forEach(function(u){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(u.name||u.email,'24px')+'<span style="font-weight:500">'+(u.name||'-')+'</span></div>';
+      var em=document.createElement('td');em.style.cssText='font-size:.75rem;color:var(--tx2)';em.textContent=u.email;
+      var rs=document.createElement('td');rs.style.cssText='font-size:.75rem;color:var(--wa);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.textContent=u.lock_reason||'-';
+      var by=document.createElement('td');by.style.fontSize='.75rem';by.textContent=u.locked_by||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=u.locked_at?gxAgo(u.locked_at):'-';
+      var at=document.createElement('td');
+      var ulBtn=mk('button','btn btn-ok btn-sm');ulBtn.textContent='Unlock';
+      (function(uid,nm){ulBtn.onclick=function(){gxConfirm('Unlock <strong>'+nm+'</strong>? They will be able to log in again.','Unlock Account','Yes, Unlock','btn-ok',function(){api('POST','/api/users/'+uid+'/unlock').then(function(r){toast(r.message,'ok');pgITLocked();}).catch(function(e){toast('Error: '+e.message,'er');});});};;})(u.id,u.name||u.email);
+      at.appendChild(ulBtn);[n,em,rs,by,dt,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('it-locked-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function openLockAccount(uid, name){
+  document.getElementById('lock-uid').value=uid;
+  document.getElementById('lock-user-info').textContent='Locking: '+name;
+  document.getElementById('lock-reason').value='';
+  gxOpen('mLock');
+}
+
+function doLockAccount(){
+  var uid=document.getElementById('lock-uid').value;
+  var reason=document.getElementById('lock-reason').value.trim();
+  if(!reason){toast('Please provide a reason for locking','er');return;}
+  api('POST','/api/users/'+uid+'/lock',{reason:reason})
+  .then(function(r){gxClose('mLock');toast(r.message,'wa');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+
+// ── START ──
+
+// ── ASSET REGISTER ──
+function pgAssets(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  // Stats row
+  var statsDiv=mk('div','','display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1rem');statsDiv.id='ast-stats';
+  statsDiv.innerHTML='<div class="spin" style="margin:.5rem auto;grid-column:span 4;width:16px;height:16px;border-width:2px"></div>';mc.appendChild(statsDiv);
+  api('GET','/api/it/assets/stats').then(function(st){
+    var el=document.getElementById('ast-stats');if(!el)return;el.innerHTML='';
+    [{val:st.total,lbl:'Total Assets',sc:'#60A5FA'},{val:st.assigned,lbl:'Assigned',sc:'#F59E0B'},{val:st.available,lbl:'Available',sc:'#4ADE80'},{val:st.warranty_expiring,lbl:'Warranty Expiring',sc:'#EF4444'}].forEach(function(s){
+      var d=mk('div','','background:var(--bg3);border-radius:10px;padding:.75rem;text-align:center');
+      var v=mk('div','','font-size:1.5rem;font-weight:700;color:'+s.sc);v.textContent=s.val;d.appendChild(v);
+      var l=mk('div','','font-size:.72rem;color:var(--tx3);margin-top:.15rem');l.textContent=s.lbl;d.appendChild(l);el.appendChild(d);
+    });
+  }).catch(function(){});
+
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Asset Register';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem');
+  var inp=document.createElement('input');inp.placeholder='Search...';inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:130px';
+  inp.oninput=function(){var q=this.value.toLowerCase();document.querySelectorAll('.ast-row').forEach(function(r){r.style.display=(r.dataset.name||'').includes(q)||(r.dataset.tag||'').includes(q)?'':'none';});};
+  hdR.appendChild(inp);addBtn(hdR,'+ Add Asset','btn-hi btn-sm',function(){['ast-name','ast-brand','ast-model','ast-serial','ast-notes'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});gxOpen('mAsset');});addBtn(hdR,'Refresh','btn-gh btn-sm',pgAssets);hd.appendChild(hdR);mc.appendChild(hd);
+
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Tag</th><th>Name</th><th>Category</th><th>Brand/Model</th><th>Condition</th><th>Status</th><th>Assigned To</th><th>Warranty</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='ast-tb';tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+
+  api('GET','/api/it/assets').then(function(assets){
+    var tb=document.getElementById('ast-tb');if(!tb)return;tb.innerHTML='';
+    if(!assets.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--tx3)">No assets registered yet</td></tr>';return;}
+    assets.forEach(function(a){
+      var isExpiring=a.warranty_expiry&&a.warranty_expiry<=new Date(Date.now()+30*864e5).toISOString().slice(0,10);
+      var tr=document.createElement('tr');tr.className='ast-row';tr.dataset.name=(a.name||'').toLowerCase();tr.dataset.tag=(a.asset_tag||'').toLowerCase();
+      var tag=document.createElement('td');tag.style.cssText='font-family:monospace;font-size:.75rem;color:var(--bl)';tag.textContent=a.asset_tag||'-';
+      var nm=document.createElement('td');nm.style.fontWeight='500';nm.textContent=a.name;
+      var cat=document.createElement('td');cat.innerHTML='<span class="b b-gy">'+a.category+'</span>';
+      var bm=document.createElement('td');bm.style.cssText='font-size:.75rem;color:var(--tx3)';bm.textContent=(a.brand||'-')+(a.model?' / '+a.model:'');
+      var cond=document.createElement('td');var condClr={new:'var(--ok)',good:'var(--bl)',fair:'var(--wa)',poor:'var(--er)'};cond.innerHTML='<span style="font-size:.75rem;color:'+(condClr[a.condition]||'var(--tx3)')+'">'+a.condition+'</span>';
+      var st=document.createElement('td');st.innerHTML=gxBadge(a.status);
+      var asgn=document.createElement('td');asgn.style.fontSize='.78rem';asgn.textContent=a.assigned_to_name||'-';
+      var warr=document.createElement('td');warr.style.cssText='font-size:.72rem;color:'+(isExpiring?'var(--er)':'var(--tx3)');warr.textContent=a.warranty_expiry||'-';
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(a.status==='available'){
+        var assBtn=mk('button','btn btn-bl btn-xs');assBtn.textContent='Assign';
+        (function(asset){assBtn.onclick=function(){document.getElementById('assign-asset-id').value=asset.id;document.getElementById('assign-asset-name').value=asset.name;document.getElementById('assign-asset-info').textContent='Assigning: '+asset.name+' ('+asset.asset_tag+')';var sel=document.getElementById('assign-emp');sel.innerHTML='<option value="">Loading...</option>';api('GET','/api/employees/').then(function(emps){sel.innerHTML='<option value="">Select...</option>';emps.forEach(function(e){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.department+')';sel.appendChild(o);});}).catch(function(){});gxOpen('mAssign');};})(a);
+        acts.appendChild(assBtn);
+      } else if(a.status==='assigned'){
+        var retBtn=mk('button','btn btn-wa btn-xs');retBtn.textContent='Return';
+        (function(aid){retBtn.onclick=function(){gxConfirm('Return this asset to inventory?','Return Asset','Yes, Return','btn-wa',function(){api('POST','/api/it/assets/'+aid+'/return').then(function(r){toast(r.message,'ok');pgAssets();}).catch(function(e){toast(e.message,'er');});});};;})(a.id);
+        acts.appendChild(retBtn);
+      }
+      at.appendChild(acts);[tag,nm,cat,bm,cond,st,asgn,warr,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('ast-tb');if(tb)tb.innerHTML='<tr><td colspan="9" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+
+function submitAsset(){
+  var name=document.getElementById('ast-name').value.trim();var cat=document.getElementById('ast-cat').value;
+  if(!name){toast('Asset name is required','er');return;}
+  var btn=document.getElementById('ast-btn');btn.disabled=true;btn.textContent='Adding...';
+  api('POST','/api/it/assets',{name:name,category:cat,brand:document.getElementById('ast-brand').value.trim(),model:document.getElementById('ast-model').value.trim(),serial_number:document.getElementById('ast-serial').value.trim(),condition:document.getElementById('ast-condition').value,purchase_date:document.getElementById('ast-purchase').value,purchase_price:parseFloat(document.getElementById('ast-price').value)||0,warranty_expiry:document.getElementById('ast-warranty').value,location:document.getElementById('ast-location').value.trim(),notes:document.getElementById('ast-notes').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Add Asset';gxClose('mAsset');toast('Asset added - Tag: '+r.asset_tag,'ok');pgAssets();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Add Asset';toast('Error: '+e.message,'er');});
+}
+
+function submitAssign(){
+  var assetId=document.getElementById('assign-asset-id').value;var assetName=document.getElementById('assign-asset-name').value;
+  var sel=document.getElementById('assign-emp');
+  if(!sel.value){toast('Select an employee','er');return;}
+  var btn=document.getElementById('assign-btn');btn.disabled=true;btn.textContent='Assigning...';
+  api('POST','/api/it/assets/'+assetId+'/assign',{employee_id:sel.value,asset_name:assetName})
+  .then(function(r){btn.disabled=false;btn.textContent='Assign Asset';gxClose('mAssign');toast(r.message,'ok');pgAssets();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Assign Asset';toast('Error: '+e.message,'er');});
+}
+
+// ── SOFTWARE LICENSES ──
+function pgLicenses(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Software Licenses';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem');addBtn(hdR,'+ Add License','btn-hi btn-sm',function(){['lic-name','lic-vendor','lic-key','lic-notes'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});gxOpen('mLicense');});hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Software</th><th>Vendor</th><th>Category</th><th>Seats</th><th>Used</th><th>Annual Cost</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='lic-tb';tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/it/licenses').then(function(licenses){
+    var tb=document.getElementById('lic-tb');if(!tb)return;tb.innerHTML='';
+    if(!licenses.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--tx3)">No licenses tracked yet</td></tr>';return;}
+    licenses.forEach(function(l){
+      var tr=document.createElement('tr');
+      var nm=document.createElement('td');nm.style.fontWeight='600';nm.textContent=l.name;
+      var vn=document.createElement('td');vn.style.fontSize='.78rem';vn.textContent=l.vendor||'-';
+      var cat=document.createElement('td');cat.innerHTML='<span class="b b-gy">'+(l.category||'-')+'</span>';
+      var seats=document.createElement('td');seats.style.cssText='text-align:center;font-weight:600';seats.textContent=l.seats||'-';
+      var used=document.createElement('td');var usedPct=l.seats>0?Math.round(l.seats_used/l.seats*100):0;used.innerHTML='<div style="font-size:.78rem;font-weight:600;color:'+(usedPct>=90?'var(--er)':usedPct>=70?'var(--wa)':'var(--ok)')+'">'+l.seats_used+' / '+l.seats+'</div><div class="prog-bg" style="height:3px;margin-top:.2rem"><div class="prog-fill" style="width:'+Math.min(usedPct,100)+'%;background:'+(usedPct>=90?'var(--er)':usedPct>=70?'var(--wa)':'var(--ok)')+'"></div></div>';
+      var cost=document.createElement('td');cost.style.cssText='color:var(--hi);font-size:.82rem';cost.textContent=l.cost>0?money(l.cost):'-';
+      var exp=document.createElement('td');var expClr=l.expiry_status==='expired'?'var(--er)':l.expiry_status==='expiring_soon'?'var(--wa)':'var(--tx3)';exp.style.cssText='font-size:.75rem;color:'+expClr+';font-weight:'+(l.expiry_status!=='ok'?'600':'400');exp.textContent=l.expiry_date||'No expiry';
+      var st=document.createElement('td');st.innerHTML=l.expiry_status==='expired'?'<span class="b b-er">expired</span>':l.expiry_status==='expiring_soon'?'<span class="b b-wa">expiring soon</span>':gxBadge(l.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      var editBtn=mk('button','btn btn-gh btn-xs');editBtn.textContent='Update';(function(lid,seats_used){editBtn.onclick=function(){gxAskReason({title:'Update Seats In Use',label:'Seats currently in use (of '+l.seats+'):',btnText:'Update',btnCls:'btn-hi',placeholder:String(seats_used)},function(val){api('PATCH','/api/it/licenses/'+lid,{seats_used:parseInt(val)||0}).then(function(){toast('License updated','ok');pgLicenses();}).catch(function(e){toast(e.message,'er');});});};})(l.id,l.seats_used);
+      acts.appendChild(editBtn);at.appendChild(acts);[nm,vn,cat,seats,used,cost,exp,st,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('lic-tb');if(tb)tb.innerHTML='<tr><td colspan="9" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+
+function submitLicense(){
+  var name=document.getElementById('lic-name').value.trim();
+  if(!name){toast('License name is required','er');return;}
+  var btn=document.getElementById('lic-btn');btn.disabled=true;btn.textContent='Adding...';
+  api('POST','/api/it/licenses',{name:name,vendor:document.getElementById('lic-vendor').value.trim(),category:document.getElementById('lic-cat').value,seats:parseInt(document.getElementById('lic-seats').value)||1,cost:parseFloat(document.getElementById('lic-cost').value)||0,expiry_date:document.getElementById('lic-expiry').value,license_key:document.getElementById('lic-key').value.trim(),notes:document.getElementById('lic-notes').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Add License';gxClose('mLicense');toast(r.message,'ok');pgLicenses();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Add License';toast('Error: '+e.message,'er');});
+}
+
+// ── SLA TRACKER ──
+function pgSLA(){
+  showLoading();
+  Promise.all([
+    api('GET','/api/it/tickets/overdue'),
+    api('GET','/api/it/tickets/stats')
+  ]).then(function(r){
+    var overdue=r[0];var stats=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    // Stats
+    var sg=mk('div','','display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1rem');
+    [{val:stats.open,lbl:'Open',sc:'var(--or)'},{val:stats.in_progress,lbl:'In Progress',sc:'var(--bl)'},{val:stats.resolved,lbl:'Resolved',sc:'var(--ok)'},{val:overdue.length,lbl:'SLA Breached',sc:'var(--er)'}].forEach(function(s){
+      var d=mk('div','','background:var(--bg3);border-radius:10px;padding:.75rem;text-align:center');
+      var v=mk('div','','font-size:1.5rem;font-weight:700;color:'+s.sc);v.textContent=s.val;d.appendChild(v);
+      var l=mk('div','','font-size:.72rem;color:var(--tx3);margin-top:.15rem');l.textContent=s.lbl;d.appendChild(l);sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+    // SLA rules info
+    var info=mk('div','info info-orange');info.innerHTML='<strong>SLA Policy:</strong> Urgent: 4h &bull; High: 8h &bull; Medium: 24h &bull; Low: 48h';mc.appendChild(info);
+    // Overdue tickets
+    var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title" style="color:var(--er)">&#x26a0; SLA Breached Tickets ('+overdue.length+')</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgSLA);card.appendChild(hd);
+    if(!overdue.length){var nd=mk('div','','text-align:center;padding:2rem;color:var(--ok)');nd.innerHTML='&#x2705; All tickets within SLA!';card.appendChild(nd);}
+    else{
+      var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+      tbl.innerHTML='<thead><tr><th>Subject</th><th>Department</th><th>Priority</th><th>SLA</th><th>Hours Open</th><th>Overdue By</th><th>Status</th></tr></thead>';
+      var tbody=document.createElement('tbody');
+      overdue.forEach(function(t){
+        var tr=document.createElement('tr');
+        var sub=document.createElement('td');sub.style.fontWeight='500';sub.textContent=t.subject;
+        var dep=document.createElement('td');dep.style.fontSize='.78rem';dep.textContent=t.department||'-';
+        var pr=document.createElement('td');pr.innerHTML=gxBadge(t.priority);
+        var sla=document.createElement('td');sla.style.fontSize='.78rem';sla.textContent=t.sla_hours+'h SLA';
+        var ho=document.createElement('td');ho.style.cssText='font-weight:600;color:var(--wa)';ho.textContent=t.hours_open+'h';
+        var od=document.createElement('td');od.innerHTML='<span style="font-weight:700;color:var(--er)">+'+t.hours_overdue+'h</span>';
+        var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+        [sub,dep,pr,sla,ho,od,st].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);
+    }
+    mc.appendChild(card);
+  }).catch(function(e){showErr(e.message,pgSLA);});
+}
+
+// ── SESSION NOTES ──
+function pgSessionNotes(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Session Notes';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem');addBtn(hdR,'+ Log Session','btn-hi btn-sm',function(){var sel=document.getElementById('sn-emp');sel.innerHTML='<option value="">Select...</option>';api('GET','/api/employees/').then(function(emps){emps.forEach(function(e){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.department+')';sel.appendChild(o);});}).catch(function(){});document.getElementById('sn-work').value='';gxOpen('mSession');});addBtn(hdR,'Refresh','btn-gh btn-sm',pgSessionNotes);hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var list=mk('div');list.id='sn-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/it/remote-notes').then(function(notes){
+    var el=document.getElementById('sn-list');if(!el)return;
+    if(!notes.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No session notes logged yet</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Employee</th><th>Type</th><th>Duration</th><th>Work Done</th><th>Technician</th><th>Date</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    notes.forEach(function(n){
+      var tr=document.createElement('tr');
+      var em=document.createElement('td');em.textContent=n.employee_name||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+n.session_type+'</span>';
+      var dur=document.createElement('td');dur.style.fontSize='.78rem';dur.textContent=n.duration_minutes+'min';
+      var wd=document.createElement('td');wd.style.cssText='font-size:.78rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';wd.textContent=n.work_done;
+      var tech=document.createElement('td');tech.style.fontSize='.78rem';tech.textContent=n.technician_name||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(n.created_at);
+      [em,tp,dur,wd,tech,dt].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('sn-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function submitSessionNote(){
+  var work=document.getElementById('sn-work').value.trim();
+  if(!work){toast('Describe what was done','er');return;}
+  var btn=document.getElementById('sn-btn');btn.disabled=true;btn.textContent='Saving...';
+  var sel=document.getElementById('sn-emp');
+  api('POST','/api/it/remote-notes',{employee_id:sel.value||null,session_type:document.getElementById('sn-type').value,duration_minutes:parseInt(document.getElementById('sn-duration').value)||30,work_done:work})
+  .then(function(r){btn.disabled=false;btn.textContent='Save Note';gxClose('mSession');toast(r.message,'ok');pgSessionNotes();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Save Note';toast('Error: '+e.message,'er');});
+}
+
+
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('dept_manager,admin',function(user){
+    pgDashboard();
+  });
+});
+</script>
+
+
+
+var API='https://web-production-50873.up.railway.app';
+
+function gxOpen(id){var e=document.getElementById(id);if(e)e.classList.add('open');}
+function gxClose(id){var e=document.getElementById(id);if(e)e.classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target&&e.target.classList.contains('overlay'))e.target.classList.remove('open');});
+function mk(tag,cls,sty){var e=document.createElement(tag);if(cls)e.className=cls;if(sty)e.style.cssText=sty;return e;}
+function addBtn(p,html,cls,fn){var b=mk('button','btn '+cls);b.innerHTML=html;b.onclick=fn;p.appendChild(b);return b;}
+function showLoading(){var mc=document.getElementById('MC');mc.innerHTML='';var w=mk('div','','display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem');w.appendChild(mk('div','spin'));var t=mk('div','','color:var(--tx3)');t.textContent='Loading...';w.appendChild(t);mc.appendChild(w);}
+function showErr(msg,fn){var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem');var m=mk('div','','color:var(--er);margin-bottom:1rem');m.textContent=msg;d.appendChild(m);if(fn){var b=mk('button','btn btn-gh');b.textContent='Retry';b.onclick=fn;d.appendChild(b);}mc.appendChild(d);}
+function toggleSb(){var sb=document.getElementById('sb'),ov=document.getElementById('sb-overlay');sb.classList.toggle('open');ov.style.display=sb.classList.contains('open')?'block':'none';}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-overlay').style.display='none';}
+
+var PT={dashboard:'Dashboard',health:'System Health',sessions:'Live Sessions',logs:'Activity Logs',users:'All Users',finalize:'Create Accounts',suspended:'Suspended Users',tickets:'IT Tickets',notifications:'Notifications'};
+
+function goTo(id){
+  closeSb();gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='health')pgHealth();
+    else if(id==='sessions')pgSessions();
+    else if(id==='logs')pgLogs();
+    else if(id==='users')pgUsers();
+    else if(id==='finalize')pgFinalize();
+    else if(id==='suspended')pgSuspended();
+    else if(id==='tickets')pgTickets();
+    else if(id==='notifications')pgNotifications();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+// ── DASHBOARD ──
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/it/system-health'),
+    api('GET','/api/it/tickets?status=open'),
+    api('GET','/api/users/requests'),
+    api('GET','/api/users/active-sessions')
+  ]).then(function(r){
+    var health=r[0], tickets=r[1], reqs=r[2], sessions=r[3];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Stats
+    var sg=mk('div','stats');
+    [{sc:'#22C55E',sc2:'#4ADE80',ic:'&#x1f465;',val:health.active_users||0,lbl:'Active Users'},{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f3ab;',val:health.open_tickets||0,lbl:'Open Tickets'},{sc:'#60A5FA',sc2:'#93C5FD',ic:'&#x1f7e2;',val:health.active_sessions||0,lbl:'Live Sessions'},{sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f4dd;',val:health.pending_user_requests||0,lbl:'Pending Accounts'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val');v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    // Pending accounts card
+    var ac=mk('div','card');var ach=mk('div','c-hd');ach.innerHTML='<div class="c-title">Accounts to Create</div>';addBtn(ach,'View All','btn-gh btn-sm',function(){goTo('finalize');});ac.appendChild(ach);
+    var al=mk('div');
+    var pendingIT=reqs.filter(function(r){return r.status==='pending_it';});
+    if(!pendingIT.length){
+      var nd=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');nd.textContent='No accounts waiting to be created';al.appendChild(nd);
+    } else {
+      pendingIT.slice(0,4).forEach(function(r){
+        var d2=r.request_data||{};
+        var row=mk('div','appr-row');
+        var ic=mk('div','appr-ic');ic.innerHTML='&#x1f4dd;';row.appendChild(ic);
+        var info=mk('div','appr-info');var ti=mk('div','appr-title');ti.textContent=(d2.name||'?')+' - '+d2.role;info.appendChild(ti);var me=mk('div','appr-meta');me.textContent=d2.department+' - Approved by: '+(r.manager_name||'Manager');info.appendChild(me);row.appendChild(info);
+        var cb=mk('button','btn btn-hi btn-xs');cb.textContent='Create';
+        (function(req){cb.onclick=function(){openFinalize(req);};})(r);
+        row.appendChild(cb);al.appendChild(row);
+      });
+    }
+    ac.appendChild(al);left.appendChild(ac);
+
+    // Open tickets
+    var tc=mk('div','card');var th=mk('div','c-hd');th.innerHTML='<div class="c-title">Open IT Tickets</div>';addBtn(th,'All Tickets','btn-gh btn-sm',function(){goTo('tickets');});tc.appendChild(th);
+    var tl=mk('div');
+    if(!tickets||!tickets.length){
+      var td2=mk('div','','text-align:center;padding:1rem;color:var(--ok)');td2.textContent='No open tickets!';tl.appendChild(td2);
+    } else {
+      tickets.slice(0,5).forEach(function(t){
+        var row=mk('div','','display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+        var dot=mk('div','','width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(t.priority==='urgent'?'var(--er)':t.priority==='high'?'var(--or)':'var(--wa)'));
+        var info=mk('div','','flex:1');var ti=mk('div','','font-size:.8rem;font-weight:500');ti.textContent=t.subject;info.appendChild(ti);var me=mk('div','','font-size:.68rem;color:var(--tx3)');me.textContent=(t.submitter_name||'?')+' - '+(t.department||'?');info.appendChild(me);
+        row.appendChild(dot);row.appendChild(info);
+        var cb2=mk('button','btn btn-gh btn-xs');cb2.textContent='Update';
+        (function(tk){cb2.onclick=function(){openTicketUpdate(tk);};})(t);
+        row.appendChild(cb2);tl.appendChild(row);
+      });
+    }
+    tc.appendChild(tl);left.appendChild(tc);
+
+    // Quick actions
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">Quick Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['System Health','btn-hi btn-bl2',function(){goTo('health');}],['Live Sessions','btn-gh btn-bl2',function(){goTo('sessions');}],['Create Account','btn-gh btn-bl2',function(){gxOpen('mCreateUser');}],['Activity Logs','btn-gh btn-bl2',function(){goTo('logs');}],['IT Tickets','btn-gh btn-bl2',function(){goTo('tickets');}],['All Users','btn-gh btn-bl2',function(){goTo('users');}]].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    // System quick stats
+    var sc2=mk('div','card','margin-top:1rem');sc2.innerHTML='<div class="c-hd"><div class="c-title">System Overview</div></div>';
+    [['Total Users',health.total_users||0,'var(--tx)'],['Active Users',health.active_users||0,'var(--ok)'],['Suspended',health.suspended_users||0,'var(--er)'],['Database Size',health.db_size_kb+'KB','var(--bl)'],['Logins Today',health.today_logins||0,'var(--ok)'],['Failed Logins Today',health.today_failed_logins||0,'var(--wa)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);sc2.appendChild(d);
+    });
+    right.appendChild(sc2);
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+// ── SYSTEM HEALTH ──
+function pgHealth(){
+  api('GET','/api/it/system-health').then(function(h){
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Status banner
+    var banner=mk('div','','background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.75rem');
+    var dot=mk('div','','width:12px;height:12px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite');
+    var txt=mk('div');var t1=mk('div','','font-weight:700;color:var(--ok)');t1.textContent='System Status: '+h.status.toUpperCase();txt.appendChild(t1);
+    var t2=mk('div','','font-size:.75rem;color:var(--tx3)');t2.textContent='All systems operational';txt.appendChild(t2);
+    banner.appendChild(dot);banner.appendChild(txt);mc.appendChild(banner);
+
+    var grid=mk('div','g2');
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">User Statistics</div></div>';
+    [['Total Users',h.total_users,'var(--tx)'],['Active Users',h.active_users,'var(--ok)'],['Suspended Users',h.suspended_users,'var(--er)'],['Active Sessions',h.active_sessions,'var(--bl)'],['Total Employees',h.total_employees,'var(--tx)'],['Pending Staff Requests',h.pending_user_requests,'var(--wa)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)');
+      var lb=mk('span','','font-size:.82rem;color:var(--tx3)');lb.textContent=row[0];
+      var vl=mk('span','','font-weight:700;font-size:1rem;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);left.appendChild(d);
+    });
+
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Activity Today</div></div>';
+    [['Successful Logins',h.today_logins,'var(--ok)'],['Failed Login Attempts',h.today_failed_logins,'var(--er)'],['Open IT Tickets',h.open_tickets,'var(--or)'],['Database Size',h.db_size_kb+' KB','var(--bl)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)');
+      var lb=mk('span','','font-size:.82rem;color:var(--tx3)');lb.textContent=row[0];
+      var vl=mk('span','','font-weight:700;font-size:1rem;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+
+    // Quick links
+    addBtn(left,'View All Users','btn-gh btn-bl2 btn-sm',function(){goTo('users');});
+    addBtn(right,'View Activity Logs','btn-gh btn-bl2 btn-sm',function(){goTo('logs');});
+
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgHealth);});
+}
+
+// ── LIVE SESSIONS ──
+function pgSessions(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Live Sessions</div><div style="font-size:.75rem;color:var(--tx3)">Users currently logged in</div>';hd.appendChild(ht);
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgSessions);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>User</th><th>Role</th><th>Department</th><th>IP Address</th><th>Login Time</th><th>Expires</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='sess-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/users/active-sessions').then(function(sessions){
+    var tb=document.getElementById('sess-tb');if(!tb)return;tb.innerHTML='';
+    if(!sessions.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No active sessions right now</td></tr>';return;}
+    sessions.forEach(function(s){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(s.name||s.email,'24px')+'<div><div style="font-weight:500;font-size:.8rem">'+(s.name||'?')+'</div><div style="font-size:.68rem;color:var(--tx3)">'+s.email+'</div></div></div>';
+      var r=document.createElement('td');r.innerHTML=gxBadge(s.role);
+      var d=document.createElement('td');d.style.fontSize='.78rem';d.textContent=s.department||'-';
+      var ip=document.createElement('td');ip.style.cssText='font-size:.75rem;font-family:monospace;color:var(--bl)';ip.textContent=s.ip_address||'-';
+      var lt=document.createElement('td');lt.style.cssText='font-size:.72rem;color:var(--tx3)';lt.textContent=gxAgo(s.created_at);
+      var ex=document.createElement('td');ex.style.cssText='font-size:.72rem;color:var(--tx3)';ex.textContent=s.expires_at?s.expires_at.slice(0,16).replace('T',' ')+' UTC':'-';
+      var at=document.createElement('td');
+      var flBtn=mk('button','btn btn-er btn-xs');flBtn.textContent='Force Logout';
+      (function(sid,nm){flBtn.onclick=function(){if(!confirm('Force logout '+nm+'?'))return;api('POST','/api/users/sessions/'+sid+'/force-logout').then(function(){toast(nm+' logged out','wa');pgSessions();}).catch(function(e){toast('Error: '+e.message,'er');});};})(s.id,s.name||s.email);
+      at.appendChild(flBtn);[n,r,d,ip,lt,ex,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    // Summary
+    var info=mk('div','','margin-top:.75rem;font-size:.78rem;color:var(--tx3);text-align:right');info.textContent=sessions.length+' active session'+(sessions.length!==1?'s':'');card.appendChild(info);
+  }).catch(function(e){var tb=document.getElementById('sess-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+// ── ACTIVITY LOGS ──
+function pgLogs(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Activity Logs</div><div style="font-size:.75rem;color:var(--tx3)">Every login, action and system event</div>';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Filter by action...';inp.id='log-filter';inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:160px';
+  inp.oninput=function(){filterLogs(this.value);};hdR.appendChild(inp);
+  addBtn(hdR,'Refresh','btn-gh btn-sm',pgLogs);hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Time</th><th>User</th><th>Role</th><th>Action</th><th>Details</th><th>Status</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='log-tb';tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadLogs();
+}
+
+var ALL_LOGS=[];
+function loadLogs(){
+  api('GET','/api/it/logs?limit=100').then(function(logs){
+    ALL_LOGS=logs;renderLogs(logs);
+  }).catch(function(e){var tb=document.getElementById('log-tb');if(tb)tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function filterLogs(q){renderLogs(q?ALL_LOGS.filter(function(l){return(l.action||'').toLowerCase().includes(q.toLowerCase())||(l.user_name||'').toLowerCase().includes(q.toLowerCase());}):ALL_LOGS);}
+function renderLogs(logs){
+  var tb=document.getElementById('log-tb');if(!tb)return;tb.innerHTML='';
+  if(!logs.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No logs found</td></tr>';return;}
+  var actionClr={LOGIN_SUCCESS:'var(--ok)',LOGIN_FAILED:'var(--er)',USER_SUSPENDED:'var(--wa)',USER_DELETED:'var(--er)',PASSWORD_RESET:'var(--bl)',USER_CREATED:'var(--ok)',FORCE_LOGOUT:'var(--or)'};
+  logs.forEach(function(l){
+    var tr=document.createElement('tr');
+    var tm=document.createElement('td');tm.style.cssText='font-size:.7rem;color:var(--tx3);white-space:nowrap';tm.textContent=l.created_at?l.created_at.slice(0,16).replace('T',' '):'-';
+    var un=document.createElement('td');un.innerHTML='<span style="font-size:.78rem;font-weight:500">'+(l.user_name||'System')+'</span>';
+    var ur=document.createElement('td');ur.innerHTML=l.user_role?gxBadge(l.user_role):'<span class="b b-gy">system</span>';
+    var ac=document.createElement('td');
+    var acTag=mk('span','','font-size:.72rem;font-weight:600;color:'+(actionClr[l.action]||'var(--tx2)'));acTag.textContent=l.action||'-';ac.appendChild(acTag);
+    var det=document.createElement('td');det.style.cssText='font-size:.7rem;color:var(--tx3);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    det.textContent=l.details?JSON.stringify(l.details).slice(0,60):'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(l.status||'success');
+    [tm,un,ur,ac,det,st].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+// ── ALL USERS ──
+var ALL_USERS=[];
+function pgUsers(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">All Users</div><div style="font-size:.75rem;color:var(--tx3)">Manage accounts, reset passwords, suspend users</div>';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Search...';inp.oninput=function(){filterUsers(this.value);};inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';hdR.appendChild(inp);
+  addBtn(hdR,'+ Create User','btn-hi btn-sm',function(){gxOpen('mCreateUser');});
+  addBtn(hdR,'Refresh','btn-gh btn-sm',pgUsers);hd.appendChild(hdR);mc.appendChild(hd);
+
+  var tabs=mk('div','tabs');
+  [['all','All'],['active','Active'],['suspended','Suspended']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(f){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');filterUsersByStatus(f);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='users-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/users/').then(function(u){ALL_USERS=u;renderUsers(u);}).catch(function(e){var tb=document.getElementById('users-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function filterUsers(q){renderUsers(q?ALL_USERS.filter(function(u){return(u.name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase())||(u.department||'').toLowerCase().includes(q.toLowerCase());}):ALL_USERS);}
+function filterUsersByStatus(f){
+  if(f==='all')renderUsers(ALL_USERS);
+  else if(f==='active')renderUsers(ALL_USERS.filter(function(u){return !u.is_suspended&&u.is_active;}));
+  else renderUsers(ALL_USERS.filter(function(u){return u.is_suspended;}));
+}
+function renderUsers(users){
+  var tb=document.getElementById('users-tb');if(!tb)return;tb.innerHTML='';
+  if(!users.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No users found</td></tr>';return;}
+  users.forEach(function(u){
+    var tr=document.createElement('tr');
+    var status=u.is_suspended?'suspended':u.is_active?'active':'inactive';
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(u.name||u.email,'24px')+'<div><div style="font-weight:500;font-size:.8rem">'+(u.name||'-')+'</div>'+(u.password_reset_required?'<div style="font-size:.65rem;color:var(--wa)">Password reset required</div>':'')+'</div></div>';
+    var em=document.createElement('td');em.style.cssText='font-size:.75rem;color:var(--tx2)';em.textContent=u.email;
+    var ro=document.createElement('td');ro.innerHTML=gxBadge(u.role);
+    var de=document.createElement('td');de.style.fontSize='.78rem';de.textContent=u.emp_dept||u.department||'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(status)+(u.login_attempts>=3?'<span class="b b-wa" style="margin-left:.3rem">'+u.login_attempts+' fails</span>':'');
+    var lg=document.createElement('td');lg.style.cssText='font-size:.72rem;color:var(--tx3)';lg.textContent=u.last_login?gxAgo(u.last_login):'Never';
+    var at=document.createElement('td');var acts=mk('div','td-acts');
+
+    var pwdBtn=mk('button','btn btn-bl btn-xs');pwdBtn.textContent='Reset Pwd';
+    (function(uid,nm){pwdBtn.onclick=function(){openResetPwd(uid,nm);};})(u.id,u.name||u.email);acts.appendChild(pwdBtn);
+
+    if(u.is_suspended){
+      var unsBtn=mk('button','btn btn-ok btn-xs');unsBtn.textContent='Reinstate';
+      (function(uid,nm){unsBtn.onclick=function(){if(!confirm('Reinstate '+nm+'?'))return;api('POST','/api/users/'+uid+'/unsuspend').then(function(r){toast(r.message,'ok');pgUsers();}).catch(function(e){toast('Error: '+e.message,'er');});};})(u.id,u.name||u.email);acts.appendChild(unsBtn);
+    } else if(u.role!=='admin'){
+      var susBtn=mk('button','btn btn-wa btn-xs');susBtn.textContent='Suspend';
+      (function(uid,nm){susBtn.onclick=function(){openSuspend(uid,nm);};})(u.id,u.name||u.email);acts.appendChild(susBtn);
+    }
+
+    at.appendChild(acts);[n,em,ro,de,st,lg,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+function openResetPwd(uid,name){
+  document.getElementById('reset-uid').value=uid;
+  document.getElementById('reset-user-info').textContent='Resetting password for: '+name;
+  document.getElementById('reset-pwd').value='Welcome@1234';
+  gxOpen('mResetPwd');
+}
+function doResetPwd(){
+  var uid=document.getElementById('reset-uid').value;
+  var pwd=document.getElementById('reset-pwd').value.trim();
+  if(!pwd){toast('Enter a password','er');return;}
+  api('POST','/api/users/'+uid+'/reset-password').then(function(r){
+    gxClose('mResetPwd');
+    toast('Password reset! New temp pwd: '+r.new_password,'ok');
+    pgUsers();
+  }).catch(function(e){toast('Error: '+e.message,'er');});
+}
+function openSuspend(uid,name){
+  document.getElementById('sus-uid').value=uid;
+  document.getElementById('sus-user-info').textContent='Suspending: '+name;
+  document.getElementById('sus-reason').value='';
+  gxOpen('mSuspend');
+}
+function doSuspend(){
+  var uid=document.getElementById('sus-uid').value;
+  var reason=document.getElementById('sus-reason').value.trim();
+  if(!reason){toast('A reason is required','er');return;}
+  api('POST','/api/users/'+uid+'/suspend',{reason:reason,notify_user:true})
+  .then(function(r){gxClose('mSuspend');toast(r.message,'wa');pgUsers();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+function createUser(){
+  var name=document.getElementById('cu-name').value.trim(),email=document.getElementById('cu-email').value.trim(),pwd=document.getElementById('cu-pwd').value;
+  var role=document.getElementById('cu-role').value,dept=document.getElementById('cu-dept').value;
+  if(!name||!email||!pwd){toast('Fill in Name, Email, Password','er');return;}
+  var btn=document.getElementById('cu-btn');btn.disabled=true;btn.textContent='Creating...';
+  api('POST','/api/users/create',{name:name,email:email,password:pwd,role:role,department:dept,title:document.getElementById('cu-title').value.trim(),salary:parseFloat(document.getElementById('cu-salary').value)||0,phone:document.getElementById('cu-phone').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Create Account';gxClose('mCreateUser');toast(r.message,'ok');['cu-name','cu-email','cu-pwd','cu-title','cu-salary','cu-phone'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});pgUsers();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Create Account';toast('Error: '+e.message,'er');});
+}
+
+// ── CREATE ACCOUNTS (Finalize HR Requests) ──
+function pgFinalize(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='These are staff requests approved by Manager. Create their accounts below.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Approved Requests — Ready to Create</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgFinalize);card.appendChild(hd);
+  var list=mk('div');list.id='fin-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('fin-list');if(!el)return;
+    var pending=reqs.filter(function(r){return r.status==='pending_it';});
+    if(!pending.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No approved requests waiting. Check back later.</div>';return;}
+    pending.forEach(function(r){
+      var d=r.request_data||{};
+      var card2=mk('div','','background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:.85rem');
+      // Header
+      var hdr=mk('div','','display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem');
+      var left2=mk('div');var nm=mk('div','','font-weight:700;font-size:.95rem');nm.textContent=d.name||'?';left2.appendChild(nm);
+      var meta=mk('div','','font-size:.75rem;color:var(--tx3);margin-top:.2rem');meta.textContent='Submitted by '+r.submitted_by_name+' - Approved by '+(r.manager_name||'Manager')+' - '+gxAgo(r.created_at);left2.appendChild(meta);hdr.appendChild(left2);
+      var acts=mk('div','','display:flex;gap:.5rem');
+      var cb=mk('button','btn btn-hi btn-sm');cb.textContent='Create Account';
+      (function(req){cb.onclick=function(){openFinalize(req);};})(r);
+      acts.appendChild(cb);hdr.appendChild(acts);card2.appendChild(hdr);
+      // Details grid
+      var grid=mk('div','','display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;font-size:.78rem');
+      [['Email',d.email||'?'],['Role',d.role||'?'],['Department',d.department||'?'],['Title',d.title||'-'],['Salary',d.salary>0?money(d.salary):'-'],['Contract',d.contract_type||'Permanent']].forEach(function(f){
+        var dv=mk('div','','background:var(--bg2);border-radius:7px;padding:.5rem .7rem');var lb=mk('div','','font-size:.65rem;color:var(--tx3)');lb.textContent=f[0];var vl=mk('div','','font-weight:500;margin-top:.1rem');vl.textContent=f[1];dv.appendChild(lb);dv.appendChild(vl);grid.appendChild(dv);
+      });
+      card2.appendChild(grid);el.appendChild(card2);
+    });
+  }).catch(function(e){var el2=document.getElementById('fin-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function openFinalize(req){
+  var d=req.request_data||{};
+  document.getElementById('fin-rid').value=req.id;
+  document.getElementById('fin-pwd').value='Welcome@1234';
+  document.getElementById('fin-note').value='';
+  var info=document.getElementById('finalize-info');
+  info.innerHTML='<strong>Name:</strong> '+d.name+'<br><strong>Email:</strong> '+d.email+'<br><strong>Role:</strong> '+d.role+'<br><strong>Department:</strong> '+d.department+(d.title?'<br><strong>Title:</strong> '+d.title:'')+(d.salary>0?'<br><strong>Salary:</strong> '+money(d.salary):'')+'<br><strong>Approved by:</strong> '+(req.manager_name||'Manager');
+  gxOpen('mFinalize');
+}
+function finalizeAccount(){
+  var rid=document.getElementById('fin-rid').value;
+  var pwd=document.getElementById('fin-pwd').value.trim();
+  var note=document.getElementById('fin-note').value.trim();
+  if(!pwd){toast('Set an initial password','er');return;}
+  var btn=document.getElementById('fin-btn');btn.disabled=true;btn.textContent='Creating...';
+  api('POST','/api/users/requests/'+rid+'/it-finalize',{approved:true,initial_password:pwd,note:note})
+  .then(function(r){btn.disabled=false;btn.textContent='Create Account';gxClose('mFinalize');toast('Account created! Temp password: '+r.initial_password,'ok');pgFinalize();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Create Account';toast('Error: '+e.message,'er');});
+}
+function rejectRequest(){
+  var rid=document.getElementById('fin-rid').value;
+  var note=document.getElementById('fin-note').value.trim();
+  if(!note){toast('Provide a reason in the notes field before rejecting','er');return;}
+  api('POST','/api/users/requests/'+rid+'/it-finalize',{approved:false,note:note})
+  .then(function(r){gxClose('mFinalize');toast('Request rejected','wa');pgFinalize();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── SUSPENDED USERS ──
+function pgSuspended(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Suspended Accounts</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgSuspended);card.appendChild(hd);
+  var list=mk('div');list.id='sus-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/').then(function(users){
+    var el=document.getElementById('sus-list');if(!el)return;
+    var suspended=users.filter(function(u){return u.is_suspended;});
+    if(!suspended.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ok)">No suspended users</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Reason</th><th>Suspended</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    suspended.forEach(function(u){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(u.name||u.email,'24px')+'<span style="font-weight:500">'+(u.name||'-')+'</span></div>';
+      var em=document.createElement('td');em.style.cssText='font-size:.75rem;color:var(--tx2)';em.textContent=u.email;
+      var ro=document.createElement('td');ro.innerHTML=gxBadge(u.role);
+      var rs=document.createElement('td');rs.style.cssText='font-size:.75rem;color:var(--wa);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.textContent=u.suspension_reason||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=u.suspended_at?gxAgo(u.suspended_at):'-';
+      var at=document.createElement('td');
+      var unsBtn=mk('button','btn btn-ok btn-sm');unsBtn.textContent='Reinstate';
+      (function(uid,nm){unsBtn.onclick=function(){if(!confirm('Reinstate '+nm+'?'))return;api('POST','/api/users/'+uid+'/unsuspend').then(function(r){toast(r.message,'ok');pgSuspended();}).catch(function(e){toast('Error: '+e.message,'er');});};})(u.id,u.name||u.email);
+      at.appendChild(unsBtn);[n,em,ro,rs,dt,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('sus-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── IT TICKETS ──
+var ALL_TICKETS=[];
+function pgTickets(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">IT Tickets</div>';hd.appendChild(ht);
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgTickets);mc.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['open','Open'],['in-progress','In Progress'],['resolved','Resolved'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');renderTickets(st?ALL_TICKETS.filter(function(tk){return tk.status===st;}):ALL_TICKETS);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Subject</th><th>Submitted By</th><th>Dept</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Date</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='ticket-tb';tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/it/tickets').then(function(tickets){ALL_TICKETS=tickets;renderTickets(tickets.filter(function(t){return t.status==='open';}));}).catch(function(e){var tb=document.getElementById('ticket-tb');if(tb)tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function renderTickets(list){
+  var tb=document.getElementById('ticket-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--tx3)">No tickets found</td></tr>';return;}
+  list.forEach(function(t){
+    var tr=document.createElement('tr');
+    var sub=document.createElement('td');sub.style.fontWeight='500';sub.textContent=t.subject;
+    var by=document.createElement('td');by.style.fontSize='.78rem';by.textContent=t.submitter_name||'-';
+    var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=t.department||'-';
+    var pr=document.createElement('td');pr.innerHTML=gxBadge(t.priority);
+    var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+    var as=document.createElement('td');as.style.cssText='font-size:.75rem;color:var(--tx3)';as.textContent=t.assigned_name||'Unassigned';
+    var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(t.created_at);
+    var at=document.createElement('td');var upBtn=mk('button','btn btn-gh btn-xs');upBtn.textContent='Update';
+    (function(tk){upBtn.onclick=function(){openTicketUpdate(tk);};})(t);at.appendChild(upBtn);
+    [sub,by,dep,pr,st,as,dt,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+function openTicketUpdate(t){
+  document.getElementById('tk-id').value=t.id;
+  document.getElementById('tk-status').value=t.status||'open';
+  document.getElementById('tk-assigned').value=t.assigned_name||'';
+  document.getElementById('tk-resolution').value=t.resolution||'';
+  var info=document.getElementById('ticket-info');
+  info.innerHTML='<strong>Subject:</strong> '+t.subject+'<br><strong>From:</strong> '+(t.submitter_name||'?')+' ('+( t.department||'?')+')<br><strong>Priority:</strong> '+t.priority+(t.description?'<br><strong>Description:</strong> '+t.description:'');
+  gxOpen('mTicket');
+}
+function submitTicketUpdate(){
+  var id=document.getElementById('tk-id').value;
+  var status=document.getElementById('tk-status').value;
+  var assigned=document.getElementById('tk-assigned').value.trim();
+  var resolution=document.getElementById('tk-resolution').value.trim();
+  api('PATCH','/api/it/tickets/'+id,{status:status,resolution:resolution,assigned_name:assigned})
+  .then(function(){gxClose('mTicket');toast('Ticket updated','ok');pgTickets();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── START ──
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('dept_manager,admin',function(user){
+    pgDashboard();
+  });
+});
+</script>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/giddies-portal/sw.js').catch(function(){});}
+var _dp=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_dp=e;setTimeout(function(){if(!localStorage.getItem('gx-pwa-dismissed')){var b=document.createElement('div');b.id='gx-install-banner';b.style.cssText='position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:99999;background:#1A1D24;border:1px solid rgba(255,107,0,.3);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:320px;width:90%;font-family:DM Sans,sans-serif';b.innerHTML='<div style="font-size:1.5rem">&#x1f4f1;</div><div style="flex:1"><div style="font-weight:700;font-size:.82rem;color:#fff">Install GX Portal</div><div style="font-size:.72rem;color:#9CA3AF">Add to home screen</div></div><button onclick="if(_dp){_dp.prompt();_dp.userChoice.then(function(){_dp=null;document.getElementById(\'gx-install-banner\').remove();localStorage.setItem(\'gx-pwa-dismissed\',\'1\');});}" style="background:#FF6B00;border:none;color:#fff;padding:.4rem .75rem;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:600;font-family:inherit">Install</button><button onclick="document.getElementById(\'gx-install-banner\').remove();localStorage.setItem(\'gx-pwa-dismissed\',\'1\');" style="background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:1rem;padding:.25rem">&#x2715;</button>';document.body.appendChild(b);}},4000);});
+window.addEventListener('appinstalled',function(){var b=document.getElementById('gx-install-banner');if(b)b.remove();});
+</script>
+</body>
+</html>

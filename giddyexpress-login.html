@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="/giddies-portal/manifest.json"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="GX Portal"/>
+  <meta name="theme-color" content="#FF6B00"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0D0F14;color:#E8EAF0;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.wrap{width:100%;max-width:420px}
+.logo-area{text-align:center;margin-bottom:2.5rem}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.1em;color:#FF6B00}
+.logo-sub{font-size:.75rem;color:#6B7280;letter-spacing:.2em;text-transform:uppercase;margin-top:.2rem}
+.card{background:#161920;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:2rem}
+.card-title{font-size:1.1rem;font-weight:600;margin-bottom:.3rem}
+.card-sub{font-size:.8rem;color:#6B7280;margin-bottom:1.8rem}
+.field{margin-bottom:1.2rem}
+.field label{display:block;font-size:.78rem;font-weight:500;color:#9CA3AF;margin-bottom:.45rem}
+.field input{width:100%;background:#0D0F14;border:1.5px solid rgba(255,255,255,.1);border-radius:9px;padding:.75rem 1rem;font-size:.9rem;color:#E8EAF0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#FF6B00}
+.field input.error{border-color:#EF4444}
+.show-pwd{position:relative}
+.show-pwd input{padding-right:3rem}
+.show-pwd button{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#6B7280;cursor:pointer;font-size:.85rem;padding:.25rem}
+.btn-login{width:100%;background:#FF6B00;color:#fff;border:none;border-radius:9px;padding:.85rem;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:.5rem}
+.btn-login:hover{background:#E55A00}
+.btn-login:disabled{background:#4B5563;cursor:not-allowed}
+.err-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;color:#FCA5A5;margin-bottom:1.2rem;display:none}
+.warn-box{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;color:#FCD34D;margin-bottom:1.2rem;display:none}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footer{text-align:center;margin-top:1.5rem;font-size:.75rem;color:#4B5563}
+.attempts-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:1rem;overflow:hidden;display:none}
+.attempts-fill{height:100%;border-radius:2px;background:#EF4444;transition:width .3s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo-area">
+    <div class="logo-title">GIDDIES EXPRESS</div>
+    <div class="logo-sub">Staff Portal</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Welcome back</div>
+    <div class="card-sub">Sign in to your account</div>
+
+    <div class="warn-box" id="warnBox"></div>
+    <div class="err-box" id="errBox"></div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="show-pwd">
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+        <button type="button" onclick="togglePwd()" id="eyeBtn">👁</button>
+      </div>
+    </div>
+
+    <div class="attempts-bar" id="attBar">
+      <div class="attempts-fill" id="attFill"></div>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">Sign In</button>
+  </div>
+  <div class="footer">Giddies Express &copy; 2024 &mdash; Confidential</div>
+</div>
+
+<script>
+var API = 'https://web-production-50873.up.railway.app';
+var attempts = 0;
+var MAX_ATTEMPTS = 5;
+
+// Check if already logged in
+(function() {
+  var token = sessionStorage.getItem('gx_token');
+  var user = sessionStorage.getItem('gx_user');
+  if (token && user) {
+    try {
+      var u = JSON.parse(user);
+      // Verify token is still valid
+      fetch(API + '/api/auth/verify', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      }).then(function(r) {
+        if (r.ok) {
+          // Already logged in - redirect to their page
+          window.location.href = getPage(u.role, u.department);
+        } else {
+          sessionStorage.clear();
+        }
+      }).catch(function() {});
+    } catch(e) {
+      sessionStorage.clear();
+    }
+  }
+
+  // Check for reason param (redirected from protected page)
+  var params = new URLSearchParams(window.location.search);
+  var reason = params.get('reason');
+  if (reason) {
+    showWarn(decodeURIComponent(reason));
+  }
+})();
+
+function getPage(role, dept) {
+  if (role === 'admin') return 'giddyexpress-admin.html';
+  if (role === 'manager') return 'giddyexpress-manager.html';
+  if (role === 'dept_manager') {
+    var map = {
+      'HR': 'giddyexpress-hr.html',
+      'Finance': 'giddyexpress-finance.html',
+      'IT Support': 'giddyexpress-it.html',
+      'Payroll': 'giddyexpress-payroll.html'
+    };
+    return map[dept] || 'giddyexpress-dept.html';
+  }
+  return 'giddyexpress-employee.html';
+}
+
+function togglePwd() {
+  var inp = document.getElementById('password');
+  var btn = document.getElementById('eyeBtn');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+function showErr(msg) {
+  var e = document.getElementById('errBox');
+  e.textContent = msg;
+  e.style.display = 'block';
+  document.getElementById('warnBox').style.display = 'none';
+}
+
+function showWarn(msg) {
+  var w = document.getElementById('warnBox');
+  w.textContent = msg;
+  w.style.display = 'block';
+  document.getElementById('errBox').style.display = 'none';
+}
+
+function hideErr() {
+  document.getElementById('errBox').style.display = 'none';
+  document.getElementById('warnBox').style.display = 'none';
+}
+
+function setLoading(loading) {
+  var btn = document.getElementById('loginBtn');
+  if (loading) {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Signing in...';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = 'Sign In';
+  }
+}
+
+function updateAttemptsBar() {
+  var bar = document.getElementById('attBar');
+  var fill = document.getElementById('attFill');
+  if (attempts > 0) {
+    bar.style.display = 'block';
+    fill.style.width = (attempts / MAX_ATTEMPTS * 100) + '%';
+  }
+}
+
+function doLogin() {
+  var email = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value;
+
+  hideErr();
+
+  if (!email) { showErr('Please enter your email address'); return; }
+  if (!password) { showErr('Please enter your password'); return; }
+
+  setLoading(true);
+
+  fetch(API + '/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password })
+  })
+  .then(function(res) {
+    return res.json().then(function(data) {
+      return { ok: res.ok, status: res.status, data: data };
+    });
+  })
+  .then(function(result) {
+    setLoading(false);
+
+    if (!result.ok) {
+      var msg = result.data.detail || 'Login failed';
+      
+      // Account locked
+      if (result.status === 423 || msg.indexOf('|||LOCKED') !== -1) {
+        var reason = msg.replace('|||LOCKED','').trim();
+        setLoading(false);
+        var box = document.querySelector('.card');
+        if(box) box.innerHTML = '<div style="text-align:center;padding:1.5rem 1rem">' +
+          '<div style="font-size:2.5rem;margin-bottom:.75rem">&#x1f512;</div>' +
+          '<div style="color:#EF4444;font-size:1rem;font-weight:700;margin-bottom:.5rem">Account Locked</div>' +
+          '<div style="color:#9CA3AF;font-size:.82rem;line-height:1.6;margin-bottom:1.2rem">' + (reason || 'Your account has been locked.') + '</div>' +
+          '<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.85rem;margin-bottom:1rem">' +
+          '<div style="color:#EF4444;font-weight:600;font-size:.82rem">&#x1f4de; Contact IT Support</div>' +
+          '<div style="color:#9CA3AF;font-size:.75rem;margin-top:.2rem">Your IT team can unlock your account</div>' +
+          '</div>' +
+          '<button onclick="location.reload()" style="background:none;border:1px solid rgba(255,255,255,.1);color:#9CA3AF;padding:.5rem 1.2rem;border-radius:8px;cursor:pointer;font-size:.8rem;font-family:DM Sans,sans-serif">Back to Login</button>' +
+          '</div>';
+        return;
+      }
+      
+      // Portal closed
+      if (result.status === 503) {
+        setLoading(false);
+        var box2 = document.querySelector('.card');
+        if(box2) box2.innerHTML = '<div style="text-align:center;padding:1.5rem 1rem">' +
+          '<div style="font-size:2.5rem;margin-bottom:.75rem">&#x1f6a7;</div>' +
+          '<div style="color:#F59E0B;font-size:1rem;font-weight:700;margin-bottom:.5rem">Portal Temporarily Closed</div>' +
+          '<div style="color:#9CA3AF;font-size:.82rem;line-height:1.6;margin-bottom:1rem">' + msg + '</div>' +
+          '<div style="color:#6B7280;font-size:.72rem">Contact your Admin for more information</div>' +
+          '</div>';
+        return;
+      }
+
+      attempts++;
+      updateAttemptsBar();
+      showErr(msg);
+
+      // Shake the card
+      var card = document.querySelector('.card');
+      card.style.transform = 'translateX(-8px)';
+      setTimeout(function() { card.style.transform = 'translateX(8px)'; }, 100);
+      setTimeout(function() { card.style.transform = 'translateX(0)'; card.style.transition = 'transform .15s'; }, 200);
+      return;
+    }
+
+    // SUCCESS
+    var data = result.data;
+    attempts = 0;
+
+    // Store in sessionStorage (clears when browser closes)
+    sessionStorage.setItem('gx_token', data.token);
+    sessionStorage.setItem('gx_user', JSON.stringify(data.user));
+
+    // Must change password?
+    if (data.password_reset_required) {
+      showWarn('You must change your password before continuing.');
+      setTimeout(function() {
+        window.location.href = 'giddyexpress-change-password.html';
+      }, 1500);
+      return;
+    }
+
+    // Redirect based on role (from server, not guessed)
+    window.location.href = data.redirect_to;
+  })
+  .catch(function(err) {
+    setLoading(false);
+    showErr('Cannot connect to server. Check your internet connection.');
+    console.error(err);
+  });
+}
+
+// Allow Enter key to submit
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/giddies-portal/sw.js').catch(function(){});
+}
+var _ldp = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); _ldp = e;
+  setTimeout(showLoginInstall, 2000);
+});
+function showLoginInstall(){
+  if(document.getElementById('login-install-bar')) return;
+  var bar = document.createElement('div');
+  bar.id = 'login-install-bar';
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(255,107,0,.95);color:#fff;padding:.5rem 1rem;display:flex;align-items:center;gap:.75rem;font-family:DM Sans,sans-serif;font-size:.78rem;z-index:9999;backdrop-filter:blur(10px)';
+  bar.innerHTML = '<span style="flex:1">&#x1f4f1; Install Giddies Express Portal on your phone for quick access</span><button onclick="if(_ldp){_ldp.prompt();bar.remove();}" style="background:#fff;color:#FF6B00;border:none;padding:.3rem .75rem;border-radius:20px;font-weight:700;cursor:pointer;font-size:.75rem;font-family:inherit">Install</button><button onclick="document.getElementById('login-install-bar').remove()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1rem">&#x2715;</button>';
+  document.body.insertBefore(bar, document.body.firstChild);
+}
+window.addEventListener('appinstalled', function(){
+  var b=document.getElementById('login-install-bar');if(b)b.remove();
+});
+</script>
+
+</body>
+</html>

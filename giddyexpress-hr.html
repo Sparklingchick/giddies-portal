@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="/giddies-portal/manifest.json"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="GX Portal"/>
+  <meta name="theme-color" content="#FF6B00"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express - HR</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0F14;--bg2:#161920;--bg3:#1E2128;--br:rgba(255,255,255,.07);--tx:#E8EAF0;--tx2:#9CA3AF;--tx3:#6B7280;--hi:#FF6B00;--hi2:#FF8C38;--ok:#4ADE80;--er:#F87171;--wa:#FCD34D;--bl:#60A5FA;--pu:#A78BFA;--or:#FB923C}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:240px;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--br)}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--hi)}
+.sb-sub{font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--br)}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-nm{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{font-size:.65rem;color:var(--tx3);text-transform:capitalize}
+.sb-nav{flex:1;padding:.5rem 0}
+.nav-sec{font-size:.62rem;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.2rem .3rem}
+.nav-a{display:flex;align-items:center;gap:.65rem;padding:.6rem 1.2rem;cursor:pointer;border-radius:0;font-size:.82rem;color:var(--tx2);transition:all .15s;margin:1px 0;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-a.on{background:rgba(255,107,0,.1);color:var(--hi)}
+.nav-a.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hi);border-radius:0 2px 2px 0}
+.nav-ic{width:16px;text-align:center;font-size:.9rem}
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--br)}
+.btn-logout{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:.55rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.2)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--br);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-weight:600;font-size:.95rem}
+.tb-right{display:flex;align-items:center;gap:.85rem}
+.tb-clock{font-size:.78rem;color:var(--tx3);font-family:monospace}
+.tb-pill{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br);border-radius:100px;padding:.3rem .75rem;font-size:.72rem}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:.4rem .65rem;cursor:pointer;color:var(--tx2);font-size:.9rem;position:relative;transition:all .2s}
+.tb-btn:hover{border-color:var(--hi);color:var(--hi)}
+.rdot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--er);border:1px solid var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:1.1rem}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.c-title{font-weight:600;font-size:.9rem}
+.c-sub{font-size:.72rem;color:var(--tx3);margin-top:.1rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+.stat{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sc),var(--sc2))}
+.s-ic{font-size:1.4rem;margin-bottom:.4rem}
+.s-val{font-size:1.7rem;font-weight:700;line-height:1}
+.s-lbl{font-size:.7rem;color:var(--tx3);margin-top:.25rem}
+.s-sub{font-size:.65rem;color:var(--tx3);margin-top:.15rem}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g21{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+/* BUTTONS */
+.btn{border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-hi{background:var(--hi);color:#fff;border-color:var(--hi)}.btn-hi:hover{background:var(--hi2)}
+.btn-gh{background:var(--bg3);color:var(--tx2);border-color:var(--br)}.btn-gh:hover{border-color:var(--hi);color:var(--hi)}
+.btn-ok{background:rgba(74,222,128,.15);color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-er{background:rgba(239,68,68,.15);color:var(--er);border-color:rgba(239,68,68,.3)}
+.btn-wa{background:rgba(252,211,77,.1);color:var(--wa);border-color:rgba(252,211,77,.2)}
+.btn-bl{background:rgba(96,165,250,.1);color:var(--bl);border-color:rgba(96,165,250,.2)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.68rem}
+.btn-bl2{display:block;width:100%;text-align:left;border-radius:8px;padding:.55rem .8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:.12rem .5rem;border-radius:100px;font-size:.65rem;font-weight:600;text-transform:capitalize}
+.b-ok{background:rgba(74,222,128,.1);color:var(--ok)}
+.b-er{background:rgba(239,68,68,.1);color:var(--er)}
+.b-wa{background:rgba(252,211,77,.1);color:var(--wa)}
+.b-bl{background:rgba(96,165,250,.1);color:var(--bl)}
+.b-pu{background:rgba(167,139,250,.1);color:var(--pu)}
+.b-or{background:rgba(251,146,60,.1);color:var(--or)}
+.b-gy{background:rgba(255,255,255,.07);color:var(--tx3)}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:.6rem .8rem;font-size:.67rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);white-space:nowrap}
+td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:.5rem}
+.td-acts{display:flex;gap:.3rem;flex-wrap:wrap}
+/* TABS */
+.tabs{display:flex;gap:.25rem;margin-bottom:1rem;border-bottom:1px solid var(--br);padding-bottom:0}
+.tab{padding:.5rem .85rem;font-size:.78rem;cursor:pointer;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--hi);border-bottom-color:var(--hi);font-weight:600}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--br);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.4rem;border-bottom:1px solid var(--br)}
+.m-title{font-weight:600;font-size:.95rem}
+.m-x{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:.2rem}
+.m-body{padding:1.4rem}
+.m-ft{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.4rem;border-top:1px solid var(--br)}
+/* FORM */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.75rem;font-weight:500;color:var(--tx2);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1.5px solid var(--br);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--hi)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+/* INFO BOXES */
+.info{padding:.7rem 1rem;border-radius:8px;font-size:.78rem;margin-bottom:1rem}
+.info-blue{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:var(--bl)}
+.info-orange{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);color:var(--or)}
+.info-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--er)}
+.info-green{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--ok)}
+/* PROGRESS */
+.prog-bg{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:var(--hi);transition:width .3s}
+/* SPINNER */
+.spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* APPROVAL ROW */
+.appr-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.appr-row:last-child{border-bottom:none}
+.appr-ic{font-size:1.2rem;width:28px;text-align:center;flex-shrink:0}
+.appr-info{flex:1;min-width:0}
+.appr-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-meta{font-size:.68rem;color:var(--tx3);margin-top:.1rem}
+.appr-acts{display:flex;gap:.3rem;flex-shrink:0}
+/* ANNOUNCEMENT */
+.ann{padding:.85rem 1rem;border-radius:10px;margin-bottom:.65rem;background:var(--bg3)}
+.ann-title{font-weight:600;font-size:.82rem;margin-bottom:.3rem}
+.ann-body{font-size:.78rem;color:var(--tx2);line-height:1.5}
+/* MOBILE */
+@media(max-width:768px){
+.sb{width:200px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.g2,.g21{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.sb{position:fixed;left:-200px;top:0;bottom:0;z-index:100;transition:left .3s}
+.sb.open{left:0}
+.main{width:100%}
+}
+
+</style>
+</head>
+<body>
+<div id="sb-overlay" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99"></div>
+<div class="shell">
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-title">GIDDIES EXPRESS</div>
+    <div class="sb-sub">HR Portal</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">??</div>
+    <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole">HR Manager</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard"    onclick="goTo('dashboard')"><span class="nav-ic">&#x1f4ca;</span>Dashboard</div>
+    <div class="nav-a" id="nav-employees"    onclick="goTo('employees')"><span class="nav-ic">&#x1f465;</span>All Employees</div>
+    <div class="nav-a" id="nav-add-staff"    onclick="goTo('add-staff')"><span class="nav-ic">&#x1f4dd;</span>Request New Staff</div>
+    <div class="nav-sec">Management</div>
+    <div class="nav-a" id="nav-leave"        onclick="goTo('leave')"><span class="nav-ic">&#x1f334;</span>Leave Requests</div>
+    <div class="nav-a" id="nav-leave-balance" onclick="goTo('leave-balance')"><span class="nav-ic">&#x1f4c5;</span>Leave Balances</div>
+    <div class="nav-a" id="nav-leave-calendar" onclick="goTo('leave-calendar')"><span class="nav-ic">&#x1f5d3;</span>Leave Calendar</div>
+    <div class="nav-a" id="nav-attendance"   onclick="goTo('attendance')"><span class="nav-ic">&#x23f1;</span>Attendance</div>
+    <div class="nav-a" id="nav-complaints"   onclick="goTo('complaints')"><span class="nav-ic">&#x26a0;</span>Complaints</div>
+    <div class="nav-a" id="nav-suspend"      onclick="goTo('suspend')"><span class="nav-ic">&#x26d4;</span>Suspend Employee</div>
+    <div class="nav-sec">Recruitment</div>
+    <div class="nav-a" id="nav-applications" onclick="goTo('applications')"><span class="nav-ic">&#x1f4bc;</span>Job Applications</div>
+    <div class="nav-sec">Communication</div>
+    <div class="nav-a" id="nav-announcements" onclick="goTo('announcements')"><span class="nav-ic">&#x1f4e2;</span>Announcements</div>
+    <div class="nav-a" id="nav-onboarding"  onclick="goTo('onboarding')"><span class="nav-ic">&#x1f4cb;</span>Onboarding</div>
+    <div class="nav-a" id="nav-disciplinary" onclick="goTo('disciplinary')"><span class="nav-ic">&#x26a0;</span>Disciplinary</div>
+    <div class="nav-a" id="nav-exit"         onclick="goTo('exit')"><span class="nav-ic">&#x1f6aa;</span>Exit Management</div>
+    <div class="nav-a" id="nav-performance"  onclick="goTo('performance')"><span class="nav-ic">&#x2b50;</span>Performance</div>
+    <div class="nav-a" id="nav-jobs"         onclick="goTo('jobs')"><span class="nav-ic">&#x1f4bc;</span>Job Postings</div>
+    <div class="nav-a" id="nav-contracts"    onclick="goTo('contracts')"><span class="nav-ic">&#x1f4c6;</span>Contracts</div>
+    <div class="nav-a" id="nav-birthdays"    onclick="goTo('birthdays')"><span class="nav-ic">&#x1f382;</span>Birthdays</div>
+    <div class="nav-a" id="nav-training"     onclick="goTo('training')"><span class="nav-ic">&#x1f393;</span>Training Requests</div>
+    <div class="nav-a" id="nav-ai-hr"         onclick="goTo('ai-hr')"><span class="nav-ic">&#x1f916;</span>AI HR Tools</div>
+    <div class="nav-a" id="nav-notifications" onclick="goTo('notifications')"><span class="nav-ic">&#x1f514;</span>Notifications</div>
+    <div class="nav-a" id="nav-reports"      onclick="goTo('reports')"><span class="nav-ic">&#x1f4c8;</span>Reports</div>
+  </nav>
+  <div class="sb-foot"><button class="btn-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button onclick="toggleSb()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.1rem">&#9776;</button>
+      <div class="tb-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span>HR</span></div>
+      <button class="tb-btn" onclick="goTo('notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading HR Portal...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SUSPEND MODAL -->
+<div class="overlay" id="mSuspend">
+<div class="modal">
+  <div class="m-hd"><div class="m-title" style="color:var(--er)">&#x26d4; Suspend Employee</div><button class="m-x" onclick="gxClose('mSuspend')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-red">Are you sure? This will immediately log out the employee and block their access.</div>
+    <div id="sus-user-info" style="background:var(--bg3);border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem"></div>
+    <div class="field"><label>Reason for Suspension *</label><textarea id="sus-reason" placeholder="Provide a detailed reason. This will be recorded in activity logs..."></textarea></div>
+    <div class="field"><label>Notify Employee?</label>
+      <select id="sus-notify">
+        <option value="true">Yes - Send notification to employee</option>
+        <option value="false">No - Silent suspension</option>
+      </select>
+    </div>
+    <input type="hidden" id="sus-uid"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mSuspend')">Cancel</button>
+    <button class="btn btn-er" onclick="doSuspend()">Confirm Suspension</button>
+  </div>
+</div>
+</div>
+
+<!-- REQUEST NEW STAFF MODAL -->
+<div class="overlay" id="mNewStaff">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4dd; Request New Staff</div><button class="m-x" onclick="gxClose('mNewStaff')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-blue">After submission: Manager approves &rarr; IT Support creates the account</div>
+    <div class="form-row">
+      <div class="field"><label>Full Name *</label><input id="ns-name" placeholder="John Smith"/></div>
+      <div class="field"><label>Email *</label><input id="ns-email" type="email" placeholder="john@giddiesexpress.com"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Role *</label>
+        <select id="ns-role">
+          <option value="employee">Employee</option>
+          <option value="dept_manager">Department Manager</option>
+          <option value="manager">Company Manager</option>
+        </select>
+      </div>
+      <div class="field"><label>Department *</label>
+        <select id="ns-dept">
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Payroll">Payroll</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Customer Service">Customer Service</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Legal">Legal</option>
+          <option value="Management">Management</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Job Title</label><input id="ns-title" placeholder="e.g. Senior Driver"/></div>
+      <div class="field"><label>Phone</label><input id="ns-phone" placeholder="+234..."/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Salary (&#x20a6;/month)</label><input id="ns-salary" type="number" placeholder="0"/></div>
+      <div class="field"><label>Contract Type</label>
+        <select id="ns-contract">
+          <option value="Permanent">Permanent</option>
+          <option value="Contract">Contract</option>
+          <option value="Internship">Internship</option>
+          <option value="Part-time">Part-time</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Reason for Hiring *</label><textarea id="ns-reason" placeholder="Why is this position needed?"></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mNewStaff')">Cancel</button>
+    <button class="btn btn-hi" id="ns-btn" onclick="submitNewStaff()">Submit Request</button>
+  </div>
+</div>
+</div>
+
+<!-- LEAVE ACTION MODAL -->
+<div class="overlay" id="mLeaveAction">
+<div class="modal">
+  <div class="m-hd"><div class="m-title" id="la-title">Leave Request</div><button class="m-x" onclick="gxClose('mLeaveAction')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="la-details" style="background:var(--bg3);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.85rem;line-height:1.7"></div>
+    <div class="field"><label>Note (optional)</label><textarea id="la-note" placeholder="Add a note to this decision..."></textarea></div>
+    <input type="hidden" id="la-id"/>
+    <input type="hidden" id="la-action"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mLeaveAction')">Cancel</button>
+    <button class="btn" id="la-btn" onclick="submitLeaveAction()">Submit</button>
+  </div>
+</div>
+</div>
+
+<!-- POST ANNOUNCEMENT MODAL -->
+<div class="overlay" id="mAnn">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4e2; Post Announcement</div><button class="m-x" onclick="gxClose('mAnn')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Title *</label><input id="ann-title" placeholder="Announcement title"/></div>
+    <div class="field"><label>Message *</label><textarea id="ann-body" placeholder="Message to staff..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Type</label>
+        <select id="ann-type"><option value="info">Info</option><option value="warn">Warning</option><option value="ok">Good News</option><option value="er">Urgent</option></select>
+      </div>
+      <div class="field"><label>Send To</label>
+        <select id="ann-dept"><option value="all">All Staff</option><option value="HR">HR</option><option value="Finance">Finance</option><option value="IT Support">IT Support</option><option value="Logistics">Logistics</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mAnn')">Cancel</button>
+    <button class="btn btn-hi" onclick="postAnn()">Post Now</button>
+  </div>
+</div>
+</div>
+
+<!-- VIEW EMPLOYEE MODAL -->
+<div class="overlay" id="mViewEmp">
+<div class="modal" style="max-width:520px">
+  <div class="m-hd"><div class="m-title">Employee Profile</div><button class="m-x" onclick="gxClose('mViewEmp')">&#x2715;</button></div>
+  <div class="m-body" id="emp-profile-body">Loading...</div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mViewEmp')">Close</button>
+    <button class="btn btn-wa" id="emp-profile-suspend-btn">Suspend</button>
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="mDisc">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x26a0; Issue Disciplinary Record</div><button class="m-x" onclick="gxClose('mDisc')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-red">This will notify the employee and be permanently recorded on their profile.</div>
+    <div class="field"><label>Employee *</label><select id="disc-emp"><option value="">Select employee...</option></select></div>
+    <div class="form-row">
+      <div class="field"><label>Type *</label>
+        <select id="disc-type">
+          <option value="Verbal Warning">Verbal Warning</option>
+          <option value="Written Warning">Written Warning</option>
+          <option value="Final Warning">Final Warning</option>
+          <option value="Suspension">Suspension</option>
+          <option value="Query">Query Letter</option>
+          <option value="Demotion">Demotion</option>
+        </select>
+      </div>
+      <div class="field"><label>Status</label>
+        <select id="disc-status"><option value="active">Active</option><option value="resolved">Resolved</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Description *</label><textarea id="disc-desc" placeholder="Describe the incident or reason..."></textarea></div>
+    <div class="field"><label>Action Taken</label><textarea id="disc-action" placeholder="What action was taken?"></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mDisc')">Cancel</button>
+    <button class="btn btn-er" id="disc-btn" onclick="submitDisc()">Issue Record</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mJob">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4bc; Post a Job</div><button class="m-x" onclick="gxClose('mJob')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="form-row">
+      <div class="field"><label>Job Title *</label><input id="job-title" placeholder="e.g. Logistics Officer"/></div>
+      <div class="field"><label>Department</label>
+        <select id="job-dept"><option value="Logistics">Logistics</option><option value="HR">HR</option><option value="Finance">Finance</option><option value="IT Support">IT Support</option><option value="Warehouse">Warehouse</option><option value="Management">Management</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Type</label>
+        <select id="job-type"><option value="Full-time">Full-time</option><option value="Part-time">Part-time</option><option value="Contract">Contract</option><option value="Intern">Internship</option></select>
+      </div>
+      <div class="field"><label>Salary Range</label><input id="job-salary" placeholder="e.g. ₦150k - ₦250k"/></div>
+    </div>
+    <div class="field"><label>Application Deadline</label><input id="job-deadline" type="date"/></div>
+    <div class="field"><label>Job Description *</label><textarea id="job-desc" placeholder="What will this person do?"></textarea></div>
+    <div class="field"><label>Requirements</label><textarea id="job-req" placeholder="Qualifications, experience needed..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mJob')">Cancel</button>
+    <button class="btn btn-hi" id="job-btn" onclick="submitJob()">Post Job</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mExit">
+<div class="modal" style="max-width:440px">
+  <div class="m-hd"><div class="m-title">&#x1f6aa; Initiate Exit Process</div><button class="m-x" onclick="gxClose('mExit')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Employee *</label><select id="exit-emp"><option value="">Select employee...</option></select></div>
+    <div class="form-row">
+      <div class="field"><label>Exit Type</label>
+        <select id="exit-type"><option value="Resignation">Resignation</option><option value="Termination">Termination</option><option value="Retirement">Retirement</option><option value="Contract End">Contract End</option><option value="Redundancy">Redundancy</option></select>
+      </div>
+      <div class="field"><label>Exit Date</label><input id="exit-date" type="date"/></div>
+    </div>
+    <div class="field"><label>Reason</label><textarea id="exit-reason" placeholder="Reason for exit..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mExit')">Cancel</button>
+    <button class="btn btn-er" id="exit-btn" onclick="submitExit()">Start Exit Process</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mObStart">
+<div class="modal" style="max-width:380px">
+  <div class="m-hd"><div class="m-title">&#x1f4cb; Start Onboarding</div><button class="m-x" onclick="gxClose('mObStart')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Employee *</label><select id="ob-emp-sel"><option value="">Select employee...</option></select></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mObStart')">Cancel</button>
+    <button class="btn btn-hi" onclick="startOnboarding()">Create Checklist</button>
+  </div>
+</div>
+</div>
+<div class="overlay" id="mReview">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x2b50; Performance Review</div><button class="m-x" onclick="gxClose('mReview')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="form-row">
+      <div class="field"><label>Employee *</label><select id="rv-emp"><option value="">Select...</option></select></div>
+      <div class="field"><label>Review Period *</label><input id="rv-period" placeholder="e.g. Q1 2026"/></div>
+    </div>
+    <div class="info info-blue" style="font-size:.78rem">Rate each area 1-5 (1=Poor, 3=Average, 5=Excellent)</div>
+    <div id="rv-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0">
+      <div class="field"><label>Work Quality</label><select id="rv-quality"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      <div class="field"><label>Punctuality</label><select id="rv-punctuality"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      <div class="field"><label>Teamwork</label><select id="rv-teamwork"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      <div class="field"><label>Communication</label><select id="rv-comm"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      <div class="field"><label>Initiative</label><select id="rv-init"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      <div id="rv-overall-preview" style="display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--bg3);border-radius:8px;padding:.5rem">
+        <div style="font-size:.65rem;color:var(--tx3)">Overall Score</div>
+        <div id="rv-overall-val" style="font-size:1.5rem;font-weight:700;color:var(--hi)">3.0</div>
+      </div>
+    </div>
+    <div class="field"><label>Strengths</label><textarea id="rv-strengths" placeholder="What does this employee do well?"></textarea></div>
+    <div class="field"><label>Areas for Improvement</label><textarea id="rv-improve" placeholder="What should they work on?"></textarea></div>
+    <div class="field"><label>Goals for Next Period</label><textarea id="rv-goals" placeholder="Set goals for next review..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mReview')">Cancel</button>
+    <button class="btn btn-hi" id="rv-btn" onclick="submitReview()">Publish Review</button>
+  </div>
+</div>
+</div>
+<div id="toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<script>
+
+var API = 'https://web-production-50873.up.railway.app';
+var ME = null;
+var TOKEN = null;
+
+
+/* ── AI HELPER (Claude API) ── */
+var GX_AI_MODEL = 'claude-sonnet-4-20250514';
+
+function gxAI(systemPrompt, userMessage, onChunk, onDone, onError) {
+  // Show typing indicator if onChunk provided
+  var url = 'https://api.anthropic.com/v1/messages';
+  var payload = {
+    model: GX_AI_MODEL,
+    max_tokens: 1000,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }]
+  };
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  , body: JSON.stringify(payload) })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) { if(onError) onError(d.error.message); return; }
+    var text = (d.content && d.content[0]) ? d.content[0].text : '';
+    if (onDone) onDone(text);
+  })
+  .catch(function(e) { if(onError) onError(e.message); });
+}
+
+function gxAIBox(containerId, label) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  el.style.cssText = 'background:var(--bg3);border:1px solid rgba(255,107,0,.2);border-radius:10px;padding:1rem;margin-top:.75rem';
+  var hd = document.createElement('div');
+  hd.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;font-size:.78rem;font-weight:600;color:var(--hi)';
+  hd.innerHTML = '&#x1f916; ' + (label || 'AI Analysis');
+  el.appendChild(hd);
+  var body = document.createElement('div');
+  body.id = containerId + '-body';
+  body.style.cssText = 'font-size:.82rem;color:var(--tx2);line-height:1.6;white-space:pre-wrap';
+  body.innerHTML = '<span style="color:var(--tx3)">&#x23f3; Analyzing...</span>';
+  el.appendChild(body);
+  return body;
+}
+
+function gxAISetText(containerId, text) {
+  var el = document.getElementById(containerId + '-body');
+  if (el) el.textContent = text;
+}
+
+
+/* ── AUTH ── */
+function gxInit(requiredRole, onReady) {
+  TOKEN = sessionStorage.getItem('gx_token');
+  var userStr = sessionStorage.getItem('gx_user');
+  
+  if (!TOKEN || !userStr) {
+    window.location.href = 'giddyexpress-login.html';
+    return;
+  }
+  
+  ME = JSON.parse(userStr);
+  
+  // Verify with server
+  api('GET', '/api/auth/verify-role?required_role=' + requiredRole)
+  .then(function(data) {
+    ME = data.user;
+    // Update UI
+    var av = document.getElementById('sbAv');
+    var nm = document.getElementById('sbName');
+    var rl = document.getElementById('sbRole');
+    if(av) { av.textContent = gxInits(ME.name); av.style.background = ME.color || '#FF6B00'; }
+    if(nm) nm.textContent = ME.name;
+    if(rl) rl.textContent = ME.role.replace(/_/g,' ');
+    gxClock();
+    gxNotifBadge();
+    gxStartInactivityWatch();
+    gxShowLastLogin(ME);
+    if(onReady) onReady(ME);
+  })
+  .catch(function(e) {
+    sessionStorage.clear();
+    window.location.href = 'giddyexpress-login.html?reason=' + encodeURIComponent(e.message || 'Session expired');
+  });
+}
+
+/* ── API CALL ── */
+function api(method, path, body) {
+  var opts = {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  return fetch(API + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if(!r.ok) {
+        var msg = d.detail || 'Request failed';
+        // Handle locked account
+        if(r.status === 423 || (msg && msg.indexOf('|||LOCKED') !== -1)) {
+          var reason = msg.replace('|||LOCKED','').trim();
+          gxShowLockedScreen(reason);
+          throw new Error(reason);
+        }
+        // Handle portal closed
+        if(r.status === 503) {
+          gxShowPortalClosed(msg);
+          throw new Error(msg);
+        }
+        throw new Error(msg);
+      }
+      return d;
+    });
+  });
+}
+
+/* ── LOGOUT ── */
+function gxLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+
+/* ── ACCOUNT LOCKED SCREEN ── */
+function gxShowLockedScreen(reason) {
+  sessionStorage.clear();
+  document.body.innerHTML = '';
+  document.body.style.cssText = 'margin:0;padding:0;background:#0D0F14;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:DM Sans,sans-serif';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1A1D24;border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center';
+  box.innerHTML = '<div style="font-size:3rem;margin-bottom:1rem">🔒</div>' +
+    '<div style="color:#EF4444;font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Account Locked</div>' +
+    '<div style="color:#9CA3AF;font-size:.85rem;line-height:1.6;margin-bottom:1.5rem">' + (reason || 'Your account has been locked. Please contact IT Support to resolve this.') + '</div>' +
+    '<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:1rem;margin-bottom:1.5rem">' +
+    '<div style="color:#EF4444;font-weight:600;font-size:.85rem">&#x1f4de; Contact IT Support</div>' +
+    '<div style="color:#9CA3AF;font-size:.78rem;margin-top:.25rem">Reach out to your IT team to have your account unlocked</div>' +
+    '</div>' +
+    '<div style="color:#6B7280;font-size:.72rem">Giddies Express HR Portal</div>';
+  document.body.appendChild(box);
+}
+
+/* ── PORTAL CLOSED SCREEN ── */
+function gxShowPortalClosed(message) {
+  sessionStorage.clear();
+  document.body.innerHTML = '';
+  document.body.style.cssText = 'margin:0;padding:0;background:#0D0F14;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:DM Sans,sans-serif';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1A1D24;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center';
+  box.innerHTML = '<div style="font-size:3rem;margin-bottom:1rem">🚧</div>' +
+    '<div style="color:#F59E0B;font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Portal Temporarily Closed</div>' +
+    '<div style="color:#9CA3AF;font-size:.85rem;line-height:1.6;margin-bottom:1.5rem">' + (message || 'The portal is currently closed. Please check back later.') + '</div>' +
+    '<div style="color:#6B7280;font-size:.72rem">Giddies Express HR Portal &mdash; Contact Admin for more info</div>';
+  document.body.appendChild(box);
+}
+
+/* ── INACTIVITY LOGOUT (1 hour) ── */
+var GX_INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour in ms
+var GX_WARN_BEFORE = 2 * 60 * 1000;       // warn 2 minutes before
+var _gxInactTimer = null;
+var _gxWarnTimer = null;
+var _gxWarnShown = false;
+
+function gxResetInactivity() {
+  clearTimeout(_gxInactTimer);
+  clearTimeout(_gxWarnTimer);
+  _gxWarnShown = false;
+  // Remove warning banner if visible
+  var wb = document.getElementById('gx-inact-warn');
+  if(wb) wb.remove();
+  // Warn 2 mins before
+  _gxWarnTimer = setTimeout(function() {
+    if(_gxWarnShown) return;
+    _gxWarnShown = true;
+    var warn = document.createElement('div');
+    warn.id = 'gx-inact-warn';
+    warn.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#EF4444;color:#fff;text-align:center;padding:.6rem 1rem;font-size:.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:1rem;font-family:DM Sans,sans-serif';
+    warn.innerHTML = '&#x26a0; Your session will expire in 2 minutes due to inactivity. <button onclick="gxResetInactivity()" style="background:#fff;color:#EF4444;border:none;padding:.3rem .8rem;border-radius:20px;font-weight:700;cursor:pointer;font-size:.78rem">Stay Logged In</button>';
+    document.body.appendChild(warn);
+  }, GX_INACTIVITY_LIMIT - GX_WARN_BEFORE);
+  // Auto logout
+  _gxInactTimer = setTimeout(function() {
+    toast('Session expired due to inactivity', 'wa');
+    setTimeout(function() {
+      api('POST', '/api/auth/logout').catch(function(){});
+      sessionStorage.clear();
+      window.location.href = 'giddyexpress-login.html?reason=Session+expired+due+to+inactivity';
+    }, 1500);
+  }, GX_INACTIVITY_LIMIT);
+}
+
+function gxStartInactivityWatch() {
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(function(evt) {
+    document.addEventListener(evt, gxResetInactivity, {passive:true});
+  });
+  gxResetInactivity();
+}
+
+/* ── LAST LOGIN DISPLAY ── */
+function gxShowLastLogin(user) {
+  // Show last login info in a subtle bar below topbar
+  if(!user || !user.last_login) return;
+  var existing = document.getElementById('gx-last-login');
+  if(existing) existing.remove();
+  var bar = document.createElement('div');
+  bar.id = 'gx-last-login';
+  var lastTime = new Date(user.last_login);
+  var now = new Date();
+  var diffMs = now - lastTime;
+  var diffH = Math.floor(diffMs / 3600000);
+  var diffD = Math.floor(diffMs / 86400000);
+  var timeStr = diffD > 0 ? diffD + ' day'+(diffD>1?'s':'')+' ago' : diffH > 0 ? diffH + ' hour'+(diffH>1?'s':'')+' ago' : 'Less than an hour ago';
+  // Format the exact date
+  var exactStr = lastTime.toLocaleString('en-NG', {weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  bar.style.cssText = 'background:rgba(255,107,0,.06);border-bottom:1px solid rgba(255,107,0,.1);padding:.35rem 1.2rem;font-size:.72rem;color:var(--tx3);display:flex;align-items:center;gap:.4rem;font-family:DM Sans,sans-serif';
+  bar.innerHTML = '<span style="color:var(--tx3)">&#x1f552;</span> Last login: <strong style="color:var(--tx2)">'+exactStr+'</strong> <span style="color:rgba(255,255,255,.2)">|</span> <span>'+timeStr+'</span>';
+  // Insert after topbar
+  var topbar = document.querySelector('.topbar');
+  if(topbar && topbar.parentNode) {
+    topbar.parentNode.insertBefore(bar, topbar.nextSibling);
+  }
+}
+
+/* ── DISABLE BACK BUTTON AFTER LOGOUT ── */
+function gxSecureLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  // Replace history so back button can't return to portal
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+/* ── CLOCK ── */
+function gxClock() {
+  function tick() {
+    var e = document.getElementById('tbClock');
+    if(!e) return;
+    try {
+      var n = new Date(new Date().toLocaleString('en-US', {timeZone:'Africa/Lagos'}));
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    } catch(err) {
+      var n = new Date();
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    }
+  }
+  tick(); setInterval(tick, 1000);
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+/* ── NOTIF BADGE ── */
+function gxNotifBadge() {
+  api('GET', '/api/notifications/unread-count').then(function(d) {
+    if((d.count||0) > 0) {
+      var dot = document.getElementById('notifDot');
+      if(dot) dot.style.display = 'block';
+    }
+  }).catch(function(){});
+}
+
+/* ── TOAST ── */
+function toast(msg, type) {
+  var w = document.getElementById('toasts');
+  if(!w) { w = document.createElement('div'); w.id='toasts'; w.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none'; document.body.appendChild(w); }
+  var c={ok:'#4ADE80',er:'#FCA5A5',wa:'#FCD34D',in:'#93C5FD'};
+  var b={ok:'rgba(34,197,94,.3)',er:'rgba(239,68,68,.3)',wa:'rgba(245,158,11,.3)',in:'rgba(96,165,250,.3)'};
+  var t = document.createElement('div');
+  t.style.cssText='background:#1A1D24;border:1px solid '+(b[type]||b.in)+';color:'+(c[type]||c.in)+';padding:.62rem 1rem;border-radius:100px;font-size:.76rem;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateX(110%);transition:transform .28s;font-family:DM Sans,sans-serif;max-width:300px';
+  t.textContent = msg; w.appendChild(t);
+  setTimeout(function(){t.style.transform='translateX(0)';}, 10);
+  setTimeout(function(){t.style.transform='translateX(110%)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);}, 3800);
+}
+
+/* ── MODAL ── */
+function om(id) { var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function cm(id) { var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target&&e.target.classList.contains('overlay')) e.target.classList.remove('open'); });
+
+/* ── HELPERS ── */
+function money(n) { return '\u20a6' + Number(n||0).toLocaleString(); }
+function gxInits(name) { return (name||'?').split(' ').map(function(c){return c[0];}).join('').slice(0,2).toUpperCase(); }
+function gxAgo(d) { if(!d)return''; var m=Math.floor((Date.now()-new Date(d))/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; var h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+function gxToday() { return new Date().toISOString().slice(0,10); }
+function gxAvc(name) { var c=['#FF6B00','#F472B6','#60A5FA','#4ADE80','#A78BFA','#FB923C']; var h=0; for(var i=0;i<(name||'').length;i++) h=(name.charCodeAt(i)+((h<<5)-h)); return c[Math.abs(h)%c.length]; }
+function gxAv(name,sz) { var s=sz||'28px'; return '<div style="width:'+s+';height:'+s+';border-radius:50%;background:'+gxAvc(name)+';display:flex;align-items:center;justify-content:center;font-size:calc('+s+' * 0.35);font-weight:700;color:#fff;flex-shrink:0">'+gxInits(name)+'</div>'; }
+function gxBadge(s) { var m={active:'b-ok',pending:'b-wa',approved:'b-ok',rejected:'b-er','in-progress':'b-bl',done:'b-ok',present:'b-ok',late:'b-wa',absent:'b-er',high:'b-or',urgent:'b-er',medium:'b-wa',low:'b-gy',suspended:'b-er',open:'b-or',resolved:'b-ok',admin:'b-or',manager:'b-pu',dept_manager:'b-wa',employee:'b-bl',completed:'b-ok'}; return '<span class="b '+(m[s]||'b-gy')+'">'+s+'</span>'; }
+function gxPay(g) { var t=Math.round(g*.20),n=Math.round(g*.08),p=Math.round(g*.05); return {gross:g,tax:t,ni:n,pension:p,net:g-t-n-p}; }
+function gxTab(btn) { var p=btn.closest('.tabs'); if(!p)return; p.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); btn.classList.add('on'); }
+function gxNav(id) { document.querySelectorAll('.nav-a').forEach(function(n){n.classList.remove('on');}); var e=document.getElementById('nav-'+id); if(e) e.classList.add('on'); }
+function gxSetPage(id, title) { gxNav(id); var t=document.getElementById('pageTitle'); if(t) t.textContent=title||id; }
+function loading(id) { var e=document.getElementById(id); if(e) e.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>'; }
+function gxPrint(title, html) {
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to print','wa');return;}
+  w.document.write('<!DOCTYPE html><html><head><title>'+title+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:2rem;color:#111;font-size:12px}h2{color:#FF6B00;border-bottom:2px solid #FF6B00;padding-bottom:.5rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;margin:.75rem 0}th{background:#FF6B00;color:#fff;padding:.35rem .6rem;text-align:left;font-size:.7rem}td{padding:.4rem .6rem;border-bottom:1px solid #eee}</style></head><body><h2>Giddies Express &#8212; '+title+'</h2>'+html+'<p style="margin-top:1rem;font-size:.7rem;color:#888">Generated: '+new Date().toLocaleString('en-NG')+'</p><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></'+'body></'+'html>');
+  w.document.close();
+}
+
+
+function goTo(id){
+  closeSb();
+  gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='employees')pgEmployees();
+    else if(id==='add-staff')pgAddStaff();
+    else if(id==='leave')pgLeave();
+    else if(id==='leave-balance')pgLeaveBalances();
+    else if(id==='leave-calendar')pgLeaveCalendar();
+    else if(id==='attendance')pgAttendance();
+    else if(id==='complaints')pgComplaints();
+    else if(id==='suspend')pgSuspend();
+    else if(id==='applications')pgApplications();
+    else if(id==='announcements')pgAnnouncements();
+    else if(id==='notifications')pgNotifications();
+    else if(id==='ai-hr')pgAIHR();
+    else if(id==='training')pgHRTraining();
+    else if(id==='onboarding')pgOnboarding();
+    else if(id==='disciplinary')pgDisciplinary();
+    else if(id==='exit')pgExit();
+    else if(id==='performance')pgPerformance();
+    else if(id==='jobs')pgJobs();
+    else if(id==='contracts')pgContracts();
+    else if(id==='birthdays')pgBirthdays();
+    else if(id==='reports')pgReports();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+// ── DASHBOARD ──
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/reports/dashboard-stats'),
+    api('GET','/api/employees/?status=active'),
+    api('GET','/api/leave/?status=pending')
+  ]).then(function(r){
+    var stats=r[0], emps=r[1], leaves=r[2];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Stats row
+    var sg=mk('div','stats');
+    [{sc:'#F59E0B',sc2:'#FBBF24',ic:'&#x1f465;',val:stats.total_employees,lbl:'Total Staff'},{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f334;',val:stats.pending_leave||0,lbl:'Pending Leave'},{sc:'#22C55E',sc2:'#4ADE80',ic:'&#x2705;',val:stats.today_present||0,lbl:'Present Today',sub:'Late: '+(stats.today_late||0)},{sc:'#60A5FA',sc2:'#93C5FD',ic:'&#x1f4dd;',val:stats.pending_user_requests||0,lbl:'Staff Requests'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val');v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      if(item.sub){var s2=mk('div','s-sub');s2.textContent=item.sub;d.appendChild(s2);}
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    // Pending Leave card
+    var lc=mk('div','card');var lh=mk('div','c-hd');lh.innerHTML='<div class="c-title">Pending Leave Requests</div>';addBtn(lh,'View All','btn-gh btn-sm',function(){goTo('leave');});lc.appendChild(lh);
+    var ll=mk('div');ll.id='dash-leave';ll.appendChild(mk('div','spin','margin:1rem auto;width:24px;height:24px;border-width:2px'));lc.appendChild(ll);left.appendChild(lc);
+
+    // Recent Staff card
+    var sc2=mk('div','card');var sh=mk('div','c-hd');sh.innerHTML='<div class="c-title">Recent Employees</div>';addBtn(sh,'All Employees','btn-gh btn-sm',function(){goTo('employees');});sc2.appendChild(sh);
+    var sl=mk('div');sl.id='dash-staff';sl.appendChild(mk('div','spin','margin:1rem auto;width:24px;height:24px;border-width:2px'));sc2.appendChild(sl);left.appendChild(sc2);
+
+    // Quick actions
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">HR Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['+ Request New Staff','btn-hi btn-bl2',function(){gxOpen('mNewStaff');}],['Review Leave Requests','btn-gh btn-bl2',function(){goTo('leave');}],['View Attendance','btn-gh btn-bl2',function(){goTo('attendance');}],['Suspend Employee','btn-er btn-bl2',function(){goTo('suspend');}],['Post Announcement','btn-gh btn-bl2',function(){gxOpen('mAnn');}],['Job Applications','btn-gh btn-bl2',function(){goTo('applications');}],['HR Reports','btn-gh btn-bl2',function(){goTo('reports');}]].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    // Dept breakdown
+    var dc=mk('div','card','margin-top:1rem');dc.innerHTML='<div class="c-hd"><div class="c-title">Staff by Department</div></div>';
+    var depts={};
+    emps.forEach(function(e){var d=e.department||'Other';depts[d]=(depts[d]||0)+1;});
+    Object.keys(depts).sort().forEach(function(d){
+      var row=mk('div','','display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=d;var vl=mk('span','','font-weight:600');vl.textContent=depts[d];
+      row.appendChild(lb);row.appendChild(vl);dc.appendChild(row);
+    });
+    right.appendChild(dc);
+
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+    loadDashLeave(leaves);loadDashStaff(emps);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+function loadDashLeave(leaves){
+  var el=document.getElementById('dash-leave');if(!el)return;el.innerHTML='';
+  if(!leaves||!leaves.length){var d=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');d.textContent='No pending leave requests';el.appendChild(d);return;}
+  leaves.slice(0,5).forEach(function(l){
+    var row=mk('div','appr-row');
+    var ic=mk('div','appr-ic');ic.innerHTML='&#x1f334;';row.appendChild(ic);
+    var info=mk('div','appr-info');
+    var ti=mk('div','appr-title');ti.textContent=(l.employee_name||'?')+' - '+l.type+' Leave';info.appendChild(ti);
+    var me=mk('div','appr-meta');me.textContent=l.from_date+' to '+l.to_date+' ('+l.days+' days)';info.appendChild(me);
+    row.appendChild(info);
+    var acts=mk('div','appr-acts');
+    var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+    (function(id){appB.onclick=function(){openLeaveAction(id,'approve');};})(l.id);
+    var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+    (function(id){rejB.onclick=function(){openLeaveAction(id,'reject');};})(l.id);
+    acts.appendChild(appB);acts.appendChild(rejB);row.appendChild(acts);el.appendChild(row);
+  });
+}
+
+function loadDashStaff(emps){
+  var el=document.getElementById('dash-staff');if(!el)return;el.innerHTML='';
+  var sorted=emps.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);}).slice(0,6);
+  if(!sorted.length){var d=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');d.textContent='No employees yet';el.appendChild(d);return;}
+  sorted.forEach(function(e){
+    var row=mk('div','','display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+    row.innerHTML=gxAv(e.name,'28px');
+    var info=mk('div','','flex:1');var nm=mk('div','','font-size:.8rem;font-weight:500');nm.textContent=e.name;info.appendChild(nm);var dep=mk('div','','font-size:.68rem;color:var(--tx3)');dep.textContent=(e.department||'')+(e.title?' - '+e.title:'');info.appendChild(dep);
+    row.appendChild(info);
+    row.innerHTML+=gxBadge(e.status);
+    el.appendChild(row);
+  });
+}
+
+// ── ALL EMPLOYEES ──
+var ALL_EMPS=[];
+function pgEmployees(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='All Employees';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Search name or dept...';inp.oninput=function(){filterEmps(this.value);};inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';
+  hdR.appendChild(inp);
+  addBtn(hdR,'+ New Staff','btn-hi btn-sm',function(){gxOpen('mNewStaff');});
+  addBtn(hdR,'Print','btn-gh btn-sm',printEmps);
+  hd.appendChild(hdR);mc.appendChild(hd);
+
+  var tabs=mk('div','tabs');
+  [['all','All'],['active','Active'],['inactive','Inactive']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(f){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');filterEmpsByStatus(f);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Name</th><th>Department</th><th>Title</th><th>Contract</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='emp-tb';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+
+  api('GET','/api/employees/').then(function(emps){ALL_EMPS=emps;renderEmps(emps);}).catch(function(e){
+    var tb=document.getElementById('emp-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';
+  });
+}
+
+function filterEmps(q){renderEmps(q?ALL_EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q.toLowerCase())||(e.department||'').toLowerCase().includes(q.toLowerCase())||(e.title||'').toLowerCase().includes(q.toLowerCase());}):ALL_EMPS);}
+function filterEmpsByStatus(s){renderEmps(s==='all'?ALL_EMPS:ALL_EMPS.filter(function(e){return e.status===s;}));}
+
+function renderEmps(list){
+  var tb=document.getElementById('emp-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No employees found</td></tr>';return;}
+  list.forEach(function(e){
+    var tr=document.createElement('tr');
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'26px')+'<div><div style="font-weight:500;font-size:.82rem">'+e.name+'</div><div style="font-size:.68rem;color:var(--tx3)">'+e.email+'</div></div></div>';
+    var d=document.createElement('td');d.textContent=e.department||'-';
+    var ti=document.createElement('td');ti.style.fontSize='.78rem';ti.textContent=e.title||'-';
+    var ct=document.createElement('td');ct.innerHTML='<span class="b b-gy">'+(e.contract_type||'Permanent')+'</span>';
+    var s=document.createElement('td');s.style.fontWeight='600';s.textContent=e.salary>0?money(e.salary):'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(e.status);
+    var at=document.createElement('td');var acts=mk('div','td-acts');
+    var viewBtn=mk('button','btn btn-gh btn-xs');viewBtn.textContent='View';
+    (function(emp){viewBtn.onclick=function(){viewEmployee(emp);};})(e);acts.appendChild(viewBtn);
+    if(e.status!=='suspended'){
+      var susBtn=mk('button','btn btn-wa btn-xs');susBtn.textContent='Suspend';
+      (function(emp){susBtn.onclick=function(){openSuspend(emp.user_id,emp.name);};})(e);acts.appendChild(susBtn);
+    }
+    at.appendChild(acts);[n,d,ti,ct,s,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+function viewEmployee(emp){
+  var body=document.getElementById('emp-profile-body');
+  var color=emp.color||gxAvc(emp.name);
+  body.innerHTML='';
+  // Header
+  var hdr=mk('div','','display:flex;align-items:center;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--br);margin-bottom:1rem');
+  var av=mk('div','','width:56px;height:56px;border-radius:50%;background:'+color+';display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#fff;flex-shrink:0');av.textContent=gxInits(emp.name);hdr.appendChild(av);
+  var info=mk('div');var nm=mk('div','','font-weight:700;font-size:1rem');nm.textContent=emp.name;info.appendChild(nm);var ti=mk('div','','font-size:.78rem;color:var(--tx3)');ti.textContent=(emp.title||'')+(emp.department?' - '+emp.department:'');info.appendChild(ti);var em=mk('div','','font-size:.75rem;color:var(--tx3);margin-top:.2rem');em.textContent=emp.email;info.appendChild(em);hdr.appendChild(info);
+  body.appendChild(hdr);
+  // Details grid
+  var grid=mk('div','','display:grid;grid-template-columns:1fr 1fr;gap:.5rem');
+  var fields=[['Role',gxBadge(emp.role),true],['Status',gxBadge(emp.status),true],['Department',emp.department||'-',false],['Contract',emp.contract_type||'Permanent',false],['Salary',emp.salary>0?money(emp.salary):'-',false],['Phone',emp.phone||'-',false],['Join Date',emp.join_date||'-',false]];
+  fields.forEach(function(f){
+    var d=mk('div','','background:var(--bg3);border-radius:8px;padding:.6rem .8rem');
+    var l=mk('div','','font-size:.65rem;color:var(--tx3);margin-bottom:.2rem');l.textContent=f[0];d.appendChild(l);
+    if(f[2]){var v=mk('div');v.innerHTML=f[1];d.appendChild(v);}
+    else{var v2=mk('div','','font-size:.82rem;font-weight:500');v2.textContent=f[1];d.appendChild(v2);}
+    grid.appendChild(d);
+  });
+  body.appendChild(grid);
+  // Suspend button
+  var sb=document.getElementById('emp-profile-suspend-btn');
+  if(emp.status==='suspended'){
+    sb.textContent='Reinstate';sb.className='btn btn-ok';
+    sb.onclick=function(){gxClose('mViewEmp');};
+  } else {
+    sb.textContent='Suspend';sb.className='btn btn-wa';
+    (function(uid,nm){sb.onclick=function(){gxClose('mViewEmp');openSuspend(uid,nm);};})(emp.user_id,emp.name);
+  }
+  gxOpen('mViewEmp');
+}
+
+function printEmps(){gxPrint('Employee Directory','<table><thead><tr><th>Name</th><th>Email</th><th>Dept</th><th>Title</th><th>Contract</th><th>Salary</th><th>Status</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){return'<tr><td>'+e.name+'</td><td>'+e.email+'</td><td>'+(e.department||'')+'</td><td>'+(e.title||'')+'</td><td>'+(e.contract_type||'')+'</td><td>'+(e.salary?money(e.salary):'-')+'</td><td>'+e.status+'</td></tr>';}).join('')+'</tbody></table>');}
+
+// ── REQUEST NEW STAFF ──
+function pgAddStaff(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='Workflow: You submit &rarr; Manager approves &rarr; IT Support creates account';mc.appendChild(info);
+
+  // My requests
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Staff Requests</div>';
+  addBtn(hd,'+ New Request','btn-hi btn-sm',function(){gxOpen('mNewStaff');});
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgAddStaff);
+  card.appendChild(hd);
+  var list=mk('div');list.id='req-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('req-list');if(!el)return;
+    if(!reqs.length){
+      var empty=mk('div','','text-align:center;padding:2rem');
+      var em=mk('div','','color:var(--tx3);margin-bottom:1rem');em.textContent='No staff requests yet';empty.appendChild(em);
+      addBtn(empty,'+ Submit First Request','btn-hi',function(){gxOpen('mNewStaff');});
+      el.appendChild(empty);return;
+    }
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th>Manager</th><th>Date</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    reqs.forEach(function(r){
+      var d=r.request_data||{};var tr=document.createElement('tr');
+      var n=document.createElement('td');n.style.fontWeight='500';n.textContent=d.name||'?';
+      var ro=document.createElement('td');ro.innerHTML=gxBadge(d.role||'?');
+      var dep=document.createElement('td');dep.textContent=d.department||'?';
+      var st=document.createElement('td');
+      var statusMap={'pending_manager':'Waiting for Manager','pending_it':'Manager Approved - IT Processing','completed':'Completed','rejected':'Rejected'};
+      var statusCls={'pending_manager':'b-wa','pending_it':'b-bl','completed':'b-ok','rejected':'b-er'};
+      st.innerHTML='<span class="b '+(statusCls[r.status]||'b-gy')+'">'+(statusMap[r.status]||r.status)+'</span>';
+      var mg=document.createElement('td');mg.style.fontSize='.75rem';mg.textContent=r.manager_name||(r.status==='pending_manager'?'Awaiting...':'-');
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(r.created_at);
+      [n,ro,dep,st,mg,dt].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('req-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function submitNewStaff(){
+  var name=document.getElementById('ns-name').value.trim();
+  var email=document.getElementById('ns-email').value.trim();
+  var reason=document.getElementById('ns-reason').value.trim();
+  if(!name||!email){toast('Name and Email are required','er');return;}
+  if(!reason){toast('Please explain why this position is needed','er');return;}
+  var btn=document.getElementById('ns-btn');btn.disabled=true;btn.textContent='Submitting...';
+  api('POST','/api/users/request-new-user',{
+    name:name,email:email,
+    role:document.getElementById('ns-role').value,
+    department:document.getElementById('ns-dept').value,
+    title:document.getElementById('ns-title').value.trim(),
+    phone:document.getElementById('ns-phone').value.trim(),
+    salary:parseFloat(document.getElementById('ns-salary').value)||0,
+    contract_type:document.getElementById('ns-contract').value,
+    reason:reason
+  }).then(function(r){
+    btn.disabled=false;btn.textContent='Submit Request';
+    gxClose('mNewStaff');
+    toast('Request submitted! Waiting for Manager approval','ok');
+    ['ns-name','ns-email','ns-title','ns-phone','ns-salary','ns-reason'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    pgAddStaff();
+  }).catch(function(e){btn.disabled=false;btn.textContent='Submit Request';toast('Error: '+e.message,'er');});
+}
+
+// ── LEAVE ──
+var ALL_LEAVE=[];
+function pgLeave(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Leave Requests</div>';
+  addBtn(hd,'Print','btn-gh btn-sm',function(){gxPrint('Leave Report','<table><thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead><tbody>'+ALL_LEAVE.map(function(l){return'<tr><td>'+(l.employee_name||'?')+'</td><td>'+(l.department||'')+'</td><td>'+l.type+'</td><td>'+l.from_date+'</td><td>'+l.to_date+'</td><td>'+l.days+'</td><td>'+l.status+'</td></tr>';}).join('')+'</tbody></table>');});
+  card.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadLeave(st);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>Duration</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='leave-tb';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadLeave('pending');
+}
+
+function loadLeave(status){
+  api('GET','/api/leave/'+(status?'?status='+status:'')).then(function(items){
+    ALL_LEAVE=items;var tb=document.getElementById('leave-tb');if(!tb)return;tb.innerHTML='';
+    if(!items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' leave requests</td></tr>';return;}
+    items.forEach(function(l){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(l.employee_name||'?','22px')+'<span style="font-weight:500">'+(l.employee_name||'?')+'</span></div>';
+      var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=l.department||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+l.type+'</span>';
+      var dur=document.createElement('td');dur.style.fontSize='.75rem';dur.innerHTML=l.from_date+' &rarr; '+l.to_date+'<br><span style="color:var(--tx3)">'+l.days+' days</span>';
+      var rs=document.createElement('td');rs.style.cssText='font-size:.72rem;color:var(--tx2);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.title=l.reason||'';rs.textContent=l.reason||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(l.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(l.status==='pending'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+        (function(id){appB.onclick=function(){openLeaveAction(id,'approve');};})(l.id);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+        (function(id){rejB.onclick=function(){openLeaveAction(id,'reject');};})(l.id);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      } else {
+        var sp=mk('span','','color:var(--tx3);font-size:.72rem');sp.textContent=l.status;acts.appendChild(sp);
+      }
+      at.appendChild(acts);[n,dep,tp,dur,rs,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('leave-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+function openLeaveAction(id,action){
+  // Find the leave item
+  var item=ALL_LEAVE.filter(function(l){return l.id===id;})[0];
+  if(!item){
+    // Fetch from API
+    api('GET','/api/leave/').then(function(leaves){
+      var found=leaves.filter(function(l){return l.id===id;})[0];
+      if(found) _showLeaveModal(found,action);
+    });
+    return;
+  }
+  _showLeaveModal(item,action);
+}
+
+function _showLeaveModal(item,action){
+  document.getElementById('la-id').value=item.id;
+  document.getElementById('la-action').value=action;
+  document.getElementById('la-note').value='';
+  var title=document.getElementById('la-title');
+  var btn=document.getElementById('la-btn');
+  var det=document.getElementById('la-details');
+  title.textContent=action==='approve'?'Approve Leave Request':'Reject Leave Request';
+  title.style.color=action==='approve'?'var(--ok)':'var(--er)';
+  btn.textContent=action==='approve'?'Approve':'Reject';
+  btn.className='btn '+(action==='approve'?'btn-ok':'btn-er');
+  det.innerHTML='<strong>Employee:</strong> '+(item.employee_name||'?')+'<br>'+
+    '<strong>Department:</strong> '+(item.department||'-')+'<br>'+
+    '<strong>Leave Type:</strong> '+item.type+'<br>'+
+    '<strong>Duration:</strong> '+item.from_date+' to '+item.to_date+' ('+item.days+' days)'+(item.reason?'<br><strong>Reason:</strong> '+item.reason:'');
+  gxOpen('mLeaveAction');
+}
+
+function submitLeaveAction(){
+  var id=document.getElementById('la-id').value;
+  var action=document.getElementById('la-action').value;
+  var note=document.getElementById('la-note').value.trim();
+  if(action==='reject'&&!note){toast('Please provide a reason for rejection','er');return;}
+  api('POST','/api/leave/'+id+'/action',{approved:action==='approve',note:note})
+  .then(function(r){gxClose('mLeaveAction');toast(r.message,'ok');loadLeave('pending');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── ATTENDANCE ──
+function pgAttendance(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Staff Attendance Today';hd.appendChild(ht);
+  addBtn(hd,'Print','btn-gh btn-sm',function(){var tb=document.getElementById('att-tb');if(tb)gxPrint('Attendance - '+gxToday(),tb.outerHTML);});
+  mc.appendChild(hd);
+  var sg=mk('div','stats','grid-template-columns:repeat(4,1fr);margin-bottom:1rem');
+  [{sc:'#22C55E',sc2:'#4ADE80',id:'att-p',lbl:'Present'},{sc:'#F59E0B',sc2:'#FBBF24',id:'att-l',lbl:'Late'},{sc:'#EF4444',sc2:'#F87171',id:'att-a',lbl:'Absent'},{sc:'#A78BFA',sc2:'#7C3AED',id:'',lbl:'On Leave'}].forEach(function(s){
+    var d=mk('div','stat');d.style.setProperty('--sc',s.sc);d.style.setProperty('--sc2',s.sc2);
+    var v=mk('div','s-val');if(s.id)v.id=s.id;v.textContent='-';d.appendChild(v);
+    var l=mk('div','s-lbl');l.textContent=s.lbl;d.appendChild(l);sg.appendChild(d);
+  });
+  mc.appendChild(sg);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th><th>Notes</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='att-tb';
+  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/attendance/today').then(function(att){
+    var p=att.filter(function(a){return a.status==='present';}).length;
+    var l=att.filter(function(a){return a.status==='late';}).length;
+    var ab=att.filter(function(a){return a.status==='absent';}).length;
+    var ep=document.getElementById('att-p'),el=document.getElementById('att-l'),ea=document.getElementById('att-a');
+    if(ep)ep.textContent=p;if(el)el.textContent=l;if(ea)ea.textContent=ab;
+    var tb=document.getElementById('att-tb');if(!tb)return;tb.innerHTML='';
+    if(!att.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No attendance records for today</td></tr>';return;}
+    att.forEach(function(a){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(a.employee_name||'?','22px')+'<span>'+(a.employee_name||'?')+'</span></div>';
+      var d=document.createElement('td');d.textContent=a.department||'-';
+      var ci=document.createElement('td');ci.textContent=a.clock_in||'-';
+      var co=document.createElement('td');co.textContent=a.clock_out||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(a.status);
+      var nt=document.createElement('td');nt.style.cssText='font-size:.72rem;color:var(--tx3)';nt.textContent=a.notes||'-';
+      [n,d,ci,co,st,nt].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('att-tb');if(tb)tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">'+e.message+'</td></tr>';});
+}
+
+// ── SUSPEND ──
+function pgSuspend(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-red');info.innerHTML='<strong>Important:</strong> Suspension immediately blocks access and logs out the employee. A clear reason is required and will be recorded.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Select Employee to Suspend</div>';card.appendChild(hd);
+  var list=mk('div');list.id='suspend-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/employees/?status=active').then(function(emps){
+    var el=document.getElementById('suspend-list');if(!el)return;el.innerHTML='';
+    if(!emps.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No active employees</div>';return;}
+    var inp=document.createElement('input');inp.placeholder='Search employee...';inp.style.cssText='width:100%;padding:.5rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.82rem;color:var(--tx);outline:none;margin-bottom:.75rem';
+    var empList=mk('div');
+    inp.oninput=function(){
+      var q=this.value.toLowerCase();
+      empList.querySelectorAll('.sus-emp-row').forEach(function(r){r.style.display=(r.dataset.name||'').includes(q)||(r.dataset.dept||'').includes(q)?'':'none';});
+    };
+    el.appendChild(inp);
+    emps.filter(function(e){return e.role!=='admin';}).forEach(function(e){
+      var row=mk('div','sus-emp-row','display:flex;align-items:center;gap:.75rem;padding:.65rem .5rem;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;border-radius:8px;transition:background .15s');
+      row.dataset.name=(e.name||'').toLowerCase();row.dataset.dept=(e.department||'').toLowerCase();
+      row.innerHTML=gxAv(e.name,'32px');
+      var info2=mk('div','','flex:1');var nm=mk('div','','font-weight:500;font-size:.85rem');nm.textContent=e.name;info2.appendChild(nm);var dep=mk('div','','font-size:.7rem;color:var(--tx3)');dep.textContent=(e.department||'')+(e.title?' - '+e.title:'');info2.appendChild(dep);row.appendChild(info2);
+      row.innerHTML+=gxBadge(e.role);
+      var susBtn=mk('button','btn btn-er btn-sm');susBtn.textContent='Suspend';
+      (function(uid,nm2){susBtn.onclick=function(ev){ev.stopPropagation();openSuspend(uid,nm2);};})(e.user_id,e.name);
+      row.appendChild(susBtn);
+      row.onmouseover=function(){this.style.background='rgba(255,255,255,.04)';};row.onmouseout=function(){this.style.background='';};
+      empList.appendChild(row);
+    });
+    el.appendChild(empList);
+  }).catch(function(e){var el2=document.getElementById('suspend-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function openSuspend(uid,name){
+  document.getElementById('sus-uid').value=uid;
+  document.getElementById('sus-user-info').innerHTML='<strong>Employee:</strong> '+name;
+  document.getElementById('sus-reason').value='';
+  gxOpen('mSuspend');
+}
+
+function doSuspend(){
+  var uid=document.getElementById('sus-uid').value;
+  var reason=document.getElementById('sus-reason').value.trim();
+  var notify=document.getElementById('sus-notify').value==='true';
+  if(!reason){toast('A reason is required for suspension','er');return;}
+  api('POST','/api/users/'+uid+'/suspend',{reason:reason,notify_user:notify})
+  .then(function(r){gxClose('mSuspend');toast(r.message,'wa');pgSuspend();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── COMPLAINTS ──
+function pgComplaints(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.textContent='Manage employee complaints and HR cases';mc.appendChild(info);
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Complaints &amp; HR Cases</div></div>';
+  var list=mk('div');list.id='comp-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  // For now show placeholder - complaints table not fully set up
+  setTimeout(function(){
+    var el=document.getElementById('comp-list');if(!el)return;
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No complaints filed yet</div>';
+  },500);
+}
+
+// ── JOB APPLICATIONS ──
+function pgApplications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Job Applications</div>';
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgApplications);card.appendChild(hd);
+  var list=mk('div');list.id='app-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  // Show placeholder - applications can be added when job postings are configured
+  setTimeout(function(){
+    var el=document.getElementById('app-list');if(!el)return;
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No job applications yet.<br><span style="font-size:.75rem">Applications will appear here when candidates apply.</span></div>';
+  },500);
+}
+
+// ── ANNOUNCEMENTS ──
+function pgAnnouncements(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Announcements</div>';addBtn(hd,'+ Post New','btn-hi btn-sm',function(){gxOpen('mAnn');});card.appendChild(hd);
+  var list=mk('div');list.id='ann-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/announcements/').then(function(anns){
+    var el=document.getElementById('ann-list');if(!el)return;
+    if(!anns.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No announcements yet</div>';return;}
+    var clr={info:'#60A5FA',warn:'var(--wa)',ok:'var(--ok)',er:'var(--er)'};el.innerHTML='';
+    anns.forEach(function(a){
+      var div=mk('div','ann','border-left:4px solid '+(clr[a.type]||'#60A5FA'));
+      var ti=mk('div','ann-title');ti.textContent=a.title;div.appendChild(ti);
+      var bo=mk('div','ann-body');bo.textContent=a.body;div.appendChild(bo);
+      var me=mk('div','','font-size:.68rem;color:var(--tx3);margin-top:.4rem');
+      me.textContent=(a.poster_name||'?')+' - '+(a.department==='all'?'All Staff':a.department)+' - '+gxAgo(a.created_at);
+      div.appendChild(me);el.appendChild(div);
+    });
+  }).catch(function(e){var el2=document.getElementById('ann-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function postAnn(){
+  var title=document.getElementById('ann-title').value.trim(),body=document.getElementById('ann-body').value.trim();
+  if(!title||!body){toast('Fill in title and message','er');return;}
+  api('POST','/api/announcements/',{title:title,body:body,type:document.getElementById('ann-type').value,department:document.getElementById('ann-dept').value})
+  .then(function(){gxClose('mAnn');toast('Announcement posted','ok');document.getElementById('ann-title').value='';document.getElementById('ann-body').value='';})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── REPORTS ──
+function pgReports(){
+  showLoading();
+  Promise.all([api('GET','/api/reports/payroll-summary'),api('GET','/api/reports/dashboard-stats')]).then(function(r){
+    var pay=r[0],stats=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var grid=mk('div','g2');
+    // Headcount
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">Headcount Summary</div></div>';
+    [['Total Active Staff',stats.total_employees,'var(--hi)'],['On Leave Today',stats.pending_leave||0,'var(--wa)'],['Present Today',stats.today_present||0,'var(--ok)'],['Late Today',stats.today_late||0,'var(--or)'],['Suspended',stats.suspended_users||0,'var(--er)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);left.appendChild(d);
+    });
+    addBtn(left,'Print Employee List','btn-gh btn-bl2 btn-sm',printEmps);
+    // Payroll
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Payroll Overview</div></div>';
+    [['Total Employees',pay.total_employees,'var(--tx)'],['Gross Payroll',money(pay.gross_payroll),'var(--hi)'],['Tax Deductions','-'+money(pay.tax),'var(--er)'],['NI Contributions','-'+money(pay.ni),'var(--er)'],['Pension','-'+money(pay.pension),'var(--er)'],['Net Payroll',money(pay.net_payroll),'var(--ok)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+    addBtn(right,'Print Payroll Report','btn-gh btn-bl2 btn-sm',function(){gxPrint('Payroll Report','<table><tr><th>Item</th><th>Amount</th></tr><tr><td>Gross Payroll</td><td>'+money(pay.gross_payroll)+'</td></tr><tr><td>Tax (20%)</td><td>-'+money(pay.tax)+'</td></tr><tr><td>NI (8%)</td><td>-'+money(pay.ni)+'</td></tr><tr><td>Pension (5%)</td><td>-'+money(pay.pension)+'</td></tr><tr><td><b>Net Payroll</b></td><td><b>'+money(pay.net_payroll)+'</b></td></tr></table>');});
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgReports);});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── START ──
+
+// ── ALL STAFF LEAVE BALANCES ──
+function pgLeaveBalances(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  hd.innerHTML='<div style="font-size:1rem;font-weight:600">Staff Leave Balances '+new Date().getFullYear()+'</div>';
+  var hdR=mk('div','','display:flex;gap:.5rem');
+  var inp=document.createElement('input');inp.placeholder='Search employee...';inp.oninput=function(){var q=this.value.toLowerCase();document.querySelectorAll('.lb-row').forEach(function(r){r.style.display=r.dataset.name.includes(q)||r.dataset.dept.includes(q)?'':'none';});};
+  inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';
+  hdR.appendChild(inp);addBtn(hdR,'Print','btn-gh btn-sm',function(){gxPrint('Leave Balances '+new Date().getFullYear(),document.getElementById('lb-wrap')?document.getElementById('lb-wrap').outerHTML:'');});
+  hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');wrap.id='lb-wrap';
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Annual Left</th><th>Sick Left</th><th>Emergency Left</th><th>Annual Used</th><th>Sick Used</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='lb-tb';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/leave/all-balances').then(function(bals){
+    var tb=document.getElementById('lb-tb');if(!tb)return;tb.innerHTML='';
+    if(!bals.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No balance records yet</td></tr>';return;}
+    bals.forEach(function(b){
+      var tr=document.createElement('tr');tr.className='lb-row';tr.dataset.name=(b.name||'').toLowerCase();tr.dataset.dept=(b.department||'').toLowerCase();
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(b.name,'22px')+'<span style="font-weight:500">'+b.name+'</span></div>';
+      var d=document.createElement('td');d.style.fontSize='.78rem';d.textContent=b.department||'-';
+      var ar=document.createElement('td');ar.style.cssText='font-weight:700;color:'+(b.annual_remaining<=3?'var(--er)':b.annual_remaining<=7?'var(--wa)':'var(--ok)');ar.textContent=b.annual_remaining+' days';
+      var sr=document.createElement('td');sr.style.cssText='font-weight:600;color:'+(b.sick_remaining<=2?'var(--er)':'var(--bl)');sr.textContent=b.sick_remaining+' days';
+      var er=document.createElement('td');er.style.cssText='font-weight:600;color:'+(b.emergency_remaining<=1?'var(--er)':'var(--or)');er.textContent=b.emergency_remaining+' days';
+      var au=document.createElement('td');au.style.cssText='color:var(--tx3);font-size:.82rem';au.textContent=b.annual_used+' used';
+      var su=document.createElement('td');su.style.cssText='color:var(--tx3);font-size:.82rem';su.textContent=b.sick_used+' used';
+      [n,d,ar,sr,er,au,su].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('lb-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+
+// ── LEAVE CALENDAR ──
+function pgLeaveCalendar(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var now=new Date();
+  var curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Leave Calendar</div>';hd.appendChild(ht);
+  var monthSel=document.createElement('input');monthSel.type='month';monthSel.value=curMonth;
+  monthSel.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none';
+  monthSel.onchange=function(){loadCalendar(this.value);};hd.appendChild(monthSel);mc.appendChild(hd);
+  
+  var card=mk('div','card');var list=mk('div');list.id='cal-list';
+  list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  loadCalendar(curMonth);
+  
+  function loadCalendar(month){
+    api('GET','/api/leave/calendar?month='+month).then(function(items){
+      var el=document.getElementById('cal-list');if(!el)return;el.innerHTML='';
+      if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No approved leave for this month</div>';return;}
+      var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+      tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th></tr></thead>';
+      var tbody=document.createElement('tbody');
+      items.forEach(function(item){
+        var tr=document.createElement('tr');
+        var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(item.employee_name,'22px')+'<span>'+item.employee_name+'</span></div>';
+        var d=document.createElement('td');d.style.fontSize='.78rem';d.textContent=item.department||'-';
+        var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+item.type+'</span>';
+        var fd=document.createElement('td');fd.textContent=item.from_date;
+        var td2=document.createElement('td');td2.textContent=item.to_date;
+        var dy=document.createElement('td');dy.style.fontWeight='600';dy.textContent=item.days+' day'+(item.days!=1?'s':'');
+        [n,d,tp,fd,td2,dy].forEach(function(td3){tr.appendChild(td3);});tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+    }).catch(function(e){var el2=document.getElementById('cal-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+  }
+}
+
+
+
+// ── LOAD EMPS FOR SELECTS ──
+function loadEmpsSelect(selId){
+  api('GET','/api/employees/').then(function(emps){
+    var sel=document.getElementById(selId);if(!sel)return;
+    sel.innerHTML='<option value="">Select employee...</option>';
+    emps.forEach(function(e){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.department+')';sel.appendChild(o);});
+  }).catch(function(){});
+}
+
+// ── ONBOARDING ──
+function pgOnboarding(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');hd.innerHTML='<div style="font-size:1rem;font-weight:600">Employee Onboarding</div>';
+  addBtn(hd,'+ Start Onboarding','btn-hi btn-sm',function(){loadEmpsSelect('ob-emp-sel');gxOpen('mObStart');});mc.appendChild(hd);
+
+  var card=mk('div','card');var hd2=mk('div','c-hd');hd2.innerHTML='<div class="c-title">Onboarding Checklists</div>';addBtn(hd2,'Refresh','btn-gh btn-sm',pgOnboarding);card.appendChild(hd2);
+  var list=mk('div');list.id='ob-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/onboarding/').then(function(items){
+    var el=document.getElementById('ob-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No onboarding records yet</div>';return;}
+    items.forEach(function(ob){
+      var pct=Math.round([ob.id_submitted,ob.contract_signed,ob.orientation_done,ob.email_setup,ob.equipment_assigned,ob.system_access,ob.bank_details,ob.tax_form].filter(Boolean).length/8*100);
+      var card2=mk('div','','background:var(--bg3);border-radius:10px;padding:1rem;margin-bottom:.75rem');
+      var top=mk('div','','display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem');
+      top.innerHTML=gxAv(ob.employee_name||'?','32px');
+      var info=mk('div','','flex:1');var nm=mk('div','','font-weight:600');nm.textContent=ob.employee_name||'?';info.appendChild(nm);var dep=mk('div','','font-size:.72rem;color:var(--tx3)');dep.textContent=ob.department||'';info.appendChild(dep);top.appendChild(info);
+      top.innerHTML+=gxBadge(ob.completed?'completed':'in-progress');
+      card2.appendChild(top);
+      // Progress bar
+      var pb=mk('div','','margin-bottom:.75rem');var pt=mk('div','','display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.25rem');var pl=mk('span','','color:var(--tx3)');pl.textContent='Progress';var pv=mk('span','','font-weight:700;color:'+(pct===100?'var(--ok)':pct>50?'var(--wa)':'var(--or)'));pv.textContent=pct+'%';pt.appendChild(pl);pt.appendChild(pv);pb.appendChild(pt);
+      var pbg=mk('div','prog-bg');var pf=mk('div','prog-fill','width:'+pct+'%;background:'+(pct===100?'var(--ok)':pct>50?'var(--wa)':'var(--or)'));pbg.appendChild(pf);pb.appendChild(pbg);card2.appendChild(pb);
+      // Checklist items
+      var grid=mk('div','','display:grid;grid-template-columns:1fr 1fr;gap:.25rem .5rem');
+      var items2=[['id_submitted','ID Submitted'],['contract_signed','Contract Signed'],['orientation_done','Orientation Done'],['email_setup','Email Setup'],['equipment_assigned','Equipment Assigned'],['system_access','System Access'],['bank_details','Bank Details'],['tax_form','Tax Form']];
+      items2.forEach(function(item){
+        var row=mk('div','','display:flex;align-items:center;gap:.4rem;font-size:.75rem;cursor:pointer;padding:.2rem 0');
+        var chk=mk('div','','width:14px;height:14px;border-radius:3px;border:1.5px solid '+(ob[item[0]]?'var(--ok)':'var(--br)')+';background:'+(ob[item[0]]?'var(--ok)':'transparent')+';flex-shrink:0;display:flex;align-items:center;justify-content:center');
+        if(ob[item[0]])chk.innerHTML='<svg width="9" height="7" viewBox="0 0 9 7"><polyline points="1,3.5 3.5,6 8,1" stroke="white" stroke-width="1.5" fill="none"/></svg>';
+        var lbl=mk('span');lbl.textContent=item[1];row.appendChild(chk);row.appendChild(lbl);
+        (function(key,cid,current,chkEl,lblEl){row.onclick=function(){var newVal=current?0:1;api('PATCH','/api/onboarding/'+cid,{[key]:newVal}).then(function(r){chkEl.style.border='1.5px solid '+(newVal?'var(--ok)':'var(--br)');chkEl.style.background=newVal?'var(--ok)':'transparent';chkEl.innerHTML=newVal?'<svg width="9" height="7" viewBox="0 0 9 7"><polyline points="1,3.5 3.5,6 8,1" stroke="white" stroke-width="1.5" fill="none"/></svg>':'';current=newVal;if(r.completed)toast(ob.employee_name+' onboarding complete! 🎉','ok');}).catch(function(e){toast(e.message,'er');});};})(item[0],ob.id,ob[item[0]],chk,lbl);
+        grid.appendChild(row);
+      });
+      card2.appendChild(grid);el.appendChild(card2);
+    });
+  }).catch(function(e){var el2=document.getElementById('ob-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+function startOnboarding(){
+  var sel=document.getElementById('ob-emp-sel');if(!sel||!sel.value){toast('Select an employee','er');return;}
+  api('POST','/api/onboarding/',{employee_id:sel.value})
+  .then(function(r){gxClose('mObStart');toast(r.message,'ok');pgOnboarding();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── DISCIPLINARY ──
+function pgDisciplinary(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');hd.innerHTML='<div style="font-size:1rem;font-weight:600">Disciplinary Records</div>';
+  addBtn(hd,'+ Issue Record','btn-er btn-sm',function(){loadEmpsSelect('disc-emp');gxOpen('mDisc');});mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>Description</th><th>Issued By</th><th>Status</th><th>Date</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='disc-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/disciplinary/').then(function(items){
+    var tb=document.getElementById('disc-tb');if(!tb)return;tb.innerHTML='';
+    if(!items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No disciplinary records</td></tr>';return;}
+    items.forEach(function(d){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(d.employee_name||'?','22px')+'<span style="font-weight:500">'+(d.employee_name||'?')+'</span></div>';
+      var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=d.department||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-er">'+d.type+'</span>';
+      var desc=document.createElement('td');desc.style.cssText='font-size:.75rem;color:var(--tx2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';desc.textContent=d.description||'-';
+      var by=document.createElement('td');by.style.fontSize='.75rem';by.textContent=d.issuer_name||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(d.status);
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(d.created_at);
+      [n,dep,tp,desc,by,st,dt].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('disc-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+function submitDisc(){
+  var empSel=document.getElementById('disc-emp');var desc=document.getElementById('disc-desc').value.trim();
+  if(!empSel.value){toast('Select an employee','er');return;}
+  if(!desc){toast('Enter a description','er');return;}
+  var btn=document.getElementById('disc-btn');btn.disabled=true;btn.textContent='Issuing...';
+  api('POST','/api/disciplinary/',{employee_id:empSel.value,type:document.getElementById('disc-type').value,description:desc,action_taken:document.getElementById('disc-action').value.trim(),status:document.getElementById('disc-status').value})
+  .then(function(r){btn.disabled=false;btn.textContent='Issue Record';gxClose('mDisc');toast(r.message,'ok');pgDisciplinary();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Issue Record';toast('Error: '+e.message,'er');});
+}
+
+// ── EXIT MANAGEMENT ──
+function pgExit(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');hd.innerHTML='<div style="font-size:1rem;font-weight:600">Exit Management</div>';
+  addBtn(hd,'+ Initiate Exit','btn-er btn-sm',function(){loadEmpsSelect('exit-emp');gxOpen('mExit');});mc.appendChild(hd);
+  var card=mk('div','card');var list=mk('div');list.id='exit-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/exit/').then(function(items){
+    var el=document.getElementById('exit-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No exit records</div>';return;}
+    items.forEach(function(ex){
+      var steps=[['handover_done','Handover'],['equipment_returned','Equipment'],['clearance_done','Clearance'],['final_payment_done','Final Pay'],['exit_interview_done','Exit Interview']];
+      var done=steps.filter(function(s){return ex[s[0]];}).length;
+      var card2=mk('div','','background:var(--bg3);border-radius:10px;padding:1rem;margin-bottom:.75rem');
+      var top=mk('div','','display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem');
+      top.innerHTML=gxAv(ex.employee_name||'?','32px');
+      var info=mk('div','','flex:1');var nm=mk('div','','font-weight:600');nm.textContent=ex.employee_name||'?';info.appendChild(nm);
+      var meta=mk('div','','font-size:.72rem;color:var(--tx3)');meta.textContent=(ex.exit_type||'-')+' - '+(ex.exit_date||'Date TBD');info.appendChild(meta);top.appendChild(info);
+      top.innerHTML+=gxBadge(ex.status);card2.appendChild(top);
+      // Checklist
+      var stepDiv=mk('div','','display:flex;flex-wrap:wrap;gap:.4rem .75rem');
+      steps.forEach(function(step){
+        var btn=mk('button','btn '+(ex[step[0]]?'btn-ok':'btn-gh')+' btn-xs');btn.textContent=(ex[step[0]]?'✅ ':'')+step[1];
+        (function(key,eid,current){btn.onclick=function(){api('PATCH','/api/exit/'+eid,{[key]:current?0:1}).then(function(r){toast(r.message,'ok');pgExit();}).catch(function(e){toast(e.message,'er');});};})(step[0],ex.id,ex[step[0]]);
+        stepDiv.appendChild(btn);
+      });
+      card2.appendChild(stepDiv);el.appendChild(card2);
+    });
+  }).catch(function(e){var el2=document.getElementById('exit-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+function submitExit(){
+  var empSel=document.getElementById('exit-emp');
+  if(!empSel.value){toast('Select an employee','er');return;}
+  var btn=document.getElementById('exit-btn');btn.disabled=true;btn.textContent='Starting...';
+  api('POST','/api/exit/',{employee_id:empSel.value,exit_type:document.getElementById('exit-type').value,exit_date:document.getElementById('exit-date').value,reason:document.getElementById('exit-reason').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Start Exit Process';gxClose('mExit');toast(r.message,'ok');pgExit();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Start Exit Process';toast('Error: '+e.message,'er');});
+}
+
+// ── PERFORMANCE REVIEWS ──
+function pgPerformance(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');hd.innerHTML='<div style="font-size:1rem;font-weight:600">Performance Reviews</div>';
+  addBtn(hd,'+ New Review','btn-hi btn-sm',function(){loadEmpsSelect('rv-emp');gxOpen('mReview');});mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Period</th><th>Quality</th><th>Punctuality</th><th>Teamwork</th><th>Comm</th><th>Initiative</th><th>Overall</th><th>Reviewer</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='perf-tb';tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/performance/').then(function(items){
+    var tb=document.getElementById('perf-tb');if(!tb)return;tb.innerHTML='';
+    if(!items.length){tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--tx3)">No reviews yet</td></tr>';return;}
+    items.forEach(function(r){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(r.employee_name||'?','22px')+'<span>'+(r.employee_name||'?')+'</span></div>';
+      var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=r.department||'-';
+      var per=document.createElement('td');per.style.cssText='font-weight:500;font-size:.82rem';per.textContent=r.review_period||'-';
+      var mkScore=function(v){var td=document.createElement('td');var clr=v>=4?'var(--ok)':v>=3?'var(--wa)':'var(--er)';td.innerHTML='<span style="font-weight:700;color:'+clr+'">'+v+'</span>';return td;};
+      var ov=document.createElement('td');var oClr=r.overall_score>=4?'var(--ok)':r.overall_score>=3?'var(--wa)':'var(--er)';ov.innerHTML='<span style="font-weight:700;font-size:1rem;color:'+oClr+'">'+r.overall_score.toFixed(1)+'</span>';
+      var rv=document.createElement('td');rv.style.fontSize='.75rem';rv.textContent=r.reviewer_name||'-';
+      [n,dep,per,mkScore(r.work_quality),mkScore(r.punctuality),mkScore(r.teamwork),mkScore(r.communication),mkScore(r.initiative),ov,rv].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('perf-tb');if(tb)tb.innerHTML='<tr><td colspan="10" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+// Wire up live score preview
+document.addEventListener('change',function(e){
+  if(['rv-quality','rv-punctuality','rv-teamwork','rv-comm','rv-init'].indexOf(e.target.id)>=0){
+    var ids=['rv-quality','rv-punctuality','rv-teamwork','rv-comm','rv-init'];
+    var scores=ids.map(function(id){return parseInt(document.getElementById(id).value)||3;});
+    var avg=(scores.reduce(function(a,b){return a+b;},0)/scores.length).toFixed(1);
+    var ov=document.getElementById('rv-overall-val');if(ov){ov.textContent=avg;ov.style.color=avg>=4?'var(--ok)':avg>=3?'var(--wa)':'var(--er)';}
+  }
+});
+function submitReview(){
+  var empSel=document.getElementById('rv-emp');var period=document.getElementById('rv-period').value.trim();
+  if(!empSel.value){toast('Select an employee','er');return;}
+  if(!period){toast('Enter a review period','er');return;}
+  var btn=document.getElementById('rv-btn');btn.disabled=true;btn.textContent='Publishing...';
+  api('POST','/api/performance/',{employee_id:empSel.value,review_period:period,work_quality:parseInt(document.getElementById('rv-quality').value),punctuality:parseInt(document.getElementById('rv-punctuality').value),teamwork:parseInt(document.getElementById('rv-teamwork').value),communication:parseInt(document.getElementById('rv-comm').value),initiative:parseInt(document.getElementById('rv-init').value),strengths:document.getElementById('rv-strengths').value.trim(),improvements:document.getElementById('rv-improve').value.trim(),goals:document.getElementById('rv-goals').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Publish Review';gxClose('mReview');toast('Review published! Overall: '+r.overall_score,'ok');pgPerformance();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Publish Review';toast('Error: '+e.message,'er');});
+}
+
+// ── JOB POSTINGS ──
+function pgJobs(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');hd.innerHTML='<div style="font-size:1rem;font-weight:600">Job Postings</div>';
+  addBtn(hd,'+ Post Job','btn-hi btn-sm',function(){['job-title','job-salary','job-desc','job-req'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});gxOpen('mJob');});mc.appendChild(hd);
+  var card=mk('div','card');var list=mk('div');list.id='jobs-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/jobs/').then(function(jobs){
+    var el=document.getElementById('jobs-list');if(!el)return;
+    if(!jobs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No job postings yet</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Title</th><th>Dept</th><th>Type</th><th>Salary Range</th><th>Deadline</th><th>Status</th><th>Applications</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    jobs.forEach(function(j){
+      var tr=document.createElement('tr');
+      var ti=document.createElement('td');ti.style.fontWeight='600';ti.textContent=j.title;
+      var dep=document.createElement('td');dep.style.fontSize='.78rem';dep.textContent=j.department||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+j.type+'</span>';
+      var sal=document.createElement('td');sal.style.cssText='font-size:.75rem;color:var(--ok)';sal.textContent=j.salary_range||'-';
+      var dl=document.createElement('td');dl.style.cssText='font-size:.75rem;'+(j.deadline&&j.deadline<gxToday()?'color:var(--er)':'color:var(--tx3)');dl.textContent=j.deadline||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(j.status);
+      var apps=document.createElement('td');apps.style.cssText='text-align:center;font-weight:600;color:var(--hi)';apps.textContent=j.applications_count||0;
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(j.status==='open'){var closeBtn=mk('button','btn btn-er btn-xs');closeBtn.textContent='Close';(function(jid){closeBtn.onclick=function(){api('PATCH','/api/jobs/'+jid,{status:'closed'}).then(function(){toast('Job closed','wa');pgJobs();}).catch(function(e){toast(e.message,'er');});};})(j.id);acts.appendChild(closeBtn);}
+      at.appendChild(acts);[ti,dep,tp,sal,dl,st,apps,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('jobs-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+function submitJob(){
+  var title=document.getElementById('job-title').value.trim();var desc=document.getElementById('job-desc').value.trim();
+  if(!title||!desc){toast('Title and description are required','er');return;}
+  var btn=document.getElementById('job-btn');btn.disabled=true;btn.textContent='Posting...';
+  api('POST','/api/jobs/',{title:title,department:document.getElementById('job-dept').value,type:document.getElementById('job-type').value,salary_range:document.getElementById('job-salary').value.trim(),deadline:document.getElementById('job-deadline').value,description:desc,requirements:document.getElementById('job-req').value.trim()})
+  .then(function(r){btn.disabled=false;btn.textContent='Post Job';gxClose('mJob');toast(r.message,'ok');pgJobs();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Post Job';toast('Error: '+e.message,'er');});
+}
+
+// ── CONTRACT EXPIRY ──
+function pgContracts(){
+  showLoading();
+  api('GET','/api/employees/expiring-contracts?days=60').then(function(emps){
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var info=mk('div','info info-orange');info.innerHTML='<strong>Showing contracts expiring in the next 60 days.</strong> Review and renew before expiry.';mc.appendChild(info);
+    var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">&#x1f4c6; Expiring Contracts</div></div>';
+    if(!emps.length){var nd=mk('div','','text-align:center;padding:2rem;color:var(--ok)');nd.innerHTML='&#x2705; No contracts expiring in the next 60 days';card.appendChild(nd);mc.appendChild(card);return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Title</th><th>Contract Ends</th><th>Days Left</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    emps.forEach(function(e){
+      var tr=document.createElement('tr');
+      var today=new Date();var expiry=new Date(e.contract_end_date);var daysLeft=Math.ceil((expiry-today)/86400000);
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'22px')+'<span style="font-weight:500">'+e.name+'</span></div>';
+      var d=document.createElement('td');d.textContent=e.department||'-';
+      var ti=document.createElement('td');ti.style.fontSize='.78rem';ti.textContent=e.title||'-';
+      var ce=document.createElement('td');ce.style.cssText='font-weight:600;color:'+(daysLeft<=14?'var(--er)':daysLeft<=30?'var(--wa)':'var(--tx)');ce.textContent=e.contract_end_date;
+      var dl=document.createElement('td');dl.innerHTML='<span class="b '+(daysLeft<=14?'b-er':daysLeft<=30?'b-wa':'b-ok')+'">'+daysLeft+' days</span>';
+      [n,d,ti,ce,dl].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  }).catch(function(e){showErr(e.message,pgContracts);});
+}
+
+// ── BIRTHDAYS ──
+function pgBirthdays(){
+  showLoading();
+  api('GET','/api/employees/birthdays?days=30').then(function(emps){
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var info=mk('div','info info-blue');info.textContent='Employees with birthdays in the next 30 days.';mc.appendChild(info);
+    var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">&#x1f382; Upcoming Birthdays</div></div>';
+    if(!emps.length){var nd=mk('div','','text-align:center;padding:2rem;color:var(--tx3)');nd.innerHTML='No birthdays in the next 30 days';card.appendChild(nd);mc.appendChild(card);return;}
+    emps.forEach(function(e){
+      var row=mk('div','','display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      row.innerHTML=gxAv(e.name,'36px');
+      var info2=mk('div','','flex:1');var nm=mk('div','','font-weight:600');nm.textContent=e.name;info2.appendChild(nm);
+      var dep=mk('div','','font-size:.72rem;color:var(--tx3)');dep.textContent=e.department||'-';info2.appendChild(dep);row.appendChild(info2);
+      var tag=mk('div','','text-align:right');
+      var days=mk('div','','font-weight:700;color:'+(e.days_until===0?'var(--ok)':e.days_until<=3?'var(--or)':'var(--hi)'));
+      days.textContent=e.days_until===0?'🎂 Today!':e.days_until===1?'Tomorrow!':'In '+e.days_until+' days';tag.appendChild(days);
+      var dt=mk('div','','font-size:.72rem;color:var(--tx3)');dt.textContent=e.birthday;tag.appendChild(dt);row.appendChild(tag);
+      card.appendChild(row);
+    });
+    mc.appendChild(card);
+  }).catch(function(e){showErr(e.message,pgBirthdays);});
+}
+
+
+// ── TRAINING MANAGEMENT (HR) ──
+function pgHRTraining(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Training Requests</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgHRTraining);card.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadHRTraining(st);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Course</th><th>Provider</th><th>Cost</th><th>Duration</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='htr-tb';tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadHRTraining('pending');
+}
+function loadHRTraining(status){
+  api('GET','/api/training/').then(function(items){
+    var tb=document.getElementById('htr-tb');if(!tb)return;tb.innerHTML='';
+    var filtered=status?items.filter(function(t){return t.status===status;}):items;
+    if(!filtered.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' training requests</td></tr>';return;}
+    filtered.forEach(function(t){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(t.employee_name||'?','22px')+'<span>'+(t.employee_name||'?')+'</span></div>';
+      var d=document.createElement('td');d.style.fontSize='.75rem';d.textContent=t.department||'-';
+      var co=document.createElement('td');co.style.fontWeight='500';co.textContent=t.course_title;
+      var pr=document.createElement('td');pr.style.fontSize='.75rem';pr.textContent=t.provider||'-';
+      var cs=document.createElement('td');cs.style.cssText='color:var(--hi)';cs.textContent=t.cost>0?money(t.cost):'-';
+      var du=document.createElement('td');du.style.fontSize='.75rem';du.textContent=t.duration||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(t.status==='pending'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+        (function(tid){appB.onclick=function(){api('POST','/api/training/'+tid+'/action',{approved:true}).then(function(r){toast(r.message,'ok');loadHRTraining('pending');}).catch(function(e){toast(e.message,'er');});};})(t.id);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+        (function(tid){rejB.onclick=function(){gxAskReason({title:'Reject Training Request',label:'Reason *',btnText:'Reject',btnCls:'btn-er'},function(note){api('POST','/api/training/'+tid+'/action',{approved:false,note:note}).then(function(r){toast(r.message,'wa');loadHRTraining('pending');}).catch(function(e){toast(e.message,'er');});});};})(t.id);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      }
+      at.appendChild(acts);[n,d,co,pr,cs,du,st,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('htr-tb');if(tb)tb.innerHTML='<tr><td colspan="8" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+
+
+// ── AI HR TOOLS ──
+function pgAIHR(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='&#x1f916; AI-powered HR tools to save time and improve decisions.';mc.appendChild(info);
+  var grid=mk('div','g2');
+
+  // AI Interview Scorer
+  var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">&#x1f4dd; AI Interview Scorer</div></div>';
+  var form=mk('div','','padding:.5rem 0');
+  var roleF=mk('div','field');var rl=mk('label');rl.textContent='Role Applied For';roleF.appendChild(rl);var ri=document.createElement('input');ri.id='ai-role';ri.placeholder='e.g. Logistics Officer, HR Manager...';roleF.appendChild(ri);form.appendChild(roleF);
+  var clF=mk('div','field');var cl=mk('label');cl.textContent='Cover Letter / Application *';clF.appendChild(cl);var ct=document.createElement('textarea');ct.id='ai-cover';ct.rows=6;ct.placeholder='Paste the applicant cover letter or application here...';clF.appendChild(ct);form.appendChild(clF);
+  var scoreDiv=mk('div');scoreDiv.id='ai-score-out';form.appendChild(scoreDiv);
+  addBtn(form,'&#x1f916; Score This Application','btn-hi',function(){
+    var cover=document.getElementById('ai-cover').value.trim();var role=document.getElementById('ai-role').value.trim();
+    if(!cover){toast('Paste the application text first','er');return;}
+    gxAIBox('ai-score-out','Application Analysis');
+    gxAI('You are an expert HR recruiter for Giddies Express Nigeria. Score this job application: 1) Score out of 10, 2) Strengths, 3) Concerns, 4) Recommendation (Shortlist/Hold/Reject), 5) Three interview questions.',
+      'Role: '+(role||'Not specified')+' | Application: '+cover,null,
+      function(text){gxAISetText('ai-score-out',text);},
+      function(e){gxAISetText('ai-score-out','Error: '+e);});
+  });
+  left.appendChild(form);
+
+  // AI Leave Pattern Analysis
+  var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">&#x1f4ca; AI Leave Pattern Analysis</div></div>';
+  var leaveDiv=mk('div');leaveDiv.id='ai-leave-out';right.appendChild(leaveDiv);
+  var analyseBtn=mk('button','btn btn-hi btn-sm','margin-top:.5rem');analyseBtn.innerHTML='&#x1f916; Analyse Leave Patterns';analyseBtn.id='ai-leave-btn';
+  analyseBtn.onclick=function(){
+    analyseBtn.disabled=true;analyseBtn.textContent='Analysing...';
+    api('GET','/api/leave/').then(function(leaves){
+      var summary={};
+      leaves.forEach(function(l){if(!summary[l.employee_name])summary[l.employee_name]={total:0,approved:0,types:{}};summary[l.employee_name].total++;if(l.status==='approved')summary[l.employee_name].approved++;summary[l.employee_name].types[l.type]=(summary[l.employee_name].types[l.type]||0)+1;});
+      var context=Object.keys(summary).map(function(name){var d=summary[name];return name+': '+d.total+' requests, '+d.approved+' approved, types: '+Object.keys(d.types).join(', ');}).join('; ');
+      gxAIBox('ai-leave-out','Leave Pattern Analysis');
+      gxAI('You are an HR analyst for Giddies Express Nigeria. Analyse the leave request patterns and provide insights. Identify: employees with high leave frequency, common leave types, potential concerns, and recommendations for leave policy improvements. Be data-driven and constructive.',
+        'Leave data: '+context,null,
+        function(text){gxAISetText('ai-leave-out',text);analyseBtn.disabled=false;analyseBtn.innerHTML='&#x1f504; Re-analyse';},
+        function(e){gxAISetText('ai-leave-out','Error: '+e);analyseBtn.disabled=false;analyseBtn.innerHTML='&#x1f916; Analyse Leave Patterns';});
+    }).catch(function(e){analyseBtn.disabled=false;analyseBtn.innerHTML='&#x1f916; Analyse Leave Patterns';toast(e.message,'er');});
+  };
+  right.appendChild(analyseBtn);
+
+  // AI Onboarding Checklist Generator
+  var full=mk('div','card','grid-column:span 2');full.innerHTML='<div class="c-hd"><div class="c-title">&#x1f916; AI HR Policy Assistant</div></div>';
+  var pform=mk('div','','padding:.5rem 0;display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap');
+  var qF=mk('div','field','flex:1;min-width:200px');var ql=mk('label');ql.textContent='Ask about HR policy or best practices';qF.appendChild(ql);var qi=document.createElement('input');qi.id='ai-policy-q';qi.placeholder='e.g. What should our overtime policy be? How to handle repeated lateness?';qF.appendChild(qi);pform.appendChild(qF);
+  addBtn(pform,'&#x1f916; Ask AI','btn-hi',function(){
+    var q=document.getElementById('ai-policy-q').value.trim();if(!q){toast('Ask a question first','er');return;}
+    gxAIBox('ai-policy-out','HR Policy Guidance');
+    gxAI('You are an experienced HR Director and policy expert for a Nigerian logistics company called Giddies Express. Provide professional, practical HR policy advice appropriate for Nigerian labour law and business culture. Be specific, actionable and professional.',
+      q,null,
+      function(text){gxAISetText('ai-policy-out',text);},
+      function(e){gxAISetText('ai-policy-out','Error: '+e);});
+  });
+  full.appendChild(pform);
+  var pout=mk('div');pout.id='ai-policy-out';full.appendChild(pout);
+
+  grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);mc.appendChild(full);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('dept_manager',function(user){
+    // Verify this is HR dept manager
+    if(user.role==='dept_manager' && user.department!=='HR' && user.role!=='admin' && user.role!=='manager'){
+      window.location.href='giddyexpress-login.html?reason=Access denied - HR only';
+      return;
+    }
+    pgDashboard();
+  });
+});
+</script>
+
+
+
+
+var API = 'https://web-production-50873.up.railway.app';
+
+function gxOpen(id){var e=document.getElementById(id);if(e)e.classList.add('open');}
+function gxClose(id){var e=document.getElementById(id);if(e)e.classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target&&e.target.classList.contains('overlay'))e.target.classList.remove('open');});
+function mk(tag,cls,sty){var e=document.createElement(tag);if(cls)e.className=cls;if(sty)e.style.cssText=sty;return e;}
+function addBtn(p,html,cls,fn){var b=mk('button','btn '+cls);b.innerHTML=html;b.onclick=fn;p.appendChild(b);return b;}
+function showLoading(){var mc=document.getElementById('MC');mc.innerHTML='';var w=mk('div','','display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem');w.appendChild(mk('div','spin'));var t=mk('div','','color:var(--tx3)');t.textContent='Loading...';w.appendChild(t);mc.appendChild(w);}
+function showErr(msg,fn){var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem');var m=mk('div','','color:var(--er);margin-bottom:1rem');m.textContent=msg;d.appendChild(m);if(fn){var b=mk('button','btn btn-gh');b.textContent='Retry';b.onclick=fn;d.appendChild(b);}mc.appendChild(d);}
+
+function toggleSb(){var sb=document.getElementById('sb'),ov=document.getElementById('sb-overlay');sb.classList.toggle('open');ov.style.display=sb.classList.contains('open')?'block':'none';}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-overlay').style.display='none';}
+
+var PT={dashboard:'Dashboard',employees:'All Employees','add-staff':'Request New Staff',leave:'Leave Requests',attendance:'Attendance',complaints:'Complaints',suspend:'Suspend Employee',applications:'Job Applications',announcements:'Announcements',notifications:'Notifications',reports:'HR Reports'};
+
+function goTo(id){
+  closeSb();
+  gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='employees')pgEmployees();
+    else if(id==='add-staff')pgAddStaff();
+    else if(id==='leave')pgLeave();
+    else if(id==='attendance')pgAttendance();
+    else if(id==='complaints')pgComplaints();
+    else if(id==='suspend')pgSuspend();
+    else if(id==='applications')pgApplications();
+    else if(id==='announcements')pgAnnouncements();
+    else if(id==='notifications')pgNotifications();
+    else if(id==='reports')pgReports();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+// ── DASHBOARD ──
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/reports/dashboard-stats'),
+    api('GET','/api/employees/?status=active'),
+    api('GET','/api/leave/?status=pending')
+  ]).then(function(r){
+    var stats=r[0], emps=r[1], leaves=r[2];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Stats row
+    var sg=mk('div','stats');
+    [{sc:'#F59E0B',sc2:'#FBBF24',ic:'&#x1f465;',val:stats.total_employees,lbl:'Total Staff'},{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f334;',val:stats.pending_leave||0,lbl:'Pending Leave'},{sc:'#22C55E',sc2:'#4ADE80',ic:'&#x2705;',val:stats.today_present||0,lbl:'Present Today',sub:'Late: '+(stats.today_late||0)},{sc:'#60A5FA',sc2:'#93C5FD',ic:'&#x1f4dd;',val:stats.pending_user_requests||0,lbl:'Staff Requests'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val');v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      if(item.sub){var s2=mk('div','s-sub');s2.textContent=item.sub;d.appendChild(s2);}
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    // Pending Leave card
+    var lc=mk('div','card');var lh=mk('div','c-hd');lh.innerHTML='<div class="c-title">Pending Leave Requests</div>';addBtn(lh,'View All','btn-gh btn-sm',function(){goTo('leave');});lc.appendChild(lh);
+    var ll=mk('div');ll.id='dash-leave';ll.appendChild(mk('div','spin','margin:1rem auto;width:24px;height:24px;border-width:2px'));lc.appendChild(ll);left.appendChild(lc);
+
+    // Recent Staff card
+    var sc2=mk('div','card');var sh=mk('div','c-hd');sh.innerHTML='<div class="c-title">Recent Employees</div>';addBtn(sh,'All Employees','btn-gh btn-sm',function(){goTo('employees');});sc2.appendChild(sh);
+    var sl=mk('div');sl.id='dash-staff';sl.appendChild(mk('div','spin','margin:1rem auto;width:24px;height:24px;border-width:2px'));sc2.appendChild(sl);left.appendChild(sc2);
+
+    // Quick actions
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">HR Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['+ Request New Staff','btn-hi btn-bl2',function(){gxOpen('mNewStaff');}],['Review Leave Requests','btn-gh btn-bl2',function(){goTo('leave');}],['View Attendance','btn-gh btn-bl2',function(){goTo('attendance');}],['Suspend Employee','btn-er btn-bl2',function(){goTo('suspend');}],['Post Announcement','btn-gh btn-bl2',function(){gxOpen('mAnn');}],['Job Applications','btn-gh btn-bl2',function(){goTo('applications');}],['HR Reports','btn-gh btn-bl2',function(){goTo('reports');}]].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    // Dept breakdown
+    var dc=mk('div','card','margin-top:1rem');dc.innerHTML='<div class="c-hd"><div class="c-title">Staff by Department</div></div>';
+    var depts={};
+    emps.forEach(function(e){var d=e.department||'Other';depts[d]=(depts[d]||0)+1;});
+    Object.keys(depts).sort().forEach(function(d){
+      var row=mk('div','','display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=d;var vl=mk('span','','font-weight:600');vl.textContent=depts[d];
+      row.appendChild(lb);row.appendChild(vl);dc.appendChild(row);
+    });
+    right.appendChild(dc);
+
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+    loadDashLeave(leaves);loadDashStaff(emps);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+function loadDashLeave(leaves){
+  var el=document.getElementById('dash-leave');if(!el)return;el.innerHTML='';
+  if(!leaves||!leaves.length){var d=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');d.textContent='No pending leave requests';el.appendChild(d);return;}
+  leaves.slice(0,5).forEach(function(l){
+    var row=mk('div','appr-row');
+    var ic=mk('div','appr-ic');ic.innerHTML='&#x1f334;';row.appendChild(ic);
+    var info=mk('div','appr-info');
+    var ti=mk('div','appr-title');ti.textContent=(l.employee_name||'?')+' - '+l.type+' Leave';info.appendChild(ti);
+    var me=mk('div','appr-meta');me.textContent=l.from_date+' to '+l.to_date+' ('+l.days+' days)';info.appendChild(me);
+    row.appendChild(info);
+    var acts=mk('div','appr-acts');
+    var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+    (function(id){appB.onclick=function(){openLeaveAction(id,'approve');};})(l.id);
+    var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+    (function(id){rejB.onclick=function(){openLeaveAction(id,'reject');};})(l.id);
+    acts.appendChild(appB);acts.appendChild(rejB);row.appendChild(acts);el.appendChild(row);
+  });
+}
+
+function loadDashStaff(emps){
+  var el=document.getElementById('dash-staff');if(!el)return;el.innerHTML='';
+  var sorted=emps.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);}).slice(0,6);
+  if(!sorted.length){var d=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');d.textContent='No employees yet';el.appendChild(d);return;}
+  sorted.forEach(function(e){
+    var row=mk('div','','display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+    row.innerHTML=gxAv(e.name,'28px');
+    var info=mk('div','','flex:1');var nm=mk('div','','font-size:.8rem;font-weight:500');nm.textContent=e.name;info.appendChild(nm);var dep=mk('div','','font-size:.68rem;color:var(--tx3)');dep.textContent=(e.department||'')+(e.title?' - '+e.title:'');info.appendChild(dep);
+    row.appendChild(info);
+    row.innerHTML+=gxBadge(e.status);
+    el.appendChild(row);
+  });
+}
+
+// ── ALL EMPLOYEES ──
+var ALL_EMPS=[];
+function pgEmployees(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='All Employees';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem;flex-wrap:wrap');
+  var inp=document.createElement('input');inp.placeholder='Search name or dept...';inp.oninput=function(){filterEmps(this.value);};inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';
+  hdR.appendChild(inp);
+  addBtn(hdR,'+ New Staff','btn-hi btn-sm',function(){gxOpen('mNewStaff');});
+  addBtn(hdR,'Print','btn-gh btn-sm',printEmps);
+  hd.appendChild(hdR);mc.appendChild(hd);
+
+  var tabs=mk('div','tabs');
+  [['all','All'],['active','Active'],['inactive','Inactive']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(f){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');filterEmpsByStatus(f);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Name</th><th>Department</th><th>Title</th><th>Contract</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='emp-tb';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+
+  api('GET','/api/employees/').then(function(emps){ALL_EMPS=emps;renderEmps(emps);}).catch(function(e){
+    var tb=document.getElementById('emp-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';
+  });
+}
+
+function filterEmps(q){renderEmps(q?ALL_EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q.toLowerCase())||(e.department||'').toLowerCase().includes(q.toLowerCase())||(e.title||'').toLowerCase().includes(q.toLowerCase());}):ALL_EMPS);}
+function filterEmpsByStatus(s){renderEmps(s==='all'?ALL_EMPS:ALL_EMPS.filter(function(e){return e.status===s;}));}
+
+function renderEmps(list){
+  var tb=document.getElementById('emp-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No employees found</td></tr>';return;}
+  list.forEach(function(e){
+    var tr=document.createElement('tr');
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'26px')+'<div><div style="font-weight:500;font-size:.82rem">'+e.name+'</div><div style="font-size:.68rem;color:var(--tx3)">'+e.email+'</div></div></div>';
+    var d=document.createElement('td');d.textContent=e.department||'-';
+    var ti=document.createElement('td');ti.style.fontSize='.78rem';ti.textContent=e.title||'-';
+    var ct=document.createElement('td');ct.innerHTML='<span class="b b-gy">'+(e.contract_type||'Permanent')+'</span>';
+    var s=document.createElement('td');s.style.fontWeight='600';s.textContent=e.salary>0?money(e.salary):'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(e.status);
+    var at=document.createElement('td');var acts=mk('div','td-acts');
+    var viewBtn=mk('button','btn btn-gh btn-xs');viewBtn.textContent='View';
+    (function(emp){viewBtn.onclick=function(){viewEmployee(emp);};})(e);acts.appendChild(viewBtn);
+    if(e.status!=='suspended'){
+      var susBtn=mk('button','btn btn-wa btn-xs');susBtn.textContent='Suspend';
+      (function(emp){susBtn.onclick=function(){openSuspend(emp.user_id,emp.name);};})(e);acts.appendChild(susBtn);
+    }
+    at.appendChild(acts);[n,d,ti,ct,s,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+function viewEmployee(emp){
+  var body=document.getElementById('emp-profile-body');
+  var color=emp.color||gxAvc(emp.name);
+  body.innerHTML='';
+  // Header
+  var hdr=mk('div','','display:flex;align-items:center;gap:1rem;padding-bottom:1rem;border-bottom:1px solid var(--br);margin-bottom:1rem');
+  var av=mk('div','','width:56px;height:56px;border-radius:50%;background:'+color+';display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#fff;flex-shrink:0');av.textContent=gxInits(emp.name);hdr.appendChild(av);
+  var info=mk('div');var nm=mk('div','','font-weight:700;font-size:1rem');nm.textContent=emp.name;info.appendChild(nm);var ti=mk('div','','font-size:.78rem;color:var(--tx3)');ti.textContent=(emp.title||'')+(emp.department?' - '+emp.department:'');info.appendChild(ti);var em=mk('div','','font-size:.75rem;color:var(--tx3);margin-top:.2rem');em.textContent=emp.email;info.appendChild(em);hdr.appendChild(info);
+  body.appendChild(hdr);
+  // Details grid
+  var grid=mk('div','','display:grid;grid-template-columns:1fr 1fr;gap:.5rem');
+  var fields=[['Role',gxBadge(emp.role),true],['Status',gxBadge(emp.status),true],['Department',emp.department||'-',false],['Contract',emp.contract_type||'Permanent',false],['Salary',emp.salary>0?money(emp.salary):'-',false],['Phone',emp.phone||'-',false],['Join Date',emp.join_date||'-',false]];
+  fields.forEach(function(f){
+    var d=mk('div','','background:var(--bg3);border-radius:8px;padding:.6rem .8rem');
+    var l=mk('div','','font-size:.65rem;color:var(--tx3);margin-bottom:.2rem');l.textContent=f[0];d.appendChild(l);
+    if(f[2]){var v=mk('div');v.innerHTML=f[1];d.appendChild(v);}
+    else{var v2=mk('div','','font-size:.82rem;font-weight:500');v2.textContent=f[1];d.appendChild(v2);}
+    grid.appendChild(d);
+  });
+  body.appendChild(grid);
+  // Suspend button
+  var sb=document.getElementById('emp-profile-suspend-btn');
+  if(emp.status==='suspended'){
+    sb.textContent='Reinstate';sb.className='btn btn-ok';
+    sb.onclick=function(){gxClose('mViewEmp');};
+  } else {
+    sb.textContent='Suspend';sb.className='btn btn-wa';
+    (function(uid,nm){sb.onclick=function(){gxClose('mViewEmp');openSuspend(uid,nm);};})(emp.user_id,emp.name);
+  }
+  gxOpen('mViewEmp');
+}
+
+function printEmps(){gxPrint('Employee Directory','<table><thead><tr><th>Name</th><th>Email</th><th>Dept</th><th>Title</th><th>Contract</th><th>Salary</th><th>Status</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){return'<tr><td>'+e.name+'</td><td>'+e.email+'</td><td>'+(e.department||'')+'</td><td>'+(e.title||'')+'</td><td>'+(e.contract_type||'')+'</td><td>'+(e.salary?money(e.salary):'-')+'</td><td>'+e.status+'</td></tr>';}).join('')+'</tbody></table>');}
+
+// ── REQUEST NEW STAFF ──
+function pgAddStaff(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='Workflow: You submit &rarr; Manager approves &rarr; IT Support creates account';mc.appendChild(info);
+
+  // My requests
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Staff Requests</div>';
+  addBtn(hd,'+ New Request','btn-hi btn-sm',function(){gxOpen('mNewStaff');});
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgAddStaff);
+  card.appendChild(hd);
+  var list=mk('div');list.id='req-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('req-list');if(!el)return;
+    if(!reqs.length){
+      var empty=mk('div','','text-align:center;padding:2rem');
+      var em=mk('div','','color:var(--tx3);margin-bottom:1rem');em.textContent='No staff requests yet';empty.appendChild(em);
+      addBtn(empty,'+ Submit First Request','btn-hi',function(){gxOpen('mNewStaff');});
+      el.appendChild(empty);return;
+    }
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th>Manager</th><th>Date</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    reqs.forEach(function(r){
+      var d=r.request_data||{};var tr=document.createElement('tr');
+      var n=document.createElement('td');n.style.fontWeight='500';n.textContent=d.name||'?';
+      var ro=document.createElement('td');ro.innerHTML=gxBadge(d.role||'?');
+      var dep=document.createElement('td');dep.textContent=d.department||'?';
+      var st=document.createElement('td');
+      var statusMap={'pending_manager':'Waiting for Manager','pending_it':'Manager Approved - IT Processing','completed':'Completed','rejected':'Rejected'};
+      var statusCls={'pending_manager':'b-wa','pending_it':'b-bl','completed':'b-ok','rejected':'b-er'};
+      st.innerHTML='<span class="b '+(statusCls[r.status]||'b-gy')+'">'+(statusMap[r.status]||r.status)+'</span>';
+      var mg=document.createElement('td');mg.style.fontSize='.75rem';mg.textContent=r.manager_name||(r.status==='pending_manager'?'Awaiting...':'-');
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(r.created_at);
+      [n,ro,dep,st,mg,dt].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('req-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function submitNewStaff(){
+  var name=document.getElementById('ns-name').value.trim();
+  var email=document.getElementById('ns-email').value.trim();
+  var reason=document.getElementById('ns-reason').value.trim();
+  if(!name||!email){toast('Name and Email are required','er');return;}
+  if(!reason){toast('Please explain why this position is needed','er');return;}
+  var btn=document.getElementById('ns-btn');btn.disabled=true;btn.textContent='Submitting...';
+  api('POST','/api/users/request-new-user',{
+    name:name,email:email,
+    role:document.getElementById('ns-role').value,
+    department:document.getElementById('ns-dept').value,
+    title:document.getElementById('ns-title').value.trim(),
+    phone:document.getElementById('ns-phone').value.trim(),
+    salary:parseFloat(document.getElementById('ns-salary').value)||0,
+    contract_type:document.getElementById('ns-contract').value,
+    reason:reason
+  }).then(function(r){
+    btn.disabled=false;btn.textContent='Submit Request';
+    gxClose('mNewStaff');
+    toast('Request submitted! Waiting for Manager approval','ok');
+    ['ns-name','ns-email','ns-title','ns-phone','ns-salary','ns-reason'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    pgAddStaff();
+  }).catch(function(e){btn.disabled=false;btn.textContent='Submit Request';toast('Error: '+e.message,'er');});
+}
+
+// ── LEAVE ──
+var ALL_LEAVE=[];
+function pgLeave(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Leave Requests</div>';
+  addBtn(hd,'Print','btn-gh btn-sm',function(){gxPrint('Leave Report','<table><thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead><tbody>'+ALL_LEAVE.map(function(l){return'<tr><td>'+(l.employee_name||'?')+'</td><td>'+(l.department||'')+'</td><td>'+l.type+'</td><td>'+l.from_date+'</td><td>'+l.to_date+'</td><td>'+l.days+'</td><td>'+l.status+'</td></tr>';}).join('')+'</tbody></table>');});
+  card.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadLeave(st);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>Duration</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='leave-tb';
+  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadLeave('pending');
+}
+
+function loadLeave(status){
+  api('GET','/api/leave/'+(status?'?status='+status:'')).then(function(items){
+    ALL_LEAVE=items;var tb=document.getElementById('leave-tb');if(!tb)return;tb.innerHTML='';
+    if(!items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' leave requests</td></tr>';return;}
+    items.forEach(function(l){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(l.employee_name||'?','22px')+'<span style="font-weight:500">'+(l.employee_name||'?')+'</span></div>';
+      var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=l.department||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+l.type+'</span>';
+      var dur=document.createElement('td');dur.style.fontSize='.75rem';dur.innerHTML=l.from_date+' &rarr; '+l.to_date+'<br><span style="color:var(--tx3)">'+l.days+' days</span>';
+      var rs=document.createElement('td');rs.style.cssText='font-size:.72rem;color:var(--tx2);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.title=l.reason||'';rs.textContent=l.reason||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(l.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(l.status==='pending'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+        (function(id){appB.onclick=function(){openLeaveAction(id,'approve');};})(l.id);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+        (function(id){rejB.onclick=function(){openLeaveAction(id,'reject');};})(l.id);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      } else {
+        var sp=mk('span','','color:var(--tx3);font-size:.72rem');sp.textContent=l.status;acts.appendChild(sp);
+      }
+      at.appendChild(acts);[n,dep,tp,dur,rs,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('leave-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+function openLeaveAction(id,action){
+  // Find the leave item
+  var item=ALL_LEAVE.filter(function(l){return l.id===id;})[0];
+  if(!item){
+    // Fetch from API
+    api('GET','/api/leave/').then(function(leaves){
+      var found=leaves.filter(function(l){return l.id===id;})[0];
+      if(found) _showLeaveModal(found,action);
+    });
+    return;
+  }
+  _showLeaveModal(item,action);
+}
+
+function _showLeaveModal(item,action){
+  document.getElementById('la-id').value=item.id;
+  document.getElementById('la-action').value=action;
+  document.getElementById('la-note').value='';
+  var title=document.getElementById('la-title');
+  var btn=document.getElementById('la-btn');
+  var det=document.getElementById('la-details');
+  title.textContent=action==='approve'?'Approve Leave Request':'Reject Leave Request';
+  title.style.color=action==='approve'?'var(--ok)':'var(--er)';
+  btn.textContent=action==='approve'?'Approve':'Reject';
+  btn.className='btn '+(action==='approve'?'btn-ok':'btn-er');
+  det.innerHTML='<strong>Employee:</strong> '+(item.employee_name||'?')+'<br>'+
+    '<strong>Department:</strong> '+(item.department||'-')+'<br>'+
+    '<strong>Leave Type:</strong> '+item.type+'<br>'+
+    '<strong>Duration:</strong> '+item.from_date+' to '+item.to_date+' ('+item.days+' days)'+(item.reason?'<br><strong>Reason:</strong> '+item.reason:'');
+  gxOpen('mLeaveAction');
+}
+
+function submitLeaveAction(){
+  var id=document.getElementById('la-id').value;
+  var action=document.getElementById('la-action').value;
+  var note=document.getElementById('la-note').value.trim();
+  if(action==='reject'&&!note){toast('Please provide a reason for rejection','er');return;}
+  api('POST','/api/leave/'+id+'/action',{approved:action==='approve',note:note})
+  .then(function(r){gxClose('mLeaveAction');toast(r.message,'ok');loadLeave('pending');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── ATTENDANCE ──
+function pgAttendance(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Staff Attendance Today';hd.appendChild(ht);
+  addBtn(hd,'Print','btn-gh btn-sm',function(){var tb=document.getElementById('att-tb');if(tb)gxPrint('Attendance - '+gxToday(),tb.outerHTML);});
+  mc.appendChild(hd);
+  var sg=mk('div','stats','grid-template-columns:repeat(4,1fr);margin-bottom:1rem');
+  [{sc:'#22C55E',sc2:'#4ADE80',id:'att-p',lbl:'Present'},{sc:'#F59E0B',sc2:'#FBBF24',id:'att-l',lbl:'Late'},{sc:'#EF4444',sc2:'#F87171',id:'att-a',lbl:'Absent'},{sc:'#A78BFA',sc2:'#7C3AED',id:'',lbl:'On Leave'}].forEach(function(s){
+    var d=mk('div','stat');d.style.setProperty('--sc',s.sc);d.style.setProperty('--sc2',s.sc2);
+    var v=mk('div','s-val');if(s.id)v.id=s.id;v.textContent='-';d.appendChild(v);
+    var l=mk('div','s-lbl');l.textContent=s.lbl;d.appendChild(l);sg.appendChild(d);
+  });
+  mc.appendChild(sg);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th><th>Notes</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='att-tb';
+  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/attendance/today').then(function(att){
+    var p=att.filter(function(a){return a.status==='present';}).length;
+    var l=att.filter(function(a){return a.status==='late';}).length;
+    var ab=att.filter(function(a){return a.status==='absent';}).length;
+    var ep=document.getElementById('att-p'),el=document.getElementById('att-l'),ea=document.getElementById('att-a');
+    if(ep)ep.textContent=p;if(el)el.textContent=l;if(ea)ea.textContent=ab;
+    var tb=document.getElementById('att-tb');if(!tb)return;tb.innerHTML='';
+    if(!att.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No attendance records for today</td></tr>';return;}
+    att.forEach(function(a){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(a.employee_name||'?','22px')+'<span>'+(a.employee_name||'?')+'</span></div>';
+      var d=document.createElement('td');d.textContent=a.department||'-';
+      var ci=document.createElement('td');ci.textContent=a.clock_in||'-';
+      var co=document.createElement('td');co.textContent=a.clock_out||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(a.status);
+      var nt=document.createElement('td');nt.style.cssText='font-size:.72rem;color:var(--tx3)';nt.textContent=a.notes||'-';
+      [n,d,ci,co,st,nt].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('att-tb');if(tb)tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">'+e.message+'</td></tr>';});
+}
+
+// ── SUSPEND ──
+function pgSuspend(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-red');info.innerHTML='<strong>Important:</strong> Suspension immediately blocks access and logs out the employee. A clear reason is required and will be recorded.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Select Employee to Suspend</div>';card.appendChild(hd);
+  var list=mk('div');list.id='suspend-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/employees/?status=active').then(function(emps){
+    var el=document.getElementById('suspend-list');if(!el)return;el.innerHTML='';
+    if(!emps.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No active employees</div>';return;}
+    var inp=document.createElement('input');inp.placeholder='Search employee...';inp.style.cssText='width:100%;padding:.5rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.82rem;color:var(--tx);outline:none;margin-bottom:.75rem';
+    var empList=mk('div');
+    inp.oninput=function(){
+      var q=this.value.toLowerCase();
+      empList.querySelectorAll('.sus-emp-row').forEach(function(r){r.style.display=(r.dataset.name||'').includes(q)||(r.dataset.dept||'').includes(q)?'':'none';});
+    };
+    el.appendChild(inp);
+    emps.filter(function(e){return e.role!=='admin';}).forEach(function(e){
+      var row=mk('div','sus-emp-row','display:flex;align-items:center;gap:.75rem;padding:.65rem .5rem;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;border-radius:8px;transition:background .15s');
+      row.dataset.name=(e.name||'').toLowerCase();row.dataset.dept=(e.department||'').toLowerCase();
+      row.innerHTML=gxAv(e.name,'32px');
+      var info2=mk('div','','flex:1');var nm=mk('div','','font-weight:500;font-size:.85rem');nm.textContent=e.name;info2.appendChild(nm);var dep=mk('div','','font-size:.7rem;color:var(--tx3)');dep.textContent=(e.department||'')+(e.title?' - '+e.title:'');info2.appendChild(dep);row.appendChild(info2);
+      row.innerHTML+=gxBadge(e.role);
+      var susBtn=mk('button','btn btn-er btn-sm');susBtn.textContent='Suspend';
+      (function(uid,nm2){susBtn.onclick=function(ev){ev.stopPropagation();openSuspend(uid,nm2);};})(e.user_id,e.name);
+      row.appendChild(susBtn);
+      row.onmouseover=function(){this.style.background='rgba(255,255,255,.04)';};row.onmouseout=function(){this.style.background='';};
+      empList.appendChild(row);
+    });
+    el.appendChild(empList);
+  }).catch(function(e){var el2=document.getElementById('suspend-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function openSuspend(uid,name){
+  document.getElementById('sus-uid').value=uid;
+  document.getElementById('sus-user-info').innerHTML='<strong>Employee:</strong> '+name;
+  document.getElementById('sus-reason').value='';
+  gxOpen('mSuspend');
+}
+
+function doSuspend(){
+  var uid=document.getElementById('sus-uid').value;
+  var reason=document.getElementById('sus-reason').value.trim();
+  var notify=document.getElementById('sus-notify').value==='true';
+  if(!reason){toast('A reason is required for suspension','er');return;}
+  api('POST','/api/users/'+uid+'/suspend',{reason:reason,notify_user:notify})
+  .then(function(r){gxClose('mSuspend');toast(r.message,'wa');pgSuspend();})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── COMPLAINTS ──
+function pgComplaints(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.textContent='Manage employee complaints and HR cases';mc.appendChild(info);
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Complaints &amp; HR Cases</div></div>';
+  var list=mk('div');list.id='comp-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  // For now show placeholder - complaints table not fully set up
+  setTimeout(function(){
+    var el=document.getElementById('comp-list');if(!el)return;
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No complaints filed yet</div>';
+  },500);
+}
+
+// ── JOB APPLICATIONS ──
+function pgApplications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Job Applications</div>';
+  addBtn(hd,'Refresh','btn-gh btn-sm',pgApplications);card.appendChild(hd);
+  var list=mk('div');list.id='app-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  // Show placeholder - applications can be added when job postings are configured
+  setTimeout(function(){
+    var el=document.getElementById('app-list');if(!el)return;
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No job applications yet.<br><span style="font-size:.75rem">Applications will appear here when candidates apply.</span></div>';
+  },500);
+}
+
+// ── ANNOUNCEMENTS ──
+function pgAnnouncements(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Announcements</div>';addBtn(hd,'+ Post New','btn-hi btn-sm',function(){gxOpen('mAnn');});card.appendChild(hd);
+  var list=mk('div');list.id='ann-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/announcements/').then(function(anns){
+    var el=document.getElementById('ann-list');if(!el)return;
+    if(!anns.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No announcements yet</div>';return;}
+    var clr={info:'#60A5FA',warn:'var(--wa)',ok:'var(--ok)',er:'var(--er)'};el.innerHTML='';
+    anns.forEach(function(a){
+      var div=mk('div','ann','border-left:4px solid '+(clr[a.type]||'#60A5FA'));
+      var ti=mk('div','ann-title');ti.textContent=a.title;div.appendChild(ti);
+      var bo=mk('div','ann-body');bo.textContent=a.body;div.appendChild(bo);
+      var me=mk('div','','font-size:.68rem;color:var(--tx3);margin-top:.4rem');
+      me.textContent=(a.poster_name||'?')+' - '+(a.department==='all'?'All Staff':a.department)+' - '+gxAgo(a.created_at);
+      div.appendChild(me);el.appendChild(div);
+    });
+  }).catch(function(e){var el2=document.getElementById('ann-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function postAnn(){
+  var title=document.getElementById('ann-title').value.trim(),body=document.getElementById('ann-body').value.trim();
+  if(!title||!body){toast('Fill in title and message','er');return;}
+  api('POST','/api/announcements/',{title:title,body:body,type:document.getElementById('ann-type').value,department:document.getElementById('ann-dept').value})
+  .then(function(){gxClose('mAnn');toast('Announcement posted','ok');document.getElementById('ann-title').value='';document.getElementById('ann-body').value='';})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── REPORTS ──
+function pgReports(){
+  showLoading();
+  Promise.all([api('GET','/api/reports/payroll-summary'),api('GET','/api/reports/dashboard-stats')]).then(function(r){
+    var pay=r[0],stats=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var grid=mk('div','g2');
+    // Headcount
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">Headcount Summary</div></div>';
+    [['Total Active Staff',stats.total_employees,'var(--hi)'],['On Leave Today',stats.pending_leave||0,'var(--wa)'],['Present Today',stats.today_present||0,'var(--ok)'],['Late Today',stats.today_late||0,'var(--or)'],['Suspended',stats.suspended_users||0,'var(--er)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);left.appendChild(d);
+    });
+    addBtn(left,'Print Employee List','btn-gh btn-bl2 btn-sm',printEmps);
+    // Payroll
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Payroll Overview</div></div>';
+    [['Total Employees',pay.total_employees,'var(--tx)'],['Gross Payroll',money(pay.gross_payroll),'var(--hi)'],['Tax Deductions','-'+money(pay.tax),'var(--er)'],['NI Contributions','-'+money(pay.ni),'var(--er)'],['Pension','-'+money(pay.pension),'var(--er)'],['Net Payroll',money(pay.net_payroll),'var(--ok)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+    addBtn(right,'Print Payroll Report','btn-gh btn-bl2 btn-sm',function(){gxPrint('Payroll Report','<table><tr><th>Item</th><th>Amount</th></tr><tr><td>Gross Payroll</td><td>'+money(pay.gross_payroll)+'</td></tr><tr><td>Tax (20%)</td><td>-'+money(pay.tax)+'</td></tr><tr><td>NI (8%)</td><td>-'+money(pay.ni)+'</td></tr><tr><td>Pension (5%)</td><td>-'+money(pay.pension)+'</td></tr><tr><td><b>Net Payroll</b></td><td><b>'+money(pay.net_payroll)+'</b></td></tr></table>');});
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgReports);});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── START ──
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('dept_manager',function(user){
+    // Verify this is HR dept manager
+    if(user.role==='dept_manager' && user.department!=='HR' && user.role!=='admin' && user.role!=='manager'){
+      window.location.href='giddyexpress-login.html?reason=Access denied - HR only';
+      return;
+    }
+    pgDashboard();
+  });
+});
+</script>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/giddies-portal/sw.js').catch(function(){});}
+var _dp=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_dp=e;setTimeout(function(){if(!localStorage.getItem('gx-pwa-dismissed')){var b=document.createElement('div');b.id='gx-install-banner';b.style.cssText='position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:99999;background:#1A1D24;border:1px solid rgba(255,107,0,.3);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:320px;width:90%;font-family:DM Sans,sans-serif';b.innerHTML='<div style="font-size:1.5rem">&#x1f4f1;</div><div style="flex:1"><div style="font-weight:700;font-size:.82rem;color:#fff">Install GX Portal</div><div style="font-size:.72rem;color:#9CA3AF">Add to home screen</div></div><button onclick="if(_dp){_dp.prompt();_dp.userChoice.then(function(){_dp=null;document.getElementById(\'gx-install-banner\').remove();localStorage.setItem(\'gx-pwa-dismissed\',\'1\');});}" style="background:#FF6B00;border:none;color:#fff;padding:.4rem .75rem;border-radius:8px;cursor:pointer;font-size:.75rem;font-weight:600;font-family:inherit">Install</button><button onclick="document.getElementById(\'gx-install-banner\').remove();localStorage.setItem(\'gx-pwa-dismissed\',\'1\');" style="background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:1rem;padding:.25rem">&#x2715;</button>';document.body.appendChild(b);}},4000);});
+window.addEventListener('appinstalled',function(){var b=document.getElementById('gx-install-banner');if(b)b.remove();});
+</script>
+</body>
+</html>
