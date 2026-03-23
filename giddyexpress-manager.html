@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express - Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0F14;--bg2:#161920;--bg3:#1E2128;--br:rgba(255,255,255,.07);--tx:#E8EAF0;--tx2:#9CA3AF;--tx3:#6B7280;--hi:#FF6B00;--hi2:#FF8C38;--ok:#4ADE80;--er:#F87171;--wa:#FCD34D;--bl:#60A5FA;--pu:#A78BFA;--or:#FB923C}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh}
+/* SIDEBAR */
+.sb{width:240px;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--br)}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--hi)}
+.sb-sub{font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--br)}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-nm{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{font-size:.65rem;color:var(--tx3);text-transform:capitalize}
+.sb-nav{flex:1;padding:.5rem 0}
+.nav-sec{font-size:.62rem;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.2rem .3rem}
+.nav-a{display:flex;align-items:center;gap:.65rem;padding:.6rem 1.2rem;cursor:pointer;border-radius:0;font-size:.82rem;color:var(--tx2);transition:all .15s;margin:1px 0;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-a.on{background:rgba(255,107,0,.1);color:var(--hi)}
+.nav-a.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hi);border-radius:0 2px 2px 0}
+.nav-ic{width:16px;text-align:center;font-size:.9rem}
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--br)}
+.btn-logout{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:.55rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.2)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--br);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-weight:600;font-size:.95rem}
+.tb-right{display:flex;align-items:center;gap:.85rem}
+.tb-clock{font-size:.78rem;color:var(--tx3);font-family:monospace}
+.tb-pill{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br);border-radius:100px;padding:.3rem .75rem;font-size:.72rem}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:.4rem .65rem;cursor:pointer;color:var(--tx2);font-size:.9rem;position:relative;transition:all .2s}
+.tb-btn:hover{border-color:var(--hi);color:var(--hi)}
+.rdot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--er);border:1px solid var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:1.1rem}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.c-title{font-weight:600;font-size:.9rem}
+.c-sub{font-size:.72rem;color:var(--tx3);margin-top:.1rem}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+.stat{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sc),var(--sc2))}
+.s-ic{font-size:1.4rem;margin-bottom:.4rem}
+.s-val{font-size:1.7rem;font-weight:700;line-height:1}
+.s-lbl{font-size:.7rem;color:var(--tx3);margin-top:.25rem}
+.s-sub{font-size:.65rem;color:var(--tx3);margin-top:.15rem}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g21{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+/* BUTTONS */
+.btn{border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-hi{background:var(--hi);color:#fff;border-color:var(--hi)}.btn-hi:hover{background:var(--hi2)}
+.btn-gh{background:var(--bg3);color:var(--tx2);border-color:var(--br)}.btn-gh:hover{border-color:var(--hi);color:var(--hi)}
+.btn-ok{background:rgba(74,222,128,.15);color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-er{background:rgba(239,68,68,.15);color:var(--er);border-color:rgba(239,68,68,.3)}
+.btn-wa{background:rgba(252,211,77,.1);color:var(--wa);border-color:rgba(252,211,77,.2)}
+.btn-bl{background:rgba(96,165,250,.1);color:var(--bl);border-color:rgba(96,165,250,.2)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.68rem}
+.btn-bl2{display:block;width:100%;text-align:left;border-radius:8px;padding:.55rem .8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:.12rem .5rem;border-radius:100px;font-size:.65rem;font-weight:600;text-transform:capitalize}
+.b-ok{background:rgba(74,222,128,.1);color:var(--ok)}
+.b-er{background:rgba(239,68,68,.1);color:var(--er)}
+.b-wa{background:rgba(252,211,77,.1);color:var(--wa)}
+.b-bl{background:rgba(96,165,250,.1);color:var(--bl)}
+.b-pu{background:rgba(167,139,250,.1);color:var(--pu)}
+.b-or{background:rgba(251,146,60,.1);color:var(--or)}
+.b-gy{background:rgba(255,255,255,.07);color:var(--tx3)}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:.6rem .8rem;font-size:.67rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);white-space:nowrap}
+td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:.5rem}
+.td-acts{display:flex;gap:.3rem;flex-wrap:wrap}
+/* TABS */
+.tabs{display:flex;gap:.25rem;margin-bottom:1rem;border-bottom:1px solid var(--br);padding-bottom:0}
+.tab{padding:.5rem .85rem;font-size:.78rem;cursor:pointer;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--hi);border-bottom-color:var(--hi);font-weight:600}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--br);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.4rem;border-bottom:1px solid var(--br)}
+.m-title{font-weight:600;font-size:.95rem}
+.m-x{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:.2rem}
+.m-body{padding:1.4rem}
+.m-ft{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.4rem;border-top:1px solid var(--br)}
+/* FORM */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.75rem;font-weight:500;color:var(--tx2);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1.5px solid var(--br);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--hi)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+/* INFO BOXES */
+.info{padding:.7rem 1rem;border-radius:8px;font-size:.78rem;margin-bottom:1rem}
+.info-blue{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:var(--bl)}
+.info-orange{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);color:var(--or)}
+.info-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--er)}
+.info-green{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--ok)}
+/* PROGRESS */
+.prog-bg{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:var(--hi);transition:width .3s}
+/* SPINNER */
+.spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* APPROVAL ROW */
+.appr-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.appr-row:last-child{border-bottom:none}
+.appr-ic{font-size:1.2rem;width:28px;text-align:center;flex-shrink:0}
+.appr-info{flex:1;min-width:0}
+.appr-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-meta{font-size:.68rem;color:var(--tx3);margin-top:.1rem}
+.appr-acts{display:flex;gap:.3rem;flex-shrink:0}
+/* ANNOUNCEMENT */
+.ann{padding:.85rem 1rem;border-radius:10px;margin-bottom:.65rem;background:var(--bg3)}
+.ann-title{font-weight:600;font-size:.82rem;margin-bottom:.3rem}
+.ann-body{font-size:.78rem;color:var(--tx2);line-height:1.5}
+/* MOBILE */
+@media(max-width:768px){
+.sb{width:200px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.g2,.g21{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.sb{position:fixed;left:-200px;top:0;bottom:0;z-index:100;transition:left .3s}
+.sb.open{left:0}
+.main{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="sb-overlay" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99"></div>
+<div class="shell">
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-title">GIDDIES EXPRESS</div>
+    <div class="sb-sub">Manager Portal</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">??</div>
+    <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole">Manager</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard"      onclick="goTo('dashboard')"><span class="nav-ic">&#x1f4ca;</span>Dashboard</div>
+    <div class="nav-a" id="nav-approvals"      onclick="goTo('approvals')"><span class="nav-ic">&#x1f4cb;</span>Approvals</div>
+    <div class="nav-a" id="nav-staff-requests" onclick="goTo('staff-requests')"><span class="nav-ic">&#x1f4dd;</span>Staff Requests</div>
+    <div class="nav-sec">Team</div>
+    <div class="nav-a" id="nav-employees"      onclick="goTo('employees')"><span class="nav-ic">&#x1f465;</span>All Employees</div>
+    <div class="nav-a" id="nav-attendance"     onclick="goTo('attendance')"><span class="nav-ic">&#x23f1;</span>Attendance</div>
+    <div class="nav-a" id="nav-leave"          onclick="goTo('leave')"><span class="nav-ic">&#x1f334;</span>Leave Requests</div>
+    <div class="nav-a" id="nav-tasks"          onclick="goTo('tasks')"><span class="nav-ic">&#x2705;</span>Tasks</div>
+    <div class="nav-sec">Finance</div>
+    <div class="nav-a" id="nav-budgets"        onclick="goTo('budgets')"><span class="nav-ic">&#x1f4b0;</span>Budget Approvals</div>
+    <div class="nav-a" id="nav-submit-budget"   onclick="goTo('submit-budget')"><span class="nav-ic">&#x1f4e4;</span>Submit Budget</div>
+    <div class="nav-a" id="nav-transfers"      onclick="goTo('transfers')"><span class="nav-ic">&#x1f4b8;</span>Fund Transfers</div>
+    <div class="nav-sec">Communication</div>
+    <div class="nav-a" id="nav-announcements"  onclick="goTo('announcements')"><span class="nav-ic">&#x1f4e2;</span>Announcements</div>
+    <div class="nav-a" id="nav-notifications"  onclick="goTo('notifications')"><span class="nav-ic">&#x1f514;</span>Notifications</div>
+    <div class="nav-a" id="nav-reports"        onclick="goTo('reports')"><span class="nav-ic">&#x1f4c8;</span>Reports</div>
+  </nav>
+  <div class="sb-foot"><button class="btn-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button onclick="toggleSb()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.1rem">&#9776;</button>
+      <div class="tb-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span>Manager</span></div>
+      <button class="tb-btn" onclick="goTo('notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading Manager Portal...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ANNOUNCE MODAL -->
+<div class="overlay" id="mAnn">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4e2; Post Announcement</div><button class="m-x" onclick="gxClose('mAnn')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Title *</label><input id="ann-title" placeholder="Announcement title"/></div>
+    <div class="field"><label>Message *</label><textarea id="ann-body" placeholder="Message to staff..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Type</label>
+        <select id="ann-type"><option value="info">Info</option><option value="warn">Warning</option><option value="ok">Good News</option><option value="er">Urgent</option></select>
+      </div>
+      <div class="field"><label>Send To</label>
+        <select id="ann-dept"><option value="all">All Staff</option><option value="HR">HR</option><option value="Finance">Finance</option><option value="IT Support">IT Support</option><option value="Logistics">Logistics</option><option value="Warehouse">Warehouse</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mAnn')">Cancel</button>
+    <button class="btn btn-hi" onclick="submitAnn()">Post Now</button>
+  </div>
+</div>
+</div>
+
+<!-- ASSIGN TASK MODAL -->
+<div class="overlay" id="mTask">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x2705; Assign Task</div><button class="m-x" onclick="gxClose('mTask')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="field"><label>Task Title *</label><input id="tk-title" placeholder="What needs to be done?"/></div>
+    <div class="field"><label>Description</label><textarea id="tk-desc" placeholder="Detailed instructions..."></textarea></div>
+    <div class="form-row">
+      <div class="field"><label>Assign To *</label><select id="tk-emp"><option value="">Loading employees...</option></select></div>
+      <div class="field"><label>Priority</label>
+        <select id="tk-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Due Date *</label><input id="tk-due" type="date"/></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mTask')">Cancel</button>
+    <button class="btn btn-hi" id="tk-btn" onclick="submitTask()">Assign Task</button>
+  </div>
+</div>
+</div>
+
+<!-- STAFF REQUEST REVIEW MODAL -->
+<div class="overlay" id="mReview">
+<div class="modal">
+  <div class="m-hd"><div class="m-title" id="rv-title">Review Staff Request</div><button class="m-x" onclick="gxClose('mReview')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="rv-details" style="background:var(--bg3);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.85rem;line-height:1.9"></div>
+    <div class="field"><label id="rv-note-lbl">Note (optional)</label><textarea id="rv-note" placeholder="Add a note about your decision..."></textarea></div>
+    <input type="hidden" id="rv-id"/>
+    <input type="hidden" id="rv-action"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mReview')">Cancel</button>
+    <button class="btn" id="rv-btn" onclick="submitReview()">Submit</button>
+  </div>
+</div>
+</div>
+
+<!-- LEAVE ACTION MODAL -->
+<div class="overlay" id="mLeaveAction">
+<div class="modal" style="max-width:440px">
+  <div class="m-hd"><div class="m-title" id="la-title">Leave Request</div><button class="m-x" onclick="gxClose('mLeaveAction')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="la-details" style="background:var(--bg3);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.85rem;line-height:1.7"></div>
+    <div class="field"><label>Note</label><textarea id="la-note" placeholder="Add a note for the employee..."></textarea></div>
+    <input type="hidden" id="la-id"/>
+    <input type="hidden" id="la-action"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mLeaveAction')">Cancel</button>
+    <button class="btn" id="la-btn" onclick="submitLeaveAction()">Submit</button>
+  </div>
+</div>
+</div>
+
+<!-- BUDGET ACTION MODAL -->
+<div class="overlay" id="mBudgetAction">
+<div class="modal" style="max-width:440px">
+  <div class="m-hd"><div class="m-title" id="ba-title">Budget Request</div><button class="m-x" onclick="gxClose('mBudgetAction')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="ba-details" style="background:var(--bg3);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.85rem;line-height:1.8"></div>
+    <div class="field"><label>Note</label><textarea id="ba-note" placeholder="Add a note..."></textarea></div>
+    <input type="hidden" id="ba-id"/>
+    <input type="hidden" id="ba-action"/>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mBudgetAction')">Cancel</button>
+    <button class="btn" id="ba-btn" onclick="submitBudgetAction()">Submit</button>
+  </div>
+</div>
+</div>
+
+
+<!-- CREATE BUDGET MODAL -->
+<div class="overlay" id="mCreateBudget">
+<div class="modal">
+  <div class="m-hd"><div class="m-title">&#x1f4e4; Submit Budget Request</div><button class="m-x" onclick="gxClose('mCreateBudget')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-blue">Your request goes to Finance for review and fund allocation.</div>
+    <div class="form-row">
+      <div class="field"><label>Department *</label>
+        <select id="cb-dept">
+          <option value="HR">HR</option><option value="Finance">Finance</option>
+          <option value="IT Support">IT Support</option><option value="Payroll">Payroll</option>
+          <option value="Logistics">Logistics</option><option value="Warehouse">Warehouse</option>
+          <option value="Customer Service">Customer Service</option><option value="Marketing">Marketing</option>
+          <option value="Legal">Legal</option><option value="Management">Management</option>
+          <option value="Administration">Administration</option>
+        </select>
+      </div>
+      <div class="field"><label>Amount (&#x20a6;) *</label><input id="cb-amount" type="number" placeholder="0.00"/></div>
+    </div>
+    <div class="field"><label>Budget Title *</label><input id="cb-title" placeholder="e.g. Q1 Office Supplies, IT Equipment Upgrade..."/></div>
+    <div class="form-row">
+      <div class="field"><label>Category</label>
+        <select id="cb-category">
+          <option value="Operational">Operational</option><option value="Equipment">Equipment</option>
+          <option value="Training">Training</option><option value="Travel">Travel</option>
+          <option value="Marketing">Marketing</option><option value="Maintenance">Maintenance</option>
+          <option value="Salaries">Salaries</option><option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Priority</label>
+        <select id="cb-priority">
+          <option value="low">Low</option><option value="medium" selected>Medium</option>
+          <option value="high">High</option><option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Justification *</label><textarea id="cb-reason" placeholder="Explain why this budget is needed and how it will be used..."></textarea></div>
+    <div id="cb-preview" style="margin-top:.75rem;display:none"></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mCreateBudget')">Cancel</button>
+    <button class="btn btn-hi" id="cb-btn" onclick="submitBudgetRequest()">Submit to Finance</button>
+  </div>
+</div>
+</div>
+
+<div id="toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<script>
+
+
+var API = 'https://web-production-50873.up.railway.app';
+var ME = null;
+var TOKEN = null;
+
+/* ── AUTH ── */
+function gxInit(requiredRole, onReady) {
+  TOKEN = sessionStorage.getItem('gx_token');
+  var userStr = sessionStorage.getItem('gx_user');
+  
+  if (!TOKEN || !userStr) {
+    window.location.href = 'giddyexpress-login.html';
+    return;
+  }
+  
+  ME = JSON.parse(userStr);
+  
+  // Verify with server
+  api('GET', '/api/auth/verify-role?required_role=' + requiredRole)
+  .then(function(data) {
+    ME = data.user;
+    // Update UI
+    var av = document.getElementById('sbAv');
+    var nm = document.getElementById('sbName');
+    var rl = document.getElementById('sbRole');
+    if(av) { av.textContent = gxInits(ME.name); av.style.background = ME.color || '#FF6B00'; }
+    if(nm) nm.textContent = ME.name;
+    if(rl) rl.textContent = ME.role.replace(/_/g,' ');
+    gxClock();
+    gxNotifBadge();
+    gxStartInactivityWatch();
+    gxShowLastLogin(ME);
+    if(onReady) onReady(ME);
+  })
+  .catch(function(e) {
+    sessionStorage.clear();
+    window.location.href = 'giddyexpress-login.html?reason=' + encodeURIComponent(e.message || 'Session expired');
+  });
+}
+
+/* ── API CALL ── */
+function api(method, path, body) {
+  var opts = {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  return fetch(API + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if(!r.ok) throw new Error(d.detail || 'Request failed');
+      return d;
+    });
+  });
+}
+
+/* ── LOGOUT ── */
+function gxLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+/* ── INACTIVITY LOGOUT (1 hour) ── */
+var GX_INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour in ms
+var GX_WARN_BEFORE = 2 * 60 * 1000;       // warn 2 minutes before
+var _gxInactTimer = null;
+var _gxWarnTimer = null;
+var _gxWarnShown = false;
+
+function gxResetInactivity() {
+  clearTimeout(_gxInactTimer);
+  clearTimeout(_gxWarnTimer);
+  _gxWarnShown = false;
+  // Remove warning banner if visible
+  var wb = document.getElementById('gx-inact-warn');
+  if(wb) wb.remove();
+  // Warn 2 mins before
+  _gxWarnTimer = setTimeout(function() {
+    if(_gxWarnShown) return;
+    _gxWarnShown = true;
+    var warn = document.createElement('div');
+    warn.id = 'gx-inact-warn';
+    warn.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#EF4444;color:#fff;text-align:center;padding:.6rem 1rem;font-size:.82rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:1rem;font-family:DM Sans,sans-serif';
+    warn.innerHTML = '&#x26a0; Your session will expire in 2 minutes due to inactivity. <button onclick="gxResetInactivity()" style="background:#fff;color:#EF4444;border:none;padding:.3rem .8rem;border-radius:20px;font-weight:700;cursor:pointer;font-size:.78rem">Stay Logged In</button>';
+    document.body.appendChild(warn);
+  }, GX_INACTIVITY_LIMIT - GX_WARN_BEFORE);
+  // Auto logout
+  _gxInactTimer = setTimeout(function() {
+    toast('Session expired due to inactivity', 'wa');
+    setTimeout(function() {
+      api('POST', '/api/auth/logout').catch(function(){});
+      sessionStorage.clear();
+      window.location.href = 'giddyexpress-login.html?reason=Session+expired+due+to+inactivity';
+    }, 1500);
+  }, GX_INACTIVITY_LIMIT);
+}
+
+function gxStartInactivityWatch() {
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(function(evt) {
+    document.addEventListener(evt, gxResetInactivity, {passive:true});
+  });
+  gxResetInactivity();
+}
+
+/* ── LAST LOGIN DISPLAY ── */
+function gxShowLastLogin(user) {
+  // Show last login info in a subtle bar below topbar
+  if(!user || !user.last_login) return;
+  var existing = document.getElementById('gx-last-login');
+  if(existing) existing.remove();
+  var bar = document.createElement('div');
+  bar.id = 'gx-last-login';
+  var lastTime = new Date(user.last_login);
+  var now = new Date();
+  var diffMs = now - lastTime;
+  var diffH = Math.floor(diffMs / 3600000);
+  var diffD = Math.floor(diffMs / 86400000);
+  var timeStr = diffD > 0 ? diffD + ' day'+(diffD>1?'s':'')+' ago' : diffH > 0 ? diffH + ' hour'+(diffH>1?'s':'')+' ago' : 'Less than an hour ago';
+  // Format the exact date
+  var exactStr = lastTime.toLocaleString('en-NG', {weekday:'short',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  bar.style.cssText = 'background:rgba(255,107,0,.06);border-bottom:1px solid rgba(255,107,0,.1);padding:.35rem 1.2rem;font-size:.72rem;color:var(--tx3);display:flex;align-items:center;gap:.4rem;font-family:DM Sans,sans-serif';
+  bar.innerHTML = '<span style="color:var(--tx3)">&#x1f552;</span> Last login: <strong style="color:var(--tx2)">'+exactStr+'</strong> <span style="color:rgba(255,255,255,.2)">|</span> <span>'+timeStr+'</span>';
+  // Insert after topbar
+  var topbar = document.querySelector('.topbar');
+  if(topbar && topbar.parentNode) {
+    topbar.parentNode.insertBefore(bar, topbar.nextSibling);
+  }
+}
+
+/* ── DISABLE BACK BUTTON AFTER LOGOUT ── */
+function gxSecureLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  // Replace history so back button can't return to portal
+  history.pushState(null, '', window.location.href);
+  window.onpopstate = function() { history.pushState(null, '', window.location.href); };
+  window.location.replace('giddyexpress-login.html');
+}
+
+
+/* ── CLOCK ── */
+function gxClock() {
+  function tick() {
+    var e = document.getElementById('tbClock');
+    if(!e) return;
+    try {
+      var n = new Date(new Date().toLocaleString('en-US', {timeZone:'Africa/Lagos'}));
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    } catch(err) {
+      var n = new Date();
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    }
+  }
+  tick(); setInterval(tick, 1000);
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+/* ── NOTIF BADGE ── */
+function gxNotifBadge() {
+  api('GET', '/api/notifications/unread-count').then(function(d) {
+    if((d.count||0) > 0) {
+      var dot = document.getElementById('notifDot');
+      if(dot) dot.style.display = 'block';
+    }
+  }).catch(function(){});
+}
+
+/* ── TOAST ── */
+function toast(msg, type) {
+  var w = document.getElementById('toasts');
+  if(!w) { w = document.createElement('div'); w.id='toasts'; w.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none'; document.body.appendChild(w); }
+  var c={ok:'#4ADE80',er:'#FCA5A5',wa:'#FCD34D',in:'#93C5FD'};
+  var b={ok:'rgba(34,197,94,.3)',er:'rgba(239,68,68,.3)',wa:'rgba(245,158,11,.3)',in:'rgba(96,165,250,.3)'};
+  var t = document.createElement('div');
+  t.style.cssText='background:#1A1D24;border:1px solid '+(b[type]||b.in)+';color:'+(c[type]||c.in)+';padding:.62rem 1rem;border-radius:100px;font-size:.76rem;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateX(110%);transition:transform .28s;font-family:DM Sans,sans-serif;max-width:300px';
+  t.textContent = msg; w.appendChild(t);
+  setTimeout(function(){t.style.transform='translateX(0)';}, 10);
+  setTimeout(function(){t.style.transform='translateX(110%)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);}, 3800);
+}
+
+/* ── MODAL ── */
+function om(id) { var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function cm(id) { var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target&&e.target.classList.contains('overlay')) e.target.classList.remove('open'); });
+
+/* ── HELPERS ── */
+function money(n) { return '\u20a6' + Number(n||0).toLocaleString(); }
+function gxInits(name) { return (name||'?').split(' ').map(function(c){return c[0];}).join('').slice(0,2).toUpperCase(); }
+function gxAgo(d) { if(!d)return''; var m=Math.floor((Date.now()-new Date(d))/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; var h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+function gxToday() { return new Date().toISOString().slice(0,10); }
+function gxAvc(name) { var c=['#FF6B00','#F472B6','#60A5FA','#4ADE80','#A78BFA','#FB923C']; var h=0; for(var i=0;i<(name||'').length;i++) h=(name.charCodeAt(i)+((h<<5)-h)); return c[Math.abs(h)%c.length]; }
+function gxAv(name,sz) { var s=sz||'28px'; return '<div style="width:'+s+';height:'+s+';border-radius:50%;background:'+gxAvc(name)+';display:flex;align-items:center;justify-content:center;font-size:calc('+s+' * 0.35);font-weight:700;color:#fff;flex-shrink:0">'+gxInits(name)+'</div>'; }
+function gxBadge(s) { var m={active:'b-ok',pending:'b-wa',approved:'b-ok',rejected:'b-er','in-progress':'b-bl',done:'b-ok',present:'b-ok',late:'b-wa',absent:'b-er',high:'b-or',urgent:'b-er',medium:'b-wa',low:'b-gy',suspended:'b-er',open:'b-or',resolved:'b-ok',admin:'b-or',manager:'b-pu',dept_manager:'b-wa',employee:'b-bl',completed:'b-ok'}; return '<span class="b '+(m[s]||'b-gy')+'">'+s+'</span>'; }
+function gxPay(g) { var t=Math.round(g*.20),n=Math.round(g*.08),p=Math.round(g*.05); return {gross:g,tax:t,ni:n,pension:p,net:g-t-n-p}; }
+function gxTab(btn) { var p=btn.closest('.tabs'); if(!p)return; p.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); btn.classList.add('on'); }
+function gxNav(id) { document.querySelectorAll('.nav-a').forEach(function(n){n.classList.remove('on');}); var e=document.getElementById('nav-'+id); if(e) e.classList.add('on'); }
+function gxSetPage(id, title) { gxNav(id); var t=document.getElementById('pageTitle'); if(t) t.textContent=title||id; }
+function loading(id) { var e=document.getElementById(id); if(e) e.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>'; }
+function gxPrint(title, html) {
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to print','wa');return;}
+  w.document.write('<!DOCTYPE html><html><head><title>'+title+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:2rem;color:#111;font-size:12px}h2{color:#FF6B00;border-bottom:2px solid #FF6B00;padding-bottom:.5rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;margin:.75rem 0}th{background:#FF6B00;color:#fff;padding:.35rem .6rem;text-align:left;font-size:.7rem}td{padding:.4rem .6rem;border-bottom:1px solid #eee}</style></head><body><h2>Giddies Express &#8212; '+title+'</h2>'+html+'<p style="margin-top:1rem;font-size:.7rem;color:#888">Generated: '+new Date().toLocaleString('en-NG')+'</p><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>');
+  w.document.close();
+}
+
+
+var API='https://web-production-50873.up.railway.app';
+
+function gxOpen(id){var e=document.getElementById(id);if(e)e.classList.add('open');}
+function gxClose(id){var e=document.getElementById(id);if(e)e.classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target&&e.target.classList.contains('overlay'))e.target.classList.remove('open');});
+function mk(tag,cls,sty){var e=document.createElement(tag);if(cls)e.className=cls;if(sty)e.style.cssText=sty;return e;}
+function addBtn(p,html,cls,fn){var b=mk('button','btn '+cls);b.innerHTML=html;b.onclick=fn;p.appendChild(b);return b;}
+function showLoading(){var mc=document.getElementById('MC');mc.innerHTML='';var w=mk('div','','display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem');w.appendChild(mk('div','spin'));var t=mk('div','','color:var(--tx3)');t.textContent='Loading...';w.appendChild(t);mc.appendChild(w);}
+function showErr(msg,fn){var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem');var m=mk('div','','color:var(--er);margin-bottom:1rem');m.textContent=msg;d.appendChild(m);if(fn){var b=mk('button','btn btn-gh');b.textContent='Retry';b.onclick=fn;d.appendChild(b);}mc.appendChild(d);}
+function toggleSb(){var sb=document.getElementById('sb'),ov=document.getElementById('sb-overlay');sb.classList.toggle('open');ov.style.display=sb.classList.contains('open')?'block':'none';}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-overlay').style.display='none';}
+
+var PT={'dashboard':'Dashboard','submit-budget':'Submit Budget Request','approvals':'Approvals','staff-requests':'Staff Requests','employees':'All Employees','attendance':'Attendance','leave':'Leave Requests','tasks':'Tasks','budgets':'Budget Approvals','transfers':'Fund Transfers','announcements':'Announcements','notifications':'Notifications','reports':'Reports'};
+
+function goTo(id){
+  closeSb();gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='approvals')pgApprovals();
+    else if(id==='staff-requests')pgStaffRequests();
+    else if(id==='employees')pgEmployees();
+    else if(id==='attendance')pgAttendance();
+    else if(id==='leave')pgLeave();
+    else if(id==='tasks')pgTasks();
+    else if(id==='budgets')pgBudgets();
+    else if(id==='submit-budget')pgSubmitBudget();
+    else if(id==='transfers')pgTransfers();
+    else if(id==='announcements')pgAnnouncements();
+    else if(id==='notifications')pgNotifications();
+    else if(id==='reports')pgReports();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+var ALL_EMPS=[], ALL_LEAVE=[], ALL_TASKS=[];
+
+// ── DASHBOARD ──
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/reports/dashboard-stats'),
+    api('GET','/api/leave/?status=pending'),
+    api('GET','/api/users/requests'),
+    api('GET','/api/tasks/')
+  ]).then(function(r){
+    var stats=r[0],leaves=r[1],reqs=r[2],tasks=r[3];
+    ALL_LEAVE=leaves;ALL_TASKS=tasks;
+    var mc=document.getElementById('MC');mc.innerHTML='';
+
+    // Stats
+    var sg=mk('div','stats');
+    [{sc:'#F59E0B',sc2:'#FBBF24',ic:'&#x1f465;',val:stats.total_employees||0,lbl:'Total Staff'},
+     {sc:'#EF4444',sc2:'#F87171',ic:'&#x1f4cb;',val:(leaves.length)+(stats.pending_budgets||0),lbl:'Pending Approvals',sub:leaves.length+' leave, '+(stats.pending_budgets||0)+' budgets'},
+     {sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f4dd;',val:reqs.length,lbl:'Staff Requests'},
+     {sc:'#22C55E',sc2:'#4ADE80',ic:'&#x2705;',val:tasks.filter(function(t){return t.status==='pending';}).length,lbl:'Pending Tasks'}
+    ].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val');v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      if(item.sub){var s2=mk('div','s-sub');s2.textContent=item.sub;d.appendChild(s2);}
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    // Pending approvals card
+    var ac=mk('div','card');var ach=mk('div','c-hd');ach.innerHTML='<div class="c-title">Needs Your Approval</div>';addBtn(ach,'View All','btn-gh btn-sm',function(){goTo('approvals');});ac.appendChild(ach);
+    var al=mk('div');
+    var total=(leaves.length)+(reqs.length);
+    if(!total){var nd=mk('div','','text-align:center;padding:1.5rem;color:var(--ok)');nd.innerHTML='&#x2705; No pending approvals';al.appendChild(nd);}
+    else{
+      leaves.slice(0,3).forEach(function(l){
+        var row=mk('div','appr-row');
+        var ic=mk('div','appr-ic');ic.innerHTML='&#x1f334;';row.appendChild(ic);
+        var info=mk('div','appr-info');var ti=mk('div','appr-title');ti.textContent=(l.employee_name||'?')+' - '+l.type+' Leave';info.appendChild(ti);var me=mk('div','appr-meta');me.textContent=l.from_date+' to '+l.to_date+' ('+l.days+' days)';info.appendChild(me);row.appendChild(info);
+        var acts=mk('div','appr-acts');
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+        (function(leave){appB.onclick=function(){openLeaveAction(leave,'approve');};})(l);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+        (function(leave){rejB.onclick=function(){openLeaveAction(leave,'reject');};})(l);
+        acts.appendChild(appB);acts.appendChild(rejB);row.appendChild(acts);al.appendChild(row);
+      });
+      reqs.slice(0,2).forEach(function(r){
+        var d2=r.request_data||{};
+        var row=mk('div','appr-row');
+        var ic=mk('div','appr-ic');ic.innerHTML='&#x1f4dd;';row.appendChild(ic);
+        var info=mk('div','appr-info');var ti=mk('div','appr-title');ti.textContent='New Staff: '+d2.name+' ('+d2.role+')';info.appendChild(ti);var me=mk('div','appr-meta');me.textContent=d2.department+' - by '+(r.submitted_by_name||'?');info.appendChild(me);row.appendChild(info);
+        var acts=mk('div','appr-acts');
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';
+        (function(req){appB.onclick=function(){openReview(req,'approve');};})(r);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';
+        (function(req){rejB.onclick=function(){openReview(req,'reject');};})(r);
+        acts.appendChild(appB);acts.appendChild(rejB);row.appendChild(acts);al.appendChild(row);
+      });
+    }
+    ac.appendChild(al);left.appendChild(ac);
+
+    // Recent tasks
+    var tc=mk('div','card');var th=mk('div','c-hd');th.innerHTML='<div class="c-title">Recent Tasks</div>';addBtn(th,'All Tasks','btn-gh btn-sm',function(){goTo('tasks');});tc.appendChild(th);
+    var tl=mk('div');
+    if(!tasks.length){var nd2=mk('div','','text-align:center;padding:1rem;color:var(--tx3)');nd2.textContent='No tasks assigned yet';tl.appendChild(nd2);}
+    else{
+      tasks.slice(0,5).forEach(function(t){
+        var row=mk('div','','display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+        var dot=mk('div','','width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(t.priority==='urgent'?'var(--er)':t.priority==='high'?'var(--or)':t.priority==='medium'?'var(--wa)':'var(--tx3)'));
+        var info=mk('div','','flex:1');var ti=mk('div','','font-size:.8rem;font-weight:500');ti.textContent=t.title;info.appendChild(ti);var me=mk('div','','font-size:.68rem;color:var(--tx3)');me.textContent=(t.assigned_to_name||'?')+' - Due: '+(t.due_date||'?');info.appendChild(me);
+        row.appendChild(dot);row.appendChild(info);row.innerHTML+=gxBadge(t.status);tl.appendChild(row);
+      });
+    }
+    tc.appendChild(tl);left.appendChild(tc);
+
+    // Quick actions
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">Quick Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['Review Approvals','btn-hi btn-bl2',function(){goTo('approvals');}],
+     ['Review Staff Requests','btn-gh btn-bl2',function(){goTo('staff-requests');}],
+     ['Assign Task','btn-gh btn-bl2',function(){loadEmpsForTask();gxOpen('mTask');}],
+     ['Post Announcement','btn-gh btn-bl2',function(){gxOpen('mAnn');}],
+     ['View Attendance','btn-gh btn-bl2',function(){goTo('attendance');}],
+     ['Submit Budget Request','btn-hi btn-bl2',function(){goTo('submit-budget');}],
+     ['Budget Approvals','btn-gh btn-bl2',function(){goTo('budgets');}],
+     ['Reports','btn-gh btn-bl2',function(){goTo('reports');}]
+    ].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    // Company status
+    var cs=mk('div','card','margin-top:1rem');cs.innerHTML='<div class="c-hd"><div class="c-title">Company Status</div></div>';
+    [['Present Today',stats.today_present||0,'var(--ok)'],
+     ['Late Today',stats.today_late||0,'var(--wa)'],
+     ['Open IT Tickets',stats.open_tickets||0,'var(--or)'],
+     ['Suspended Staff',stats.suspended_users||0,'var(--er)']
+    ].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.8rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);cs.appendChild(d);
+    });
+    right.appendChild(cs);
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+// ── APPROVALS (Leave + Budget + Staff) ──
+function pgApprovals(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">All Pending Approvals</div></div>';
+  var tabs=mk('div','tabs');
+  [['leave','Leave'],['budget','Budgets'],['staff','Staff Requests']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(tp){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadApprovals(tp);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var list=mk('div');list.id='appr-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  loadApprovals('leave');
+}
+
+function loadApprovals(type){
+  var el=document.getElementById('appr-list');if(!el)return;
+  el.innerHTML='';el.appendChild(mk('div','spin','margin:2rem auto'));
+  var url=type==='leave'?'/api/leave/?status=pending':type==='budget'?'/api/budgets/?status=pending':'/api/users/requests';
+  api('GET',url).then(function(items){
+    el=document.getElementById('appr-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ok)">&#x2705; No pending '+type+' approvals</div>';return;}
+    el.innerHTML='';
+    items.forEach(function(item){
+      var d=item.request_data||{};
+      var row=mk('div','appr-row');
+      var ic=mk('div','appr-ic');ic.innerHTML=type==='leave'?'&#x1f334;':type==='budget'?'&#x1f4b0;':'&#x1f4dd;';row.appendChild(ic);
+      var info=mk('div','appr-info');
+      var title=type==='leave'?(item.employee_name||'?')+' - '+item.type+' Leave':type==='budget'?'Budget: '+(item.department||'?')+' - '+money(item.amount):'New Staff: '+(d.name||'?')+' ('+d.role+') / '+d.department;
+      var meta=type==='leave'?item.from_date+' to '+item.to_date+' ('+item.days+' days)':type==='budget'?'By: '+(item.submitter_name||'?'):'By: '+(item.submitted_by_name||'?');
+      var ti=mk('div','appr-title');ti.textContent=title;info.appendChild(ti);
+      var me=mk('div','appr-meta');me.textContent=meta;info.appendChild(me);
+      if(type==='leave'&&item.reason){var re=mk('div','','font-size:.7rem;color:var(--tx3)');re.textContent='Reason: '+item.reason;info.appendChild(re);}
+      row.appendChild(info);
+      var acts=mk('div','appr-acts');
+      var appB=mk('button','btn btn-ok btn-sm');appB.textContent='Approve';
+      var rejB=mk('button','btn btn-er btn-sm');rejB.textContent='Reject';
+      if(type==='leave'){
+        (function(leave){appB.onclick=function(){openLeaveAction(leave,'approve');};})(item);
+        (function(leave){rejB.onclick=function(){openLeaveAction(leave,'reject');};})(item);
+      } else if(type==='budget'){
+        (function(budget){appB.onclick=function(){openBudgetAction(budget,'approve');};})(item);
+        (function(budget){rejB.onclick=function(){openBudgetAction(budget,'reject');};})(item);
+      } else {
+        (function(req){appB.onclick=function(){openReview(req,'approve');};})(item);
+        (function(req){rejB.onclick=function(){openReview(req,'reject');};})(item);
+      }
+      acts.appendChild(appB);acts.appendChild(rejB);row.appendChild(acts);el.appendChild(row);
+    });
+  }).catch(function(e){var el2=document.getElementById('appr-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// Leave action modal
+function openLeaveAction(item,action){
+  document.getElementById('la-id').value=item.id;
+  document.getElementById('la-action').value=action;
+  document.getElementById('la-note').value='';
+  var title=document.getElementById('la-title');var btn=document.getElementById('la-btn');var det=document.getElementById('la-details');
+  title.textContent=action==='approve'?'Approve Leave':'Reject Leave';
+  title.style.color=action==='approve'?'var(--ok)':'var(--er)';
+  btn.textContent=action==='approve'?'Approve':'Reject';
+  btn.className='btn '+(action==='approve'?'btn-ok':'btn-er');
+  det.innerHTML='<strong>Employee:</strong> '+(item.employee_name||'?')+'<br><strong>Department:</strong> '+(item.department||'?')+'<br><strong>Type:</strong> '+item.type+'<br><strong>Duration:</strong> '+item.from_date+' to '+item.to_date+' ('+item.days+' days)'+(item.reason?'<br><strong>Reason:</strong> '+item.reason:'');
+  if(action==='reject'){document.getElementById('la-note').placeholder='Reason for rejection (required)';}
+  else{document.getElementById('la-note').placeholder='Optional note for employee...';}
+  gxOpen('mLeaveAction');
+}
+function submitLeaveAction(){
+  var id=document.getElementById('la-id').value;
+  var action=document.getElementById('la-action').value;
+  var note=document.getElementById('la-note').value.trim();
+  if(action==='reject'&&!note){toast('Please provide a reason for rejection','er');return;}
+  api('POST','/api/leave/'+id+'/action',{approved:action==='approve',note:note})
+  .then(function(r){gxClose('mLeaveAction');toast(r.message,'ok');loadApprovals('leave');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// Budget action modal
+function openBudgetAction(item,action){
+  document.getElementById('ba-id').value=item.id;
+  document.getElementById('ba-action').value=action;
+  document.getElementById('ba-note').value='';
+  var title=document.getElementById('ba-title');var btn=document.getElementById('ba-btn');
+  title.textContent=action==='approve'?'Approve Budget':'Reject Budget';
+  title.style.color=action==='approve'?'var(--ok)':'var(--er)';
+  btn.textContent=action==='approve'?'Approve':'Reject';
+  btn.className='btn '+(action==='approve'?'btn-ok':'btn-er');
+  document.getElementById('ba-details').innerHTML='<strong>Department:</strong> '+(item.department||'?')+'<br><strong>Title:</strong> '+(item.title||'-')+'<br><strong>Amount:</strong> <span style="color:var(--hi);font-weight:700">'+money(item.amount)+'</span><br><strong>Reason:</strong> '+(item.reason||'-')+'<br><strong>By:</strong> '+(item.submitter_name||'-');
+  gxOpen('mBudgetAction');
+}
+function submitBudgetAction(){
+  var id=document.getElementById('ba-id').value;
+  var action=document.getElementById('ba-action').value;
+  var note=document.getElementById('ba-note').value.trim();
+  if(action==='reject'&&!note){toast('Please provide a reason','er');return;}
+  api('POST','/api/budgets/'+id+'/action',{approved:action==='approve',note:note})
+  .then(function(r){gxClose('mBudgetAction');toast(r.message,'ok');loadApprovals('budget');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// Staff request review modal
+function openReview(req,action){
+  var d=req.request_data||{};
+  document.getElementById('rv-id').value=req.id;
+  document.getElementById('rv-action').value=action;
+  document.getElementById('rv-note').value='';
+  var title=document.getElementById('rv-title');var btn=document.getElementById('rv-btn');
+  title.textContent=action==='approve'?'Approve Staff Request':'Reject Staff Request';
+  title.style.color=action==='approve'?'var(--ok)':'var(--er)';
+  btn.textContent=action==='approve'?'Approve - Send to IT':'Reject Request';
+  btn.className='btn '+(action==='approve'?'btn-ok':'btn-er');
+  if(action==='reject')document.getElementById('rv-note').placeholder='Reason for rejection (required)';
+  document.getElementById('rv-details').innerHTML='<strong>Name:</strong> '+(d.name||'?')+'<br><strong>Email:</strong> '+(d.email||'?')+'<br><strong>Role:</strong> '+(d.role||'?')+'<br><strong>Department:</strong> '+(d.department||'?')+(d.title?'<br><strong>Title:</strong> '+d.title:'')+(d.salary>0?'<br><strong>Salary:</strong> '+money(d.salary):'')+(d.reason?'<br><strong>Reason:</strong> '+d.reason:'');
+  gxOpen('mReview');
+}
+function submitReview(){
+  var id=document.getElementById('rv-id').value;
+  var action=document.getElementById('rv-action').value;
+  var note=document.getElementById('rv-note').value.trim();
+  if(action==='reject'&&!note){toast('Please provide a reason for rejection','er');return;}
+  api('POST','/api/users/requests/'+id+'/manager-approve',{approved:action==='approve',note:note||'Reviewed by Manager'})
+  .then(function(r){gxClose('mReview');toast(r.message,'ok');loadApprovals('staff');})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── STAFF REQUESTS ──
+function pgStaffRequests(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='Approve or reject new staff requests submitted by HR. Approved requests go to IT Support for account creation.';mc.appendChild(info);
+  var card=mk('div','card');var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Pending Staff Requests</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgStaffRequests);card.appendChild(hd);
+  var list=mk('div');list.id='sr-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/users/requests').then(function(reqs){
+    var el=document.getElementById('sr-list');if(!el)return;
+    if(!reqs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--ok)">&#x2705; No pending staff requests</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Salary</th><th>Submitted By</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    reqs.forEach(function(r){
+      var d=r.request_data||{};var tr=document.createElement('tr');
+      var n=document.createElement('td');n.style.fontWeight='500';n.textContent=d.name||'?';
+      var ro=document.createElement('td');ro.innerHTML=gxBadge(d.role||'?');
+      var dep=document.createElement('td');dep.textContent=d.department||'?';
+      var sal=document.createElement('td');sal.style.cssText='font-weight:600;color:var(--hi)';sal.textContent=d.salary>0?money(d.salary):'-';
+      var by=document.createElement('td');by.style.fontSize='.75rem';by.textContent=r.submitted_by_name||'?';
+      var st=document.createElement('td');
+      var smap={'pending_manager':'Awaiting Approval','pending_it':'Approved - IT Creating','completed':'Account Created','rejected':'Rejected'};
+      var scls={'pending_manager':'b-wa','pending_it':'b-bl','completed':'b-ok','rejected':'b-er'};
+      st.innerHTML='<span class="b '+(scls[r.status]||'b-gy')+'">'+(smap[r.status]||r.status)+'</span>';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(r.created_at);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(r.status==='pending_manager'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';(function(req){appB.onclick=function(){openReview(req,'approve');};})(r);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';(function(req){rejB.onclick=function(){openReview(req,'reject');};})(r);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      }
+      at.appendChild(acts);[n,ro,dep,sal,by,st,dt,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('sr-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── EMPLOYEES ──
+function pgEmployees(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='All Employees';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem');
+  var inp=document.createElement('input');inp.placeholder='Search...';inp.oninput=function(){var q=this.value.toLowerCase();renderEmps(q?ALL_EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q)||(e.department||'').toLowerCase().includes(q);}):ALL_EMPS);};
+  inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';
+  hdR.appendChild(inp);addBtn(hdR,'Print','btn-gh btn-sm',function(){gxPrint('Employee List','<table><thead><tr><th>Name</th><th>Dept</th><th>Role</th><th>Salary</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+e.role+'</td><td>'+(e.salary?money(e.salary):'-')+'</td></tr>';}).join('')+'</tbody></table>');});
+  hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Title</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='emp-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/employees/').then(function(emps){ALL_EMPS=emps;renderEmps(emps);}).catch(function(e){var tb=document.getElementById('emp-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="color:var(--er);text-align:center;padding:2rem">'+e.message+'</td></tr>';});
+}
+function renderEmps(list){
+  var tb=document.getElementById('emp-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No employees found</td></tr>';return;}
+  list.forEach(function(e){
+    var tr=document.createElement('tr');
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'24px')+'<span style="font-weight:500">'+e.name+'</span></div>';
+    var d=document.createElement('td');d.textContent=e.department||'-';
+    var r=document.createElement('td');r.innerHTML=gxBadge(e.role);
+    var ti=document.createElement('td');ti.style.cssText='font-size:.75rem;color:var(--tx3)';ti.textContent=e.title||'-';
+    var s=document.createElement('td');s.style.fontWeight='600';s.textContent=e.salary>0?money(e.salary):'-';
+    var st=document.createElement('td');st.innerHTML=gxBadge(e.status);
+    var at=document.createElement('td');
+    var slipBtn=mk('button','btn btn-gh btn-xs');slipBtn.textContent='Payslip';
+    (function(emp){slipBtn.onclick=function(){var p=gxPay(emp.salary||0);var m=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});gxPrint('Payslip - '+emp.name,'<p><b>Employee:</b> '+emp.name+'</p><p><b>Dept:</b> '+(emp.department||'-')+'</p><p><b>Period:</b> '+m+'</p><table><tr><th>Gross</th><td>'+money(p.gross)+'</td></tr><tr><th>Tax 20%</th><td>-'+money(p.tax)+'</td></tr><tr><th>NI 8%</th><td>-'+money(p.ni)+'</td></tr><tr><th>Pension 5%</th><td>-'+money(p.pension)+'</td></tr><tr><th>NET PAY</th><td><b>'+money(p.net)+'</b></td></tr></table>');};})(e);
+    at.appendChild(slipBtn);[n,d,r,ti,s,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+// ── ATTENDANCE ──
+function pgAttendance(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Attendance Today';hd.appendChild(ht);
+  addBtn(hd,'Print','btn-gh btn-sm',function(){var tb=document.getElementById('att-tb');if(!tb)return;var by=typeof ME!=='undefined'&&ME?ME.name:'Manager';gxPrint('Attendance - '+gxToday(),'<p><b>Date:</b> '+gxToday()+'</p><p><b>Printed by:</b> '+by+'</p>'+tb.outerHTML);});
+  mc.appendChild(hd);
+  var sg=mk('div','stats','grid-template-columns:repeat(4,1fr);margin-bottom:1rem');
+  [{sc:'#22C55E',sc2:'#4ADE80',id:'att-p',lbl:'Present'},{sc:'#F59E0B',sc2:'#FBBF24',id:'att-l',lbl:'Late'},{sc:'#EF4444',sc2:'#F87171',id:'att-a',lbl:'Absent'},{sc:'#A78BFA',sc2:'#7C3AED',id:'',lbl:'On Leave'}].forEach(function(s){
+    var d=mk('div','stat');d.style.setProperty('--sc',s.sc);d.style.setProperty('--sc2',s.sc2);
+    var v=mk('div','s-val');if(s.id)v.id=s.id;v.textContent='-';d.appendChild(v);
+    var l=mk('div','s-lbl');l.textContent=s.lbl;d.appendChild(l);sg.appendChild(d);
+  });
+  mc.appendChild(sg);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Clock In</th><th>Clock Out</th><th>Status</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='att-tb';tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/attendance/today').then(function(att){
+    var p=att.filter(function(a){return a.status==='present';}).length;var l=att.filter(function(a){return a.status==='late';}).length;var ab=att.filter(function(a){return a.status==='absent';}).length;
+    var ep=document.getElementById('att-p'),el=document.getElementById('att-l'),ea=document.getElementById('att-a');if(ep)ep.textContent=p;if(el)el.textContent=l;if(ea)ea.textContent=ab;
+    var tb=document.getElementById('att-tb');if(!tb)return;tb.innerHTML='';
+    if(!att.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">No records today</td></tr>';return;}
+    att.forEach(function(a){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(a.employee_name||'?','22px')+'<span>'+(a.employee_name||'?')+'</span></div>';
+      var d=document.createElement('td');d.textContent=a.department||'-';var ci=document.createElement('td');ci.textContent=a.clock_in||'-';var co=document.createElement('td');co.textContent=a.clock_out||'-';var st=document.createElement('td');st.innerHTML=gxBadge(a.status);
+      [n,d,ci,co,st].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('att-tb');if(tb)tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">'+e.message+'</td></tr>';});
+}
+
+// ── LEAVE ──
+function pgLeave(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Leave Requests</div>';card.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadLeave(st);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Type</th><th>Duration</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='leave-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  loadLeave('pending');
+}
+function loadLeave(status){
+  api('GET','/api/leave/'+(status?'?status='+status:'')).then(function(items){
+    ALL_LEAVE=items;var tb=document.getElementById('leave-tb');if(!tb)return;tb.innerHTML='';
+    if(!items.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' requests</td></tr>';return;}
+    items.forEach(function(l){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(l.employee_name||'?','22px')+'<span>'+(l.employee_name||'?')+'</span></div>';
+      var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=l.department||'-';
+      var tp=document.createElement('td');tp.innerHTML='<span class="b b-bl">'+l.type+'</span>';
+      var dur=document.createElement('td');dur.style.fontSize='.75rem';dur.innerHTML=l.from_date+' &rarr; '+l.to_date+'<br><span style="color:var(--tx3)">'+l.days+' days</span>';
+      var rs=document.createElement('td');rs.style.cssText='font-size:.72rem;color:var(--tx2);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.textContent=l.reason||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(l.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(l.status==='pending'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';(function(leave){appB.onclick=function(){openLeaveAction(leave,'approve');};})(l);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';(function(leave){rejB.onclick=function(){openLeaveAction(leave,'reject');};})(l);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      }
+      at.appendChild(acts);[n,dep,tp,dur,rs,st,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+    });
+  }).catch(function(e){var tb=document.getElementById('leave-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+// ── TASKS ──
+function pgTasks(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');var ht=mk('div','','font-size:1rem;font-weight:600');ht.textContent='Task Management';hd.appendChild(ht);
+  addBtn(hd,'+ Assign Task','btn-hi btn-sm',function(){loadEmpsForTask();gxOpen('mTask');});mc.appendChild(hd);
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['in-progress','In Progress'],['done','Done'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');renderTasks(st?ALL_TASKS.filter(function(tk){return tk.status===st;}):ALL_TASKS);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  mc.appendChild(tabs);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Task</th><th>Assigned To</th><th>Dept</th><th>Due</th><th>Priority</th><th>Status</th><th>Note</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='task-tb';tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/tasks/').then(function(tasks){ALL_TASKS=tasks;renderTasks(tasks.filter(function(t){return t.status==='pending';}));}).catch(function(e){var tb=document.getElementById('task-tb');if(tb)tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+function renderTasks(list){
+  var tb=document.getElementById('task-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--tx3)">No tasks found</td></tr>';return;}
+  list.forEach(function(t){
+    var tr=document.createElement('tr');
+    var ti=document.createElement('td');ti.style.fontWeight='500';ti.textContent=t.title;
+    var as=document.createElement('td');as.innerHTML='<div class="td-user">'+gxAv(t.assigned_to_name||'?','20px')+'<span style="font-size:.78rem">'+(t.assigned_to_name||'?')+'</span></div>';
+    var dep=document.createElement('td');dep.style.fontSize='.75rem';dep.textContent=t.department||'-';
+    var isOverdue=t.due_date&&t.due_date<gxToday()&&t.status!=='done';
+    var due=document.createElement('td');due.style.cssText='font-size:.75rem;'+(isOverdue?'color:var(--er);font-weight:600':'color:var(--tx3)');due.textContent=t.due_date||'-';
+    var pr=document.createElement('td');pr.innerHTML=gxBadge(t.priority);
+    var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+    var nt=document.createElement('td');nt.style.cssText='font-size:.72rem;color:var(--tx3);max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';nt.textContent=t.progress_note||'-';
+    [ti,as,dep,due,pr,st,nt].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+function loadEmpsForTask(){
+  api('GET','/api/employees/?status=active').then(function(emps){
+    var sel=document.getElementById('tk-emp');if(!sel)return;sel.innerHTML='<option value="">Select employee...</option>';
+    emps.forEach(function(e){var opt=document.createElement('option');opt.value=e.id;opt.textContent=e.name+' ('+e.department+')';sel.appendChild(opt);});
+  }).catch(function(){});
+}
+function submitTask(){
+  var title=document.getElementById('tk-title').value.trim();
+  var empSel=document.getElementById('tk-emp');
+  var empId=empSel.value;
+  var empName=empSel.options[empSel.selectedIndex]?empSel.options[empSel.selectedIndex].textContent.split(' (')[0]:'?';
+  var due=document.getElementById('tk-due').value;
+  if(!title||!empId||!due){toast('Fill in title, assign to, and due date','er');return;}
+  var btn=document.getElementById('tk-btn');btn.disabled=true;btn.textContent='Assigning...';
+  api('POST','/api/tasks/',{title:title,description:document.getElementById('tk-desc').value.trim(),assigned_to:empId,assigned_to_name:empName,department:'',due_date:due,priority:document.getElementById('tk-priority').value})
+  .then(function(r){btn.disabled=false;btn.textContent='Assign Task';gxClose('mTask');toast('Task assigned to '+empName,'ok');['tk-title','tk-desc','tk-due'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});pgTasks();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Assign Task';toast('Error: '+e.message,'er');});
+}
+
+// ── BUDGETS ──
+function pgBudgets(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Budget Requests</div></div>';
+  var tabs=mk('div','tabs');
+  [['pending','Pending'],['approved','Approved'],['','All']].forEach(function(t,i){
+    var tab=mk('div',i===0?'tab on':'tab');tab.textContent=t[1];
+    (function(st){tab.onclick=function(){tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});tab.classList.add('on');loadBudgets(st);};})(t[0]);
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+  var list=mk('div');list.id='budg-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  loadBudgets('pending');
+}
+function loadBudgets(status){
+  var el=document.getElementById('budg-list');if(!el)return;el.innerHTML='';el.appendChild(mk('div','spin','margin:2rem auto'));
+  api('GET','/api/budgets/'+(status?'?status='+status:'')).then(function(items){
+    el=document.getElementById('budg-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No '+status+' budget requests</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Department</th><th>Title</th><th>Amount</th><th>Reason</th><th>By</th><th>Status</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    items.forEach(function(b){
+      var tr=document.createElement('tr');
+      var de=document.createElement('td');de.innerHTML='<span class="b b-gy">'+b.department+'</span>';
+      var ti=document.createElement('td');ti.style.fontWeight='500';ti.textContent=b.title||'-';
+      var am=document.createElement('td');am.style.cssText='font-weight:700;color:var(--hi)';am.textContent=money(b.amount);
+      var rs=document.createElement('td');rs.style.cssText='font-size:.72rem;color:var(--tx2);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';rs.textContent=b.reason||'-';
+      var by=document.createElement('td');by.style.fontSize='.76rem';by.textContent=b.submitter_name||'-';
+      var st=document.createElement('td');st.innerHTML=gxBadge(b.status);
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      if(b.status==='pending'){
+        var appB=mk('button','btn btn-ok btn-xs');appB.textContent='Approve';(function(budget){appB.onclick=function(){openBudgetAction(budget,'approve');};})(b);
+        var rejB=mk('button','btn btn-er btn-xs');rejB.textContent='Reject';(function(budget){rejB.onclick=function(){openBudgetAction(budget,'reject');};})(b);
+        acts.appendChild(appB);acts.appendChild(rejB);
+      }
+      at.appendChild(acts);[de,ti,am,rs,by,st,at].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('budg-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── FUND TRANSFERS ──
+function pgTransfers(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Fund Transfers</div>';addBtn(hd,'Refresh','btn-gh btn-sm',pgTransfers);card.appendChild(hd);
+  var list=mk('div');list.id='trans-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/budgets/transfers').then(function(items){
+    var el=document.getElementById('trans-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No fund transfers yet</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>To Department</th><th>Amount</th><th>Reference</th><th>Note</th><th>Sent By</th><th>Date</th><th>Status</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    items.forEach(function(t){
+      var tr=document.createElement('tr');
+      var to=document.createElement('td');to.innerHTML='<span class="b b-bl">'+t.to_dept+'</span>';
+      var am=document.createElement('td');am.style.cssText='font-weight:700;color:var(--ok)';am.textContent=money(t.amount);
+      var ref=document.createElement('td');ref.style.cssText='font-family:monospace;font-size:.73rem;color:var(--bl)';ref.textContent=t.reference||'-';
+      var nt=document.createElement('td');nt.style.cssText='font-size:.75rem;color:var(--tx2);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';nt.textContent=t.note||'-';
+      var by=document.createElement('td');by.style.fontSize='.75rem';by.textContent=t.sent_by_name||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(t.created_at);
+      var st=document.createElement('td');st.innerHTML=gxBadge(t.status);
+      [to,am,ref,nt,by,dt,st].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('trans-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+// ── ANNOUNCEMENTS ──
+function pgAnnouncements(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Announcements</div>';addBtn(hd,'+ Post New','btn-hi btn-sm',function(){gxOpen('mAnn');});card.appendChild(hd);
+  var list=mk('div');list.id='ann-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/announcements/').then(function(anns){
+    var el=document.getElementById('ann-list');if(!el)return;
+    if(!anns.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No announcements yet</div>';return;}
+    var clr={info:'#60A5FA',warn:'var(--wa)',ok:'var(--ok)',er:'var(--er)'};el.innerHTML='';
+    anns.forEach(function(a){
+      var div=mk('div','ann','border-left:4px solid '+(clr[a.type]||'#60A5FA'));
+      var ti=mk('div','ann-title');ti.textContent=a.title;div.appendChild(ti);var bo=mk('div','ann-body');bo.textContent=a.body;div.appendChild(bo);
+      var me=mk('div','','font-size:.68rem;color:var(--tx3);margin-top:.4rem');me.textContent=(a.poster_name||'?')+' - '+(a.department==='all'?'All Staff':a.department)+' - '+gxAgo(a.created_at);div.appendChild(me);el.appendChild(div);
+    });
+  }).catch(function(e){var el2=document.getElementById('ann-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+function submitAnn(){
+  var title=document.getElementById('ann-title').value.trim(),body=document.getElementById('ann-body').value.trim();
+  if(!title||!body){toast('Fill in title and message','er');return;}
+  api('POST','/api/announcements/',{title:title,body:body,type:document.getElementById('ann-type').value,department:document.getElementById('ann-dept').value})
+  .then(function(){gxClose('mAnn');toast('Announcement posted','ok');document.getElementById('ann-title').value='';document.getElementById('ann-body').value='';})
+  .catch(function(e){toast('Error: '+e.message,'er');});
+}
+
+// ── REPORTS ──
+function pgReports(){
+  showLoading();
+  Promise.all([api('GET','/api/reports/payroll-summary'),api('GET','/api/reports/dashboard-stats')]).then(function(r){
+    var pay=r[0],stats=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';var grid=mk('div','g2');
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">Company Overview</div></div>';
+    [['Total Active Staff',stats.total_employees||0,'var(--hi)'],['Present Today',stats.today_present||0,'var(--ok)'],['Late Today',stats.today_late||0,'var(--wa)'],['Pending Leave',stats.pending_leave||0,'var(--bl)'],['Open IT Tickets',stats.open_tickets||0,'var(--or)'],['Suspended Staff',stats.suspended_users||0,'var(--er)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);left.appendChild(d);
+    });
+    addBtn(left,'Print Employee List','btn-gh btn-bl2 btn-sm',function(){gxPrint('Employee List','<table><thead><tr><th>Name</th><th>Dept</th><th>Role</th><th>Status</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+e.role+'</td><td>'+e.status+'</td></tr>';}).join('')+'</tbody></table>');});
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Payroll Overview</div></div>';
+    [['Active Staff',pay.total_employees||0,'var(--tx)'],['Gross Payroll',money(pay.gross_payroll||0),'var(--hi)'],['Tax (20%)','-'+money(pay.tax||0),'var(--er)'],['NI (8%)','-'+money(pay.ni||0),'var(--er)'],['Pension (5%)','-'+money(pay.pension||0),'var(--er)'],['Net Payroll',money(pay.net_payroll||0),'var(--ok)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgReports);});
+}
+
+// ── NOTIFICATIONS ──
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+
+// ── SUBMIT BUDGET REQUEST ──
+function pgSubmitBudget(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.innerHTML='Submit a budget request to Finance. They will review and allocate funds.';mc.appendChild(info);
+
+  var newCard=mk('div','card');
+  var nh=mk('div','c-hd');nh.innerHTML='<div class="c-title">&#x1f4e4; Submit New Budget Request</div>';newCard.appendChild(nh);
+  var nb=mk('div','','padding:.5rem 0');
+  var desc=mk('div','','font-size:.82rem;color:var(--tx3);margin-bottom:1rem');desc.textContent='Request funds for your department. Finance will review and send the allocation.';nb.appendChild(desc);
+  addBtn(nb,'+ Create Budget Request','btn-hi',function(){
+    ['cb-amount','cb-title','cb-reason'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    var prev=document.getElementById('cb-preview');if(prev)prev.style.display='none';
+    var amtInp=document.getElementById('cb-amount');
+    if(amtInp){amtInp.oninput=function(){
+      var amt=parseFloat(this.value)||0;var prev2=document.getElementById('cb-preview');
+      if(prev2&&amt>0){prev2.style.display='block';prev2.innerHTML='<div style="background:var(--bg3);border-radius:8px;padding:.75rem 1rem;font-size:.82rem">Requesting: <strong style="color:var(--hi);font-size:1rem">'+money(amt)+'</strong></div>';}
+      else if(prev2){prev2.style.display='none';}
+    };}
+    gxOpen('mCreateBudget');
+  });
+  newCard.appendChild(nb);mc.appendChild(newCard);
+
+  var histCard=mk('div','card');
+  var hh=mk('div','c-hd');hh.innerHTML='<div class="c-title">My Budget Requests</div>';addBtn(hh,'Refresh','btn-gh btn-sm',pgSubmitBudget);histCard.appendChild(hh);
+  var list=mk('div');list.id='my-budg-list';list.appendChild(mk('div','spin','margin:2rem auto'));histCard.appendChild(list);mc.appendChild(histCard);
+
+  api('GET','/api/budgets/').then(function(items){
+    var el=document.getElementById('my-budg-list');if(!el)return;
+    if(!items.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No budget requests submitted yet</div>';return;}
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Department</th><th>Title</th><th>Amount</th><th>Category</th><th>Priority</th><th>Status</th><th>Finance Note</th><th>Date</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    items.forEach(function(b){
+      var tr=document.createElement('tr');
+      var de=document.createElement('td');de.innerHTML='<span class="b b-gy">'+b.department+'</span>';
+      var ti=document.createElement('td');ti.style.fontWeight='500';ti.textContent=b.title||'-';
+      var am=document.createElement('td');am.style.cssText='font-weight:700;color:var(--hi)';am.textContent=money(b.amount);
+      var ca=document.createElement('td');ca.style.fontSize='.75rem';ca.textContent=b.category||'-';
+      var pr=document.createElement('td');pr.innerHTML=gxBadge(b.priority||'medium');
+      var st=document.createElement('td');st.innerHTML=gxBadge(b.status);
+      var nt=document.createElement('td');nt.style.cssText='font-size:.72rem;color:'+(b.status==='rejected'?'var(--er)':'var(--tx3)');nt.textContent=b.note||'-';
+      var dt=document.createElement('td');dt.style.cssText='font-size:.72rem;color:var(--tx3)';dt.textContent=gxAgo(b.created_at);
+      [de,ti,am,ca,pr,st,nt,dt].forEach(function(td){tr.appendChild(td);});tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('my-budg-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+function submitBudgetRequest(){
+  var dept=document.getElementById('cb-dept').value;
+  var amount=parseFloat(document.getElementById('cb-amount').value)||0;
+  var title=document.getElementById('cb-title').value.trim();
+  var reason=document.getElementById('cb-reason').value.trim();
+  var category=document.getElementById('cb-category').value;
+  var priority=document.getElementById('cb-priority').value;
+  if(!amount||amount<=0){toast('Enter a valid amount','er');return;}
+  if(!title){toast('Enter a budget title','er');return;}
+  if(!reason){toast('Please provide a justification','er');return;}
+  var btn=document.getElementById('cb-btn');btn.disabled=true;btn.textContent='Submitting...';
+  api('POST','/api/budgets/',{department:dept,amount:amount,title:title,reason:reason,category:category,priority:priority})
+  .then(function(){
+    btn.disabled=false;btn.textContent='Submit to Finance';
+    gxClose('mCreateBudget');
+    toast('Budget request submitted to Finance!','ok');
+    ['cb-amount','cb-title','cb-reason'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    pgSubmitBudget();
+  }).catch(function(e){btn.disabled=false;btn.textContent='Submit to Finance';toast('Error: '+e.message,'er');});
+}
+
+// ── START ──
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('manager,admin',function(user){pgDashboard();});
+});
+</script>
+</body>
+</html>
