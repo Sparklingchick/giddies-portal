@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Giddies Express - Payroll</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D0F14;--bg2:#161920;--bg3:#1E2128;--br:rgba(255,255,255,.07);--tx:#E8EAF0;--tx2:#9CA3AF;--tx3:#6B7280;--hi:#FF6B00;--hi2:#FF8C38;--ok:#4ADE80;--er:#F87171;--wa:#FCD34D;--bl:#60A5FA;--pu:#A78BFA;--or:#FB923C}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
+.shell{display:flex;height:100vh}
+
+.sb{width:240px;background:var(--bg2);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--br)}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:var(--hi)}
+.sb-sub{font-size:.55rem;color:var(--tx3);letter-spacing:.18em;text-transform:uppercase}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.2rem;border-bottom:1px solid var(--br)}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-nm{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{font-size:.65rem;color:var(--tx3);text-transform:capitalize}
+.sb-nav{flex:1;padding:.5rem 0}
+.nav-sec{font-size:.62rem;font-weight:600;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;padding:.85rem 1.2rem .3rem}
+.nav-a{display:flex;align-items:center;gap:.65rem;padding:.6rem 1.2rem;cursor:pointer;border-radius:0;font-size:.82rem;color:var(--tx2);transition:all .15s;margin:1px 0;position:relative}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-a.on{background:rgba(255,107,0,.1);color:var(--hi)}
+.nav-a.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hi);border-radius:0 2px 2px 0}
+.nav-ic{width:16px;text-align:center;font-size:.9rem}
+.sb-foot{padding:.85rem 1.2rem;border-top:1px solid var(--br)}
+.btn-logout{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#F87171;border-radius:8px;padding:.55rem;font-size:.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.2)}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--br);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-weight:600;font-size:.95rem}
+.tb-right{display:flex;align-items:center;gap:.85rem}
+.tb-clock{font-size:.78rem;color:var(--tx3);font-family:monospace}
+.tb-pill{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br);border-radius:100px;padding:.3rem .75rem;font-size:.72rem}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-btn{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:.4rem .65rem;cursor:pointer;color:var(--tx2);font-size:.9rem;position:relative;transition:all .2s}
+.tb-btn:hover{border-color:var(--hi);color:var(--hi)}
+.rdot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--er);border:1px solid var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:1.5rem}
+
+.card{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1.2rem;margin-bottom:1.1rem}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.c-title{font-weight:600;font-size:.9rem}
+.c-sub{font-size:.72rem;color:var(--tx3);margin-top:.1rem}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem}
+.stat{background:var(--bg2);border:1px solid var(--br);border-radius:12px;padding:1rem 1.1rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sc),var(--sc2))}
+.s-ic{font-size:1.4rem;margin-bottom:.4rem}
+.s-val{font-size:1.7rem;font-weight:700;line-height:1}
+.s-lbl{font-size:.7rem;color:var(--tx3);margin-top:.25rem}
+.s-sub{font-size:.65rem;color:var(--tx3);margin-top:.15rem}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g21{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem}
+
+.btn{border-radius:8px;padding:.45rem .9rem;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-hi{background:var(--hi);color:#fff;border-color:var(--hi)}.btn-hi:hover{background:var(--hi2)}
+.btn-gh{background:var(--bg3);color:var(--tx2);border-color:var(--br)}.btn-gh:hover{border-color:var(--hi);color:var(--hi)}
+.btn-ok{background:rgba(74,222,128,.15);color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-er{background:rgba(239,68,68,.15);color:var(--er);border-color:rgba(239,68,68,.3)}
+.btn-wa{background:rgba(252,211,77,.1);color:var(--wa);border-color:rgba(252,211,77,.2)}
+.btn-bl{background:rgba(96,165,250,.1);color:var(--bl);border-color:rgba(96,165,250,.2)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.68rem}
+.btn-bl2{display:block;width:100%;text-align:left;border-radius:8px;padding:.55rem .8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.b{display:inline-flex;align-items:center;padding:.12rem .5rem;border-radius:100px;font-size:.65rem;font-weight:600;text-transform:capitalize}
+.b-ok{background:rgba(74,222,128,.1);color:var(--ok)}
+.b-er{background:rgba(239,68,68,.1);color:var(--er)}
+.b-wa{background:rgba(252,211,77,.1);color:var(--wa)}
+.b-bl{background:rgba(96,165,250,.1);color:var(--bl)}
+.b-pu{background:rgba(167,139,250,.1);color:var(--pu)}
+.b-or{background:rgba(251,146,60,.1);color:var(--or)}
+.b-gy{background:rgba(255,255,255,.07);color:var(--tx3)}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;padding:.6rem .8rem;font-size:.67rem;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br);white-space:nowrap}
+td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:.5rem}
+.td-acts{display:flex;gap:.3rem;flex-wrap:wrap}
+
+.tabs{display:flex;gap:.25rem;margin-bottom:1rem;border-bottom:1px solid var(--br);padding-bottom:0}
+.tab{padding:.5rem .85rem;font-size:.78rem;cursor:pointer;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--hi);border-bottom-color:var(--hi);font-weight:600}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--br);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.4rem;border-bottom:1px solid var(--br)}
+.m-title{font-weight:600;font-size:.95rem}
+.m-x{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1.1rem;padding:.2rem}
+.m-body{padding:1.4rem}
+.m-ft{display:flex;justify-content:flex-end;gap:.5rem;padding:1rem 1.4rem;border-top:1px solid var(--br)}
+
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.75rem;font-weight:500;color:var(--tx2);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1.5px solid var(--br);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--hi)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+.info{padding:.7rem 1rem;border-radius:8px;font-size:.78rem;margin-bottom:1rem}
+.info-blue{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:var(--bl)}
+.info-orange{background:rgba(255,107,0,.08);border:1px solid rgba(255,107,0,.2);color:var(--or)}
+.info-red{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--er)}
+.info-green{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--ok)}
+
+.prog-bg{background:rgba(255,255,255,.07);border-radius:100px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:var(--hi);transition:width .3s}
+
+.spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--hi);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.appr-row{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.appr-row:last-child{border-bottom:none}
+.appr-ic{font-size:1.2rem;width:28px;text-align:center;flex-shrink:0}
+.appr-info{flex:1;min-width:0}
+.appr-title{font-size:.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-meta{font-size:.68rem;color:var(--tx3);margin-top:.1rem}
+.appr-acts{display:flex;gap:.3rem;flex-shrink:0}
+
+.ann{padding:.85rem 1rem;border-radius:10px;margin-bottom:.65rem;background:var(--bg3)}
+.ann-title{font-weight:600;font-size:.82rem;margin-bottom:.3rem}
+.ann-body{font-size:.78rem;color:var(--tx2);line-height:1.5}
+
+@media(max-width:768px){
+.sb{width:200px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.g2,.g21{grid-template-columns:1fr}
+.form-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.sb{position:fixed;left:-200px;top:0;bottom:0;z-index:100;transition:left .3s}
+.sb.open{left:0}
+.main{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="sb-overlay" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99"></div>
+<div class="shell">
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="sb-title">GIDDIES EXPRESS</div>
+    <div class="sb-sub">Payroll Portal</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">??</div>
+    <div><div class="sb-nm" id="sbName">Loading...</div><div class="sb-rl" id="sbRole">Payroll Manager</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Main</div>
+    <div class="nav-a" id="nav-dashboard"   onclick="goTo('dashboard')"><span class="nav-ic">&#x1f4ca;</span>Dashboard</div>
+    <div class="nav-a" id="nav-run-payroll" onclick="goTo('run-payroll')"><span class="nav-ic">&#x1f4b8;</span>Run Payroll</div>
+    <div class="nav-a" id="nav-payslips"    onclick="goTo('payslips')"><span class="nav-ic">&#x1f9fe;</span>Generate Payslips</div>
+    <div class="nav-sec">Records</div>
+    <div class="nav-a" id="nav-history"     onclick="goTo('history')"><span class="nav-ic">&#x1f4dc;</span>Payroll History</div>
+    <div class="nav-a" id="nav-employees"   onclick="goTo('employees')"><span class="nav-ic">&#x1f465;</span>Employee Salaries</div>
+    <div class="nav-sec">Reports</div>
+    <div class="nav-a" id="nav-reports"     onclick="goTo('reports')"><span class="nav-ic">&#x1f4c8;</span>Payroll Reports</div>
+    <div class="nav-a" id="nav-tax"         onclick="goTo('tax')"><span class="nav-ic">&#x1f4b5;</span>Tax &amp; Deductions</div>
+    <div class="nav-sec">Communication</div>
+    <div class="nav-a" id="nav-overtime"        onclick="goTo('overtime')"><span class="nav-ic">&#x23f0;</span>Overtime Pay</div>
+    <div class="nav-a" id="nav-expenses"         onclick="goTo('expenses')"><span class="nav-ic">&#x1f4b8;</span>Expense Claims</div>
+        <div class="nav-a" id="nav-comms" onclick="window.location.href='giddyexpress-chat.html'"><span class="nav-ic">&#x1f4ac;</span>Chat &amp; Mail</div>
+    <div class="nav-a" id="nav-notifications" onclick="goTo('notifications')"><span class="nav-ic">&#x1f514;</span>Notifications</div>
+  </nav>
+  <div class="sb-foot"><button class="btn-logout" onclick="gxLogout()">&#x1f6aa; Sign Out</button></div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button onclick="toggleSb()" style="background:none;border:none;color:var(--tx2);cursor:pointer;font-size:1.1rem">&#9776;</button>
+      <div class="tb-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="tbClock">--:--:--</span>
+      <div class="tb-pill"><span class="pulse"></span><span>Payroll</span></div>
+      <button class="tb-btn" onclick="goTo('notifications')">&#x1f514;<span class="rdot" id="notifDot" style="display:none"></span></button>
+    </div>
+  </div>
+  <div class="content" id="MC">
+    <div style="display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem">
+      <div class="spin"></div>
+      <div style="color:var(--tx3)">Loading Payroll Portal...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="overlay" id="mRunPayroll">
+<div class="modal" style="max-width:480px">
+  <div class="m-hd"><div class="m-title">&#x1f4b8; Run Payroll</div><button class="m-x" onclick="gxClose('mRunPayroll')">&#x2715;</button></div>
+  <div class="m-body">
+    <div class="info info-orange">Review carefully before confirming. Payroll run will generate records for all active employees.</div>
+    <div id="run-summary" style="background:var(--bg3);border-radius:10px;padding:1rem;margin:.75rem 0"></div>
+    <div class="field"><label>Payroll Period *</label><input id="run-period" placeholder="e.g. March 2026"/></div>
+    <div class="field"><label>Payment Date *</label><input id="run-date" type="date"/></div>
+    <div class="field"><label>Notes</label><textarea id="run-notes" placeholder="Any notes about this payroll run..."></textarea></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mRunPayroll')">Cancel</button>
+    <button class="btn btn-hi" id="run-btn" onclick="confirmRunPayroll()">Confirm &amp; Run</button>
+  </div>
+</div>
+</div>
+
+
+<div class="overlay" id="mEditSalary">
+<div class="modal" style="max-width:420px">
+  <div class="m-hd"><div class="m-title">&#x270f; Update Salary</div><button class="m-x" onclick="gxClose('mEditSalary')">&#x2715;</button></div>
+  <div class="m-body">
+    <div id="edit-emp-info" style="background:var(--bg3);border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem"></div>
+    <div class="field"><label>New Gross Salary (&#x20a6;/month) *</label><input id="edit-salary" type="number" placeholder="0"/></div>
+    <div class="field"><label>Effective From</label><input id="edit-effective" type="date"/></div>
+    <div class="field"><label>Reason for Change</label><textarea id="edit-reason" placeholder="Promotion, annual review, adjustment..."></textarea></div>
+    <input type="hidden" id="edit-empid"/>
+    <div id="edit-preview" style="margin-top:.75rem;font-size:.82rem"></div>
+  </div>
+  <div class="m-ft">
+    <button class="btn btn-gh" onclick="gxClose('mEditSalary')">Cancel</button>
+    <button class="btn btn-hi" id="edit-btn" onclick="updateSalary()">Update Salary</button>
+  </div>
+</div>
+</div>
+
+<div id="toasts" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none"></div>
+
+<script>
+
+var API = 'https://web-production-50873.up.railway.app';
+var ME = null;
+var TOKEN = null;
+
+
+function gxInit(requiredRole, onReady) {
+  TOKEN = sessionStorage.getItem('gx_token');
+  var userStr = sessionStorage.getItem('gx_user');
+  
+  if (!TOKEN || !userStr) {
+    window.location.href = 'giddyexpress-login.html';
+    return;
+  }
+  
+  ME = JSON.parse(userStr);
+  
+  
+  api('GET', '/api/auth/verify-role?required_role=' + requiredRole)
+  .then(function(data) {
+    ME = data.user;
+    
+    var av = document.getElementById('sbAv');
+    var nm = document.getElementById('sbName');
+    var rl = document.getElementById('sbRole');
+    if(av) { av.textContent = gxInits(ME.name); av.style.background = ME.color || '#FF6B00'; }
+    if(nm) nm.textContent = ME.name;
+    if(rl) rl.textContent = ME.role.replace(/_/g,' ');
+    gxClock();
+    gxNotifBadge();
+    if(onReady) onReady(ME);
+  })
+  .catch(function(e) {
+    sessionStorage.clear();
+    window.location.href = 'giddyexpress-login.html?reason=' + encodeURIComponent(e.message || 'Session expired');
+  });
+}
+
+
+function api(method, path, body) {
+  var opts = {
+    method: method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN }
+  };
+  if(body) opts.body = JSON.stringify(body);
+  return fetch(API + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if(!r.ok) throw new Error(d.detail || 'Request failed');
+      return d;
+    });
+  });
+}
+
+
+function gxLogout() {
+  api('POST', '/api/auth/logout').catch(function(){});
+  sessionStorage.clear();
+  window.location.href = 'giddyexpress-login.html';
+}
+
+
+function gxClock() {
+  function tick() {
+    var e = document.getElementById('tbClock');
+    if(!e) return;
+    try {
+      var n = new Date(new Date().toLocaleString('en-US', {timeZone:'Africa/Lagos'}));
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    } catch(err) {
+      var n = new Date();
+      e.textContent = pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+    }
+  }
+  tick(); setInterval(tick, 1000);
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+
+function gxNotifBadge() {
+  api('GET', '/api/notifications/unread-count').then(function(d) {
+    if((d.count||0) > 0) {
+      var dot = document.getElementById('notifDot');
+      if(dot) dot.style.display = 'block';
+    }
+  }).catch(function(){});
+}
+
+
+function toast(msg, type) {
+  var w = document.getElementById('toasts');
+  if(!w) { w = document.createElement('div'); w.id='toasts'; w.style.cssText='position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.45rem;pointer-events:none'; document.body.appendChild(w); }
+  var c={ok:'#4ADE80',er:'#FCA5A5',wa:'#FCD34D',in:'#93C5FD'};
+  var b={ok:'rgba(34,197,94,.3)',er:'rgba(239,68,68,.3)',wa:'rgba(245,158,11,.3)',in:'rgba(96,165,250,.3)'};
+  var t = document.createElement('div');
+  t.style.cssText='background:#1A1D24;border:1px solid '+(b[type]||b.in)+';color:'+(c[type]||c.in)+';padding:.62rem 1rem;border-radius:100px;font-size:.76rem;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateX(110%);transition:transform .28s;font-family:DM Sans,sans-serif;max-width:300px';
+  t.textContent = msg; w.appendChild(t);
+  setTimeout(function(){t.style.transform='translateX(0)';}, 10);
+  setTimeout(function(){t.style.transform='translateX(110%)';setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},300);}, 3800);
+}
+
+
+function om(id) { var e=document.getElementById(id); if(e) e.classList.add('open'); }
+function cm(id) { var e=document.getElementById(id); if(e) e.classList.remove('open'); }
+document.addEventListener('click', function(e) { if(e.target&&e.target.classList.contains('overlay')) e.target.classList.remove('open'); });
+
+
+function money(n) { return '\u20a6' + Number(n||0).toLocaleString(); }
+function gxInits(name) { return (name||'?').split(' ').map(function(c){return c[0];}).join('').slice(0,2).toUpperCase(); }
+function gxAgo(d) { if(!d)return''; var m=Math.floor((Date.now()-new Date(d))/60000); if(m<1)return'just now'; if(m<60)return m+'m ago'; var h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+function gxToday() { return new Date().toISOString().slice(0,10); }
+function gxAvc(name) { var c=['#FF6B00','#F472B6','#60A5FA','#4ADE80','#A78BFA','#FB923C']; var h=0; for(var i=0;i<(name||'').length;i++) h=(name.charCodeAt(i)+((h<<5)-h)); return c[Math.abs(h)%c.length]; }
+function gxAv(name,sz) { var s=sz||'28px'; return '<div style="width:'+s+';height:'+s+';border-radius:50%;background:'+gxAvc(name)+';display:flex;align-items:center;justify-content:center;font-size:calc('+s+' * 0.35);font-weight:700;color:#fff;flex-shrink:0">'+gxInits(name)+'</div>'; }
+function gxBadge(s) { var m={active:'b-ok',pending:'b-wa',approved:'b-ok',rejected:'b-er','in-progress':'b-bl',done:'b-ok',present:'b-ok',late:'b-wa',absent:'b-er',high:'b-or',urgent:'b-er',medium:'b-wa',low:'b-gy',suspended:'b-er',open:'b-or',resolved:'b-ok',admin:'b-or',manager:'b-pu',dept_manager:'b-wa',employee:'b-bl',completed:'b-ok'}; return '<span class="b '+(m[s]||'b-gy')+'">'+s+'</span>'; }
+function gxPay(g) { var t=Math.round(g*.20),n=Math.round(g*.08),p=Math.round(g*.05); return {gross:g,tax:t,ni:n,pension:p,net:g-t-n-p}; }
+function gxTab(btn) { var p=btn.closest('.tabs'); if(!p)return; p.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); btn.classList.add('on'); }
+function gxNav(id) { document.querySelectorAll('.nav-a').forEach(function(n){n.classList.remove('on');}); var e=document.getElementById('nav-'+id); if(e) e.classList.add('on'); }
+function gxSetPage(id, title) { gxNav(id); var t=document.getElementById('pageTitle'); if(t) t.textContent=title||id; }
+function loading(id) { var e=document.getElementById(id); if(e) e.innerHTML='<div style="display:flex;align-items:center;justify-content:center;padding:2rem"><div class="spin"></div></div>'; }
+function gxPrint(title, html) {
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){toast('Allow popups to print','wa');return;}
+  w.document.write('<!DOCTYPE html><html><head><title>'+title+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:2rem;color:#111;font-size:12px}h2{color:#FF6B00;border-bottom:2px solid #FF6B00;padding-bottom:.5rem;margin-bottom:1rem}table{width:100%;border-collapse:collapse;margin:.75rem 0}th{background:#FF6B00;color:#fff;padding:.35rem .6rem;text-align:left;font-size:.7rem}td{padding:.4rem .6rem;border-bottom:1px solid #eee}</style></head><body><h2>Giddies Express &#8212; '+title+'</h2>'+html+'<p style="margin-top:1rem;font-size:.7rem;color:#888">Generated: '+new Date().toLocaleString('en-NG')+'</p><scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>');
+  w.document.close();
+}
+
+var API='https://web-production-50873.up.railway.app';
+
+function gxOpen(id){var e=document.getElementById(id);if(e)e.classList.add('open');}
+function gxClose(id){var e=document.getElementById(id);if(e)e.classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target&&e.target.classList.contains('overlay'))e.target.classList.remove('open');});
+function mk(tag,cls,sty){var e=document.createElement(tag);if(cls)e.className=cls;if(sty)e.style.cssText=sty;return e;}
+function addBtn(p,html,cls,fn){var b=mk('button','btn '+cls);b.innerHTML=html;b.onclick=fn;p.appendChild(b);return b;}
+function showLoading(){var mc=document.getElementById('MC');mc.innerHTML='';var w=mk('div','','display:flex;align-items:center;justify-content:center;height:40vh;flex-direction:column;gap:1rem');w.appendChild(mk('div','spin'));var t=mk('div','','color:var(--tx3)');t.textContent='Loading...';w.appendChild(t);mc.appendChild(w);}
+function showErr(msg,fn){var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem');var m=mk('div','','color:var(--er);margin-bottom:1rem');m.textContent=msg;d.appendChild(m);if(fn){var b=mk('button','btn btn-gh');b.textContent='Retry';b.onclick=fn;d.appendChild(b);}mc.appendChild(d);}
+function toggleSb(){var sb=document.getElementById('sb'),ov=document.getElementById('sb-overlay');sb.classList.toggle('open');ov.style.display=sb.classList.contains('open')?'block':'none';}
+function closeSb(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-overlay').style.display='none';}
+
+var PT={dashboard:'Dashboard','run-payroll':'Run Payroll',payslips:'Generate Payslips',history:'Payroll History',employees:'Employee Salaries',reports:'Payroll Reports',tax:'Tax & Deductions',notifications:'Notifications',overtime:'Overtime Pay',expenses:'Expense Claims'};
+
+function goTo(id){
+  closeSb();gxNav(id);
+  var t=document.getElementById('pageTitle');if(t)t.textContent=PT[id]||id;
+  showLoading();
+  try{
+    if(id==='dashboard')pgDashboard();
+    else if(id==='run-payroll')pgRunPayroll();
+    else if(id==='payslips')pgPayslips();
+    else if(id==='history')pgHistory();
+    else if(id==='employees')pgEmployees();
+    else if(id==='reports')pgReports();
+    else if(id==='tax')pgTax();
+    else if(id==='notifications')pgNotifications();
+    else if(id==='overtime')pgOvertimePay();
+    else if(id==='expenses')pgExpensesPay();
+    else{var mc=document.getElementById('MC');mc.innerHTML='';var d=mk('div','','text-align:center;padding:3rem;color:var(--tx3)');d.textContent='Coming soon';mc.appendChild(d);}
+  }catch(e){showErr('Error: '+e.message,function(){goTo(id);});console.error(e);}
+}
+
+
+var ALL_EMPS=[];
+
+
+function pgDashboard(){
+  Promise.all([
+    api('GET','/api/reports/payroll-summary'),
+    api('GET','/api/employees/')
+  ]).then(function(r){
+    var pay=r[0];ALL_EMPS=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+
+    
+    var sg=mk('div','stats');
+    [{sc:'#FF6B00',sc2:'#FF8C38',ic:'&#x1f4b0;',val:money(pay.gross_payroll||0),lbl:'Gross Payroll',sub:month},{sc:'#22C55E',sc2:'#4ADE80',ic:'&#x1f4b3;',val:money(pay.net_payroll||0),lbl:'Net Payroll',sub:'After all deductions'},{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f4b5;',val:money((pay.tax||0)+(pay.ni||0)+(pay.pension||0)),lbl:'Total Deductions'},{sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f465;',val:pay.total_employees||0,lbl:'Active Employees'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val','font-size:'+(String(item.val).length>8?'1rem':'1.7rem'));v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);
+      if(item.sub){var s2=mk('div','s-sub');s2.textContent=item.sub;d.appendChild(s2);}
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var grid=mk('div','g21');var left=mk('div');var right=mk('div');
+
+    
+    var dc=mk('div','card');dc.innerHTML='<div class="c-hd"><div class="c-title">Deductions Breakdown</div></div>';
+    var total=pay.gross_payroll||0;
+    [{lbl:'Income Tax (20%)',val:pay.tax||0,clr:'var(--er)',pct:20},{lbl:'National Insurance (8%)',val:pay.ni||0,clr:'var(--or)',pct:8},{lbl:'Pension (5%)',val:pay.pension||0,clr:'var(--pu)',pct:5}].forEach(function(d){
+      var row=mk('div','','padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)');
+      var top=mk('div','','display:flex;justify-content:space-between;margin-bottom:.3rem');
+      var lb=mk('span','','font-size:.8rem;color:var(--tx2)');lb.textContent=d.lbl;
+      var vl=mk('span','','font-weight:700;color:'+d.clr);vl.textContent='-'+money(d.val);
+      top.appendChild(lb);top.appendChild(vl);row.appendChild(top);
+      var pb=mk('div','prog-bg');var pf=mk('div','prog-fill','width:'+d.pct*3+'%;background:'+d.clr);pb.appendChild(pf);row.appendChild(pb);
+      dc.appendChild(row);
+    });
+    var netRow=mk('div','','display:flex;justify-content:space-between;padding:.7rem 0;margin-top:.3rem');
+    var nlb=mk('span','','font-weight:700;font-size:.88rem');nlb.textContent='Net Payroll';
+    var nvl=mk('span','','font-weight:700;font-size:1rem;color:var(--ok)');nvl.textContent=money(pay.net_payroll||0);
+    netRow.appendChild(nlb);netRow.appendChild(nvl);dc.appendChild(netRow);
+    left.appendChild(dc);
+
+    
+    var sc2=mk('div','card');sc2.innerHTML='<div class="c-hd"><div class="c-title">Salary by Department</div></div>';
+    var deptMap={};
+    ALL_EMPS.forEach(function(e){
+      var d=e.department||'Other';
+      if(!deptMap[d])deptMap[d]={count:0,gross:0};
+      deptMap[d].count++;deptMap[d].gross+=e.salary||0;
+    });
+    var maxGross=Math.max.apply(null,Object.values(deptMap).map(function(d){return d.gross;}));
+    Object.keys(deptMap).sort(function(a,b){return deptMap[b].gross-deptMap[a].gross;}).forEach(function(d){
+      var row=mk('div','','padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      var top=mk('div','','display:flex;justify-content:space-between;margin-bottom:.25rem;font-size:.8rem');
+      var lb=mk('span');lb.textContent=d+' ('+deptMap[d].count+')';
+      var vl=mk('span','','font-weight:600;color:var(--hi)');vl.textContent=money(deptMap[d].gross);
+      top.appendChild(lb);top.appendChild(vl);row.appendChild(top);
+      var pb=mk('div','prog-bg','height:4px');var pf=mk('div','prog-fill','width:'+(maxGross?Math.round(deptMap[d].gross/maxGross*100):0)+'%');pb.appendChild(pf);row.appendChild(pb);
+      sc2.appendChild(row);
+    });
+    left.appendChild(sc2);
+
+    
+    var qc=mk('div','card');qc.innerHTML='<div class="c-hd"><div class="c-title">Quick Actions</div></div>';
+    var ql=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['&#x1f4b8; Run Payroll','btn-hi btn-bl2',function(){openRunPayroll();}],['&#x1f9fe; Generate Payslips','btn-gh btn-bl2',function(){goTo('payslips');}],['&#x1f465; Employee Salaries','btn-gh btn-bl2',function(){goTo('employees');}],['&#x1f4c8; Payroll Reports','btn-gh btn-bl2',function(){goTo('reports');}],['&#x1f4b5; Tax & Deductions','btn-gh btn-bl2',function(){goTo('tax');}],['&#x1f4dc; Payroll History','btn-gh btn-bl2',function(){goTo('history');}]].forEach(function(i){addBtn(ql,i[0],i[1],i[2]);});
+    qc.appendChild(ql);right.appendChild(qc);
+
+    
+    var te=mk('div','card','margin-top:1rem');te.innerHTML='<div class="c-hd"><div class="c-title">Top Earners</div></div>';
+    var topEmps=ALL_EMPS.filter(function(e){return e.salary>0;}).sort(function(a,b){return b.salary-a.salary;}).slice(0,5);
+    topEmps.forEach(function(e,i){
+      var row=mk('div','','display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      var rank=mk('div','','width:20px;font-size:.75rem;color:var(--tx3);font-weight:700;flex-shrink:0;text-align:center');rank.textContent='#'+(i+1);row.appendChild(rank);
+      row.innerHTML+=gxAv(e.name,'26px');
+      var info=mk('div','','flex:1');var nm=mk('div','','font-size:.8rem;font-weight:500');nm.textContent=e.name;info.appendChild(nm);var dep=mk('div','','font-size:.68rem;color:var(--tx3)');dep.textContent=e.department||'-';info.appendChild(dep);row.appendChild(info);
+      var sal=mk('div','','font-weight:700;color:var(--hi);font-size:.82rem');sal.textContent=money(e.salary);row.appendChild(sal);
+      te.appendChild(row);
+    });
+    right.appendChild(te);
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgDashboard);});
+}
+
+
+function pgRunPayroll(){
+  api('GET','/api/reports/payroll-summary').then(function(pay){
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var info=mk('div','info info-orange');info.innerHTML='<strong>Important:</strong> Running payroll creates official payment records for all active employees. Ensure all salaries are correct before proceeding.';mc.appendChild(info);
+
+    var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Current Payroll Preview</div></div>';
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Item</th><th>Amount</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    [['Active Employees',pay.total_employees],['Gross Payroll',money(pay.gross_payroll||0)],['Income Tax (20%)','-'+money(pay.tax||0)],['National Insurance (8%)','-'+money(pay.ni||0)],['Pension (5%)','-'+money(pay.pension||0)],['NET PAYROLL',money(pay.net_payroll||0)]].forEach(function(row,i){
+      var tr=document.createElement('tr');
+      if(i===5)tr.style.cssText='font-weight:700;background:rgba(255,107,0,.08)';
+      var l=document.createElement('td');l.textContent=row[0];
+      var v=document.createElement('td');v.style.cssText='font-weight:600;color:'+(i===5?'var(--ok)':i>1?'var(--er)':'var(--tx)');v.textContent=row[1];
+      tr.appendChild(l);tr.appendChild(v);tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);
+    addBtn(card,'&#x1f4b8; Run Payroll for '+new Date().toLocaleString('en-NG',{month:'long',year:'numeric'}),'btn-hi',function(){openRunPayroll();});
+    mc.appendChild(card);
+  }).catch(function(e){showErr(e.message,pgRunPayroll);});
+}
+
+function openRunPayroll(){
+  api('GET','/api/reports/payroll-summary').then(function(pay){
+    var sum=document.getElementById('run-summary');
+    if(sum){
+      sum.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem">'+
+        '<div><div style="color:var(--tx3);font-size:.68rem">Employees</div><div style="font-weight:700">'+pay.total_employees+'</div></div>'+
+        '<div><div style="color:var(--tx3);font-size:.68rem">Gross Payroll</div><div style="font-weight:700;color:var(--hi)">'+money(pay.gross_payroll||0)+'</div></div>'+
+        '<div><div style="color:var(--tx3);font-size:.68rem">Total Deductions</div><div style="font-weight:700;color:var(--er)">-'+money((pay.tax||0)+(pay.ni||0)+(pay.pension||0))+'</div></div>'+
+        '<div><div style="color:var(--tx3);font-size:.68rem">Net Payroll</div><div style="font-weight:700;color:var(--ok)">'+money(pay.net_payroll||0)+'</div></div>'+
+        '</div>';
+    }
+    var pd=document.getElementById('run-period');var rd=document.getElementById('run-date');
+    if(pd)pd.value=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+    if(rd){var now=new Date();rd.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');}
+    gxOpen('mRunPayroll');
+  }).catch(function(){gxOpen('mRunPayroll');});
+}
+
+function confirmRunPayroll(){
+  var period=document.getElementById('run-period').value.trim();
+  var date=document.getElementById('run-date').value;
+  if(!period||!date){toast('Enter period and payment date','er');return;}
+  var btn=document.getElementById('run-btn');btn.disabled=true;btn.textContent='Processing...';
+  
+  api('GET','/api/employees/').then(function(emps){
+    var active=emps.filter(function(e){return e.status==='active'&&e.salary>0;});
+    toast('Payroll run initiated for '+active.length+' employees','ok');
+    btn.disabled=false;btn.textContent='Confirm & Run';
+    gxClose('mRunPayroll');
+    goTo('history');
+  }).catch(function(e){btn.disabled=false;btn.textContent='Confirm & Run';toast('Error: '+e.message,'er');});
+}
+
+
+function pgPayslips(){
+  api('GET','/api/employees/').then(function(emps){
+    ALL_EMPS=emps;
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var info=mk('div','info info-blue');info.textContent='Generate and print payslips for individual employees or entire departments.';mc.appendChild(info);
+    var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+
+    var grid=mk('div','g2');
+    
+    var left=mk('div','card');
+    var lh=mk('div','c-hd');lh.innerHTML='<div class="c-title">By Department</div>';
+    addBtn(lh,'Print All Staff','btn-hi btn-sm',function(){printAllPayslips(emps,month);});
+    left.appendChild(lh);
+    var depts={};emps.forEach(function(e){if(e.department&&e.salary>0){depts[e.department]=(depts[e.department]||[]);depts[e.department].push(e);}});
+    Object.keys(depts).sort().forEach(function(dept){
+      var row=mk('div','','display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      var info2=mk('div');var nm=mk('div','','font-weight:500;font-size:.85rem');nm.textContent=dept;info2.appendChild(nm);
+      var cnt=mk('div','','font-size:.72rem;color:var(--tx3)');
+      var gross=depts[dept].reduce(function(s,e){return s+(e.salary||0);},0);
+      cnt.textContent=depts[dept].length+' employees - Gross: '+money(gross);info2.appendChild(cnt);row.appendChild(info2);
+      var pBtn=mk('button','btn btn-gh btn-xs');pBtn.textContent='Print Dept';
+      (function(d,de){pBtn.onclick=function(){printDeptPayslips(d,de,month);};})(dept,depts[dept]);row.appendChild(pBtn);left.appendChild(row);
+    });
+
+    
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Individual Payslip</div></div>';
+    var inp=document.createElement('input');inp.placeholder='Search employee name...';inp.style.cssText='width:100%;padding:.5rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.82rem;color:var(--tx);outline:none;margin-bottom:.75rem';
+    var empList=mk('div','','max-height:420px;overflow-y:auto');
+    inp.oninput=function(){var q=this.value.toLowerCase();empList.querySelectorAll('.emp-row').forEach(function(r){r.style.display=r.dataset.name.includes(q)?'':'none';});};
+    right.appendChild(inp);
+    emps.filter(function(e){return e.salary>0;}).forEach(function(e){
+      var row=mk('div','emp-row','display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      row.dataset.name=(e.name||'').toLowerCase();
+      row.innerHTML=gxAv(e.name,'28px');
+      var info3=mk('div','','flex:1');var nm=mk('div','','font-size:.8rem;font-weight:500');nm.textContent=e.name;info3.appendChild(nm);
+      var dep=mk('div','','font-size:.68rem;color:var(--tx3)');dep.textContent=(e.department||'')+(e.title?' - '+e.title:'');info3.appendChild(dep);
+      row.appendChild(info3);
+      var sal=mk('div','','font-weight:600;font-size:.78rem;color:var(--hi)');sal.textContent=money(e.salary);row.appendChild(sal);
+      var pBtn=mk('button','btn btn-gh btn-xs','margin-left:.4rem');pBtn.textContent='Slip';
+      (function(emp){pBtn.onclick=function(){printOnePayslip(emp,month);};})(e);row.appendChild(pBtn);empList.appendChild(row);
+    });
+    right.appendChild(empList);
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgPayslips);});
+}
+
+function printOnePayslip(emp,month){
+  var p=gxPay(emp.salary||0);
+  gxPrint('Payslip - '+emp.name,'<div style="text-align:center;margin-bottom:1rem"><h2 style="color:#FF6B00">GIDDIES EXPRESS NIGERIA</h2><div>Staff Payslip</div></div><table><tr><td><b>Employee Name:</b></td><td>'+emp.name+'</td></tr><tr><td><b>Department:</b></td><td>'+(emp.department||'-')+'</td></tr><tr><td><b>Job Title:</b></td><td>'+(emp.title||emp.role||'-')+'</td></tr><tr><td><b>Payroll Period:</b></td><td>'+month+'</td></tr></table><br><table><thead><tr><th>Earnings</th><th>Amount</th></tr></thead><tbody><tr><td>Gross Salary</td><td>'+money(p.gross)+'</td></tr></tbody></table><br><table><thead><tr><th>Deductions</th><th>Amount</th></tr></thead><tbody><tr><td>Income Tax (20%)</td><td style="color:red">-'+money(p.tax)+'</td></tr><tr><td>National Insurance (8%)</td><td style="color:red">-'+money(p.ni)+'</td></tr><tr><td>Pension Contribution (5%)</td><td style="color:red">-'+money(p.pension)+'</td></tr><tr style="font-weight:bold;background:#f0fff0"><td>NET PAY</td><td style="color:green">'+money(p.net)+'</td></tr></tbody></table><p style="margin-top:1rem;font-size:.8rem;color:#888">This payslip was generated by Payroll on '+gxToday()+' - Confidential</p>');
+}
+
+function printDeptPayslips(dept,emps,month){
+  var rows=emps.map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+(e.title||'-')+'</td><td>'+money(p.gross)+'</td><td>-'+money(p.tax)+'</td><td>-'+money(p.ni)+'</td><td>-'+money(p.pension)+'</td><td><b>'+money(p.net)+'</b></td></tr>';}).join('');
+  var total=emps.reduce(function(s,e){return s+(e.salary||0);},0);var tp=gxPay(total);
+  gxPrint(dept+' Payroll - '+month,'<div style="text-align:center;margin-bottom:1rem"><h2 style="color:#FF6B00">GIDDIES EXPRESS NIGERIA</h2><div>'+dept+' Department Payroll - '+month+'</div></div><table><thead><tr><th>Employee</th><th>Title</th><th>Gross</th><th>Tax</th><th>NI</th><th>Pension</th><th>Net Pay</th></tr></thead><tbody>'+rows+'<tr style="font-weight:bold;background:#fff3e0"><td>TOTAL ('+emps.length+')</td><td>-</td><td>'+money(tp.gross)+'</td><td>-'+money(tp.tax)+'</td><td>-'+money(tp.ni)+'</td><td>-'+money(tp.pension)+'</td><td>'+money(tp.net)+'</td></tr></tbody></table>');
+}
+
+function printAllPayslips(emps,month){
+  var active=emps.filter(function(e){return e.salary>0;});
+  var rows=active.map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+(e.department||'-')+'</td><td>'+money(p.gross)+'</td><td>-'+money(p.tax)+'</td><td>-'+money(p.ni)+'</td><td>-'+money(p.pension)+'</td><td><b>'+money(p.net)+'</b></td></tr>';}).join('');
+  var total=active.reduce(function(s,e){return s+(e.salary||0);},0);var tp=gxPay(total);
+  gxPrint('Full Payroll - '+month,'<div style="text-align:center;margin-bottom:1rem"><h2 style="color:#FF6B00">GIDDIES EXPRESS NIGERIA</h2><div>Full Payroll Report - '+month+'</div></div><table><thead><tr><th>Employee</th><th>Dept</th><th>Gross</th><th>Tax</th><th>NI</th><th>Pension</th><th>Net Pay</th></tr></thead><tbody>'+rows+'<tr style="font-weight:bold;background:#fff3e0"><td>TOTAL ('+active.length+')</td><td>-</td><td>'+money(tp.gross)+'</td><td>-'+money(tp.tax)+'</td><td>-'+money(tp.ni)+'</td><td>-'+money(tp.pension)+'</td><td>'+money(tp.net)+'</td></tr></tbody></table>');
+}
+
+
+function pgHistory(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var info=mk('div','info info-blue');info.textContent='Payroll history records are generated each time payroll is run.';mc.appendChild(info);
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Payroll Run History</div></div>';
+  var list=mk('div');list.id='hist-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/employees/').then(function(emps){
+    var el=document.getElementById('hist-list');if(!el)return;
+    var pay=gxPay(emps.reduce(function(s,e){return s+(e.salary||0);},0));
+    var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Period</th><th>Employees</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Status</th><th>Actions</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    var tr=document.createElement('tr');
+    var periods=[month];
+    periods.forEach(function(period){
+      var tr2=document.createElement('tr');
+      var pe=document.createElement('td');pe.style.fontWeight='500';pe.textContent=period;
+      var em=document.createElement('td');em.style.cssText='text-align:center';em.textContent=emps.filter(function(e){return e.salary>0;}).length;
+      var gr=document.createElement('td');gr.style.cssText='font-weight:700;color:var(--hi)';gr.textContent=money(pay.gross);
+      var de=document.createElement('td');de.style.cssText='color:var(--er)';de.textContent='-'+money(pay.tax+pay.ni+pay.pension);
+      var nt=document.createElement('td');nt.style.cssText='font-weight:700;color:var(--ok)';nt.textContent=money(pay.net);
+      var st=document.createElement('td');st.innerHTML=gxBadge('pending');
+      var at=document.createElement('td');var acts=mk('div','td-acts');
+      var pBtn=mk('button','btn btn-gh btn-xs');pBtn.textContent='Print';
+      (function(p){pBtn.onclick=function(){printAllPayslips(emps,p);};})(period);acts.appendChild(pBtn);
+      at.appendChild(acts);[pe,em,gr,de,nt,st,at].forEach(function(td){tr2.appendChild(td);});tbody.appendChild(tr2);
+    });
+    tbl.appendChild(tbody);wrap.appendChild(tbl);el.innerHTML='';el.appendChild(wrap);
+  }).catch(function(e){var el2=document.getElementById('hist-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+
+function pgEmployees(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var hd=mk('div','c-hd','margin-bottom:1rem');
+  var ht=mk('div');ht.innerHTML='<div style="font-size:1rem;font-weight:600">Employee Salaries</div><div style="font-size:.75rem;color:var(--tx3)">View and update staff salaries</div>';hd.appendChild(ht);
+  var hdR=mk('div','','display:flex;gap:.5rem');
+  var inp=document.createElement('input');inp.placeholder='Search...';inp.oninput=function(){var q=this.value.toLowerCase();renderEmpSalaries(q?ALL_EMPS.filter(function(e){return(e.name||'').toLowerCase().includes(q)||(e.department||'').toLowerCase().includes(q);}):ALL_EMPS);};inp.style.cssText='padding:.4rem .8rem;background:var(--bg3);border:1.5px solid var(--br);border-radius:7px;font-size:.76rem;color:var(--tx);outline:none;width:150px';hdR.appendChild(inp);
+  addBtn(hdR,'Print List','btn-gh btn-sm',function(){gxPrint('Employee Salary List','<table><thead><tr><th>Name</th><th>Dept</th><th>Title</th><th>Gross</th><th>Net</th></tr></thead><tbody>'+ALL_EMPS.map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+(e.title||'')+'</td><td>'+money(p.gross)+'</td><td>'+money(p.net)+'</td></tr>';}).join('')+'</tbody></table>');});
+  hd.appendChild(hdR);mc.appendChild(hd);
+  var card=mk('div','card');var wrap=mk('div','tbl-wrap');
+  var tbl=document.createElement('table');tbl.innerHTML='<thead><tr><th>Employee</th><th>Department</th><th>Title</th><th>Gross Salary</th><th>Tax</th><th>NI</th><th>Pension</th><th>Net Pay</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');tbody.id='sal-tb';tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/employees/').then(function(emps){ALL_EMPS=emps;renderEmpSalaries(emps);}).catch(function(e){var tb=document.getElementById('sal-tb');if(tb)tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--er)">'+e.message+'</td></tr>';});
+}
+
+function renderEmpSalaries(list){
+  var tb=document.getElementById('sal-tb');if(!tb)return;tb.innerHTML='';
+  if(!list.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--tx3)">No employees found</td></tr>';return;}
+  list.forEach(function(e){
+    var p=gxPay(e.salary||0);var tr=document.createElement('tr');
+    var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'24px')+'<span style="font-weight:500">'+e.name+'</span></div>';
+    var d=document.createElement('td');d.style.fontSize='.78rem';d.textContent=e.department||'-';
+    var ti=document.createElement('td');ti.style.cssText='font-size:.75rem;color:var(--tx3)';ti.textContent=e.title||'-';
+    var gr=document.createElement('td');gr.style.cssText='font-weight:700;color:var(--hi)';gr.textContent=p.gross>0?money(p.gross):'-';
+    var tx=document.createElement('td');tx.style.cssText='color:var(--er);font-size:.8rem';tx.textContent=p.tax>0?'-'+money(p.tax):'-';
+    var ni=document.createElement('td');ni.style.cssText='color:var(--er);font-size:.8rem';ni.textContent=p.ni>0?'-'+money(p.ni):'-';
+    var pn=document.createElement('td');pn.style.cssText='color:var(--er);font-size:.8rem';pn.textContent=p.pension>0?'-'+money(p.pension):'-';
+    var nt=document.createElement('td');nt.style.cssText='font-weight:700;color:var(--ok)';nt.textContent=p.net>0?money(p.net):'-';
+    var at=document.createElement('td');var acts=mk('div','td-acts');
+    var edBtn=mk('button','btn btn-gh btn-xs');edBtn.textContent='Edit Salary';(function(emp){edBtn.onclick=function(){openEditSalary(emp);};})(e);acts.appendChild(edBtn);
+    var slBtn=mk('button','btn btn-bl btn-xs');slBtn.textContent='Payslip';(function(emp){slBtn.onclick=function(){var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});printOnePayslip(emp,month);};})(e);acts.appendChild(slBtn);
+    at.appendChild(acts);[n,d,ti,gr,tx,ni,pn,nt,at].forEach(function(td){tr.appendChild(td);});tb.appendChild(tr);
+  });
+}
+
+function openEditSalary(emp){
+  document.getElementById('edit-empid').value=emp.id;
+  document.getElementById('edit-salary').value=emp.salary||0;
+  document.getElementById('edit-reason').value='';
+  document.getElementById('edit-emp-info').innerHTML='<strong>'+emp.name+'</strong><br>'+(emp.title||emp.role)+' - '+(emp.department||'')+'<br>Current Salary: <strong style="color:var(--hi)">'+money(emp.salary||0)+'</strong>';
+  
+  var now=new Date();document.getElementById('edit-effective').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  
+  var salInp=document.getElementById('edit-salary');
+  function updatePreview(){
+    var sal=parseFloat(salInp.value)||0;var p=gxPay(sal);
+    var prev=document.getElementById('edit-preview');
+    if(prev&&sal>0)prev.innerHTML='<div style="background:var(--bg3);border-radius:8px;padding:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:.3rem;font-size:.78rem"><div><span style="color:var(--tx3)">Gross</span><div style="font-weight:600;color:var(--hi)">'+money(p.gross)+'</div></div><div><span style="color:var(--tx3)">Net</span><div style="font-weight:600;color:var(--ok)">'+money(p.net)+'</div></div><div><span style="color:var(--tx3)">Tax (20%)</span><div style="color:var(--er)">-'+money(p.tax)+'</div></div><div><span style="color:var(--tx3)">NI+Pension</span><div style="color:var(--er)">-'+money(p.ni+p.pension)+'</div></div></div>';
+  }
+  salInp.oninput=updatePreview;updatePreview();
+  gxOpen('mEditSalary');
+}
+
+function updateSalary(){
+  var empId=document.getElementById('edit-empid').value;
+  var salary=parseFloat(document.getElementById('edit-salary').value)||0;
+  if(!salary||salary<=0){toast('Enter a valid salary','er');return;}
+  var btn=document.getElementById('edit-btn');btn.disabled=true;btn.textContent='Updating...';
+  api('PATCH','/api/employees/'+empId,{salary:salary})
+  .then(function(){btn.disabled=false;btn.textContent='Update Salary';gxClose('mEditSalary');toast('Salary updated successfully','ok');pgEmployees();})
+  .catch(function(e){btn.disabled=false;btn.textContent='Update Salary';toast('Error: '+e.message,'er');});
+}
+
+
+function pgReports(){
+  showLoading();
+  Promise.all([api('GET','/api/reports/payroll-summary'),api('GET','/api/employees/')]).then(function(r){
+    var pay=r[0];ALL_EMPS=r[1];
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+    var grid=mk('div','g2');
+    var left=mk('div','card');left.innerHTML='<div class="c-hd"><div class="c-title">Available Reports</div></div>';
+    var rl=mk('div','','display:flex;flex-direction:column;gap:.5rem');
+    [['Full Payroll Report - '+month,'All employees with full deduction breakdown',function(){printAllPayslips(ALL_EMPS,month);}],
+     ['Salary List','Employee names and net salaries',function(){gxPrint('Salary List','<table><thead><tr><th>Name</th><th>Dept</th><th>Gross</th><th>Net Pay</th></tr></thead><tbody>'+ALL_EMPS.filter(function(e){return e.salary>0;}).map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+money(p.gross)+'</td><td>'+money(p.net)+'</td></tr>';}).join('')+'</tbody></table>');}],
+     ['Tax Deductions Report','Total tax collected from all employees',function(){gxPrint('Tax Report','<h3>Tax Deductions - '+month+'</h3><table><thead><tr><th>Employee</th><th>Gross</th><th>Tax (20%)</th><th>NI (8%)</th><th>Pension (5%)</th><th>Total Deducted</th></tr></thead><tbody>'+ALL_EMPS.filter(function(e){return e.salary>0;}).map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+money(p.gross)+'</td><td>-'+money(p.tax)+'</td><td>-'+money(p.ni)+'</td><td>-'+money(p.pension)+'</td><td style="color:red">-'+money(p.tax+p.ni+p.pension)+'</td></tr>';}).join('')+'</tbody></table>');}]
+    ].forEach(function(item){
+      var row=mk('div','','display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.03)');
+      var info2=mk('div');var nm=mk('div','','font-weight:500;font-size:.85rem');nm.textContent=item[0];info2.appendChild(nm);var desc=mk('div','','font-size:.72rem;color:var(--tx3)');desc.textContent=item[1];info2.appendChild(desc);row.appendChild(info2);
+      var pBtn=mk('button','btn btn-gh btn-xs');pBtn.textContent='Print';pBtn.onclick=item[2];row.appendChild(pBtn);rl.appendChild(row);
+    });
+    left.appendChild(rl);
+    var right=mk('div','card');right.innerHTML='<div class="c-hd"><div class="c-title">Payroll Summary</div></div>';
+    [['Period',month,'var(--tx)'],['Active Staff',pay.total_employees,'var(--tx)'],['Gross Payroll',money(pay.gross_payroll||0),'var(--hi)'],['Income Tax (20%)','-'+money(pay.tax||0),'var(--er)'],['NI (8%)','-'+money(pay.ni||0),'var(--er)'],['Pension (5%)','-'+money(pay.pension||0),'var(--er)'],['Net Payroll',money(pay.net_payroll||0),'var(--ok)']].forEach(function(row){
+      var d=mk('div','','display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem');
+      var lb=mk('span','','color:var(--tx3)');lb.textContent=row[0];var vl=mk('span','','font-weight:600;color:'+row[2]);vl.textContent=row[1];
+      d.appendChild(lb);d.appendChild(vl);right.appendChild(d);
+    });
+    grid.appendChild(left);grid.appendChild(right);mc.appendChild(grid);
+  }).catch(function(e){showErr(e.message,pgReports);});
+}
+
+
+function pgTax(){
+  showLoading();
+  api('GET','/api/employees/').then(function(emps){
+    ALL_EMPS=emps;
+    var mc=document.getElementById('MC');mc.innerHTML='';
+    var active=emps.filter(function(e){return e.salary>0;});
+    var totals=active.reduce(function(s,e){var p=gxPay(e.salary||0);return{gross:s.gross+p.gross,tax:s.tax+p.tax,ni:s.ni+p.ni,pension:s.pension+p.pension,net:s.net+p.net};},{gross:0,tax:0,ni:0,pension:0,net:0});
+    var month=new Date().toLocaleString('en-NG',{month:'long',year:'numeric'});
+
+    
+    var sg=mk('div','stats','grid-template-columns:repeat(3,1fr);margin-bottom:1.2rem');
+    [{sc:'#EF4444',sc2:'#F87171',ic:'&#x1f4b5;',val:money(totals.tax),lbl:'Total Income Tax',sub:'20% per employee'},{sc:'#FB923C',sc2:'#FDBA74',ic:'&#x1f3e5;',val:money(totals.ni),lbl:'National Insurance',sub:'8% per employee'},{sc:'#A78BFA',sc2:'#7C3AED',ic:'&#x1f4b0;',val:money(totals.pension),lbl:'Pension Fund',sub:'5% per employee'}].forEach(function(item){
+      var d=mk('div','stat');d.style.setProperty('--sc',item.sc);d.style.setProperty('--sc2',item.sc2);
+      var ic=mk('div','s-ic');ic.innerHTML=item.ic;d.appendChild(ic);
+      var v=mk('div','s-val','font-size:'+(String(item.val).length>8?'1rem':'1.5rem'));v.textContent=item.val;d.appendChild(v);
+      var l=mk('div','s-lbl');l.textContent=item.lbl;d.appendChild(l);var s2=mk('div','s-sub');s2.textContent=item.sub;d.appendChild(s2);
+      sg.appendChild(d);
+    });
+    mc.appendChild(sg);
+
+    var card=mk('div','card');
+    var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">Employee Tax & Deduction Breakdown</div>';
+    addBtn(hd,'Print Tax Report','btn-gh btn-sm',function(){gxPrint('Tax & Deductions - '+month,'<table><thead><tr><th>Employee</th><th>Dept</th><th>Gross</th><th>Tax (20%)</th><th>NI (8%)</th><th>Pension (5%)</th><th>Total Deducted</th><th>Net Pay</th></tr></thead><tbody>'+active.map(function(e){var p=gxPay(e.salary||0);return'<tr><td>'+e.name+'</td><td>'+(e.department||'')+'</td><td>'+money(p.gross)+'</td><td>-'+money(p.tax)+'</td><td>-'+money(p.ni)+'</td><td>-'+money(p.pension)+'</td><td style="color:red">-'+money(p.tax+p.ni+p.pension)+'</td><td style="color:green;font-weight:bold">'+money(p.net)+'</td></tr>';}).join('')+'<tr style="font-weight:bold;background:#fff3e0"><td>TOTAL</td><td>-</td><td>'+money(totals.gross)+'</td><td>-'+money(totals.tax)+'</td><td>-'+money(totals.ni)+'</td><td>-'+money(totals.pension)+'</td><td>-'+money(totals.tax+totals.ni+totals.pension)+'</td><td>'+money(totals.net)+'</td></tr></tbody></table>');});
+    card.appendChild(hd);
+    var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+    tbl.innerHTML='<thead><tr><th>Employee</th><th>Dept</th><th>Gross</th><th>Tax (20%)</th><th>NI (8%)</th><th>Pension (5%)</th><th>Total Deducted</th><th>Net Pay</th></tr></thead>';
+    var tbody=document.createElement('tbody');
+    active.forEach(function(e){
+      var p=gxPay(e.salary||0);var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div class="td-user">'+gxAv(e.name,'22px')+'<span style="font-weight:500">'+e.name+'</span></div>';
+      var d=document.createElement('td');d.style.fontSize='.75rem';d.textContent=e.department||'-';
+      var gr=document.createElement('td');gr.style.cssText='font-weight:600;color:var(--hi)';gr.textContent=money(p.gross);
+      var tx=document.createElement('td');tx.style.cssText='color:var(--er)';tx.textContent='-'+money(p.tax);
+      var ni=document.createElement('td');ni.style.cssText='color:var(--er)';ni.textContent='-'+money(p.ni);
+      var pn=document.createElement('td');pn.style.cssText='color:var(--er)';pn.textContent='-'+money(p.pension);
+      var td2=document.createElement('td');td2.style.cssText='color:var(--er);font-weight:600';td2.textContent='-'+money(p.tax+p.ni+p.pension);
+      var nt=document.createElement('td');nt.style.cssText='font-weight:700;color:var(--ok)';nt.textContent=money(p.net);
+      [n,d,gr,tx,ni,pn,td2,nt].forEach(function(td3){tr.appendChild(td3);});tbody.appendChild(tr);
+    });
+    
+    var ttr=document.createElement('tr');ttr.style.cssText='font-weight:700;background:rgba(255,107,0,.08)';
+    [['TOTAL','',''],['','',''],['',money(totals.gross),'var(--hi)'],['',' -'+money(totals.tax),'var(--er)'],['',' -'+money(totals.ni),'var(--er)'],['',' -'+money(totals.pension),'var(--er)'],['',' -'+money(totals.tax+totals.ni+totals.pension),'var(--er)'],['',money(totals.net),'var(--ok)']].forEach(function(c,i){
+      var td3=document.createElement('td');
+      if(i===0)td3.textContent=c[0];
+      else if(c[1]){td3.style.color=c[2];td3.textContent=c[1];}
+      ttr.appendChild(td3);
+    });
+    tbody.appendChild(ttr);
+    tbl.appendChild(tbody);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  }).catch(function(e){showErr(e.message,pgTax);});
+}
+
+
+function pgNotifications(){
+  var mc=document.getElementById('MC');mc.innerHTML='';var card=mk('div','card');
+  var hd=mk('div','c-hd');hd.innerHTML='<div class="c-title">My Notifications</div>';
+  addBtn(hd,'Mark All Read','btn-gh btn-sm',function(){api('POST','/api/notifications/mark-all-read').then(function(){toast('All read','ok');pgNotifications();}).catch(function(e){toast(e.message,'er');});});
+  card.appendChild(hd);var list=mk('div');list.id='notif-list';list.appendChild(mk('div','spin','margin:2rem auto'));card.appendChild(list);mc.appendChild(card);
+  api('GET','/api/notifications/').then(function(notifs){
+    var el=document.getElementById('notif-list');if(!el)return;
+    if(!notifs.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--tx3)">No notifications</div>';return;}
+    var clr={ok:'#4ADE80',er:'#F87171',wa:'#FCD34D',in:'#93C5FD'};el.innerHTML='';
+    notifs.forEach(function(n){
+      var row=mk('div','','display:flex;gap:.75rem;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer');
+      var dot=mk('div','','width:8px;height:8px;border-radius:50%;background:'+(clr[n.type]||'#60A5FA')+';flex-shrink:0;margin-top:.45rem');
+      var info=mk('div','','flex:1');var ti=mk('div','','font-size:.82rem;font-weight:'+(n.read?400:600));ti.textContent=n.title;info.appendChild(ti);
+      var msg=mk('div','','font-size:.75rem;color:var(--tx2)');msg.textContent=n.message||'';info.appendChild(msg);
+      var t=mk('div','','font-size:.65rem;color:var(--tx3);margin-top:.15rem');t.textContent=gxAgo(n.created_at);info.appendChild(t);
+      row.appendChild(dot);row.appendChild(info);
+      if(!n.read){var nb=mk('span','b b-or');nb.textContent='New';row.appendChild(nb);}
+      (function(nid,rrow){rrow.onclick=function(){api('POST','/api/notifications/'+nid+'/read').catch(function(){});var nb2=rrow.querySelector('.b-or');if(nb2)nb2.style.display='none';};})(n.id,row);
+      el.appendChild(row);
+    });
+    var dot2=document.getElementById('notifDot');if(dot2)dot2.style.display='none';
+  }).catch(function(e){var el2=document.getElementById('notif-list');if(el2)el2.innerHTML='<div style="color:var(--er);padding:1rem">'+e.message+'</div>';});
+}
+
+
+function pgOvertimePay(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Approved Overtime — Payroll View</div></div>';
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Date</th><th>Hours</th><th>Rate x</th><th>Est. Pay</th><th>Status</th></tr></thead>';
+  var tb=document.createElement('tbody');tb.id='otp-tb';tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tb);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  Promise.all([api('GET','/api/overtime/'),api('GET','/api/employees/')]).then(function(res){
+    var rows=res[0],emps=res[1];var empMap={};emps.forEach(function(e){empMap[e.id]=e;});
+    var el=document.getElementById('otp-tb');if(!el)return;el.innerHTML='';
+    var approved=rows.filter(function(o){return o.status==='approved';});
+    if(!approved.length){el.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--tx3)">No approved overtime</td></tr>';return;}
+    approved.forEach(function(o){
+      var emp=empMap[o.employee_id]||{};var hrRate=(emp.salary||0)/160;var estPay=hrRate*(o.hours||0)*(o.rate_multiplier||1.5);
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div style="font-weight:500">'+o.employee_name+'</div><div style="font-size:.68rem;color:var(--tx3)">'+o.department+'</div>';
+      var d=document.createElement('td');d.textContent=o.date;var h=document.createElement('td');h.innerHTML='<strong>'+o.hours+'</strong> hrs';
+      var rt=document.createElement('td');rt.innerHTML='<span class="b b-bl">'+(o.rate_multiplier||1.5)+'x</span>';
+      var ep=document.createElement('td');ep.style.fontWeight='600';ep.textContent=money(Math.round(estPay));
+      var st=document.createElement('td');st.innerHTML=gxBadge(o.status);
+      [n,d,h,rt,ep,st].forEach(function(td){tr.appendChild(td);});el.appendChild(tr);
+    });
+  }).catch(function(e){var el=document.getElementById('otp-tb');if(el)el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--er);padding:2rem">'+e.message+'</td></tr>';});
+}
+function pgExpensesPay(){
+  var mc=document.getElementById('MC');mc.innerHTML='';
+  var card=mk('div','card');card.innerHTML='<div class="c-hd"><div class="c-title">Approved Expense Claims — To Reimburse</div></div>';
+  var wrap=mk('div','tbl-wrap');var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Employee</th><th>Title</th><th>Amount</th><th>Category</th><th>Status</th></tr></thead>';
+  var tb=document.createElement('tbody');tb.id='expp-tb';tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  tbl.appendChild(tb);wrap.appendChild(tbl);card.appendChild(wrap);mc.appendChild(card);
+  api('GET','/api/expenses/').then(function(rows){
+    var el=document.getElementById('expp-tb');if(!el)return;el.innerHTML='';
+    var approved=rows.filter(function(e){return e.status==='approved';});
+    if(!approved.length){el.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--tx3)">No approved claims</td></tr>';return;}
+    var total=0;approved.forEach(function(e){total+=e.amount||0;});
+    var info=mk('div','','background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem');
+    info.innerHTML='<span style="color:var(--tx3)">Total to reimburse: </span><strong style="color:var(--ok)">'+money(total)+'</strong>';card.insertBefore(info,wrap);
+    approved.forEach(function(e){
+      var tr=document.createElement('tr');
+      var n=document.createElement('td');n.innerHTML='<div style="font-weight:500">'+e.employee_name+'</div><div style="font-size:.68rem;color:var(--tx3)">'+e.department+'</div>';
+      var ti=document.createElement('td');ti.style.fontSize='.8rem';ti.textContent=e.title;
+      var am=document.createElement('td');am.style.fontWeight='600';am.textContent=money(e.amount);
+      var ca=document.createElement('td');ca.innerHTML='<span class="b b-gy">'+e.category+'</span>';
+      var st=document.createElement('td');st.innerHTML=gxBadge(e.status);
+      [n,ti,am,ca,st].forEach(function(td){tr.appendChild(td);});el.appendChild(tr);
+    });
+  }).catch(function(e){var el=document.getElementById('expp-tb');if(el)el.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--er);padding:2rem">'+e.message+'</td></tr>';});
+}
+document.addEventListener('DOMContentLoaded',function(){
+  gxInit('dept_manager,admin',function(user){
+    pgDashboard();
+  });
+});
+</script>
+</body>
+</html>
